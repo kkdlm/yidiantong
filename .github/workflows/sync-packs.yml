@@ -29,7 +29,7 @@ jobs:
           curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/ecyDYfWqHR"
           curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Uklx9QVGnm"
           curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/i51mAgFSFE"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/B3GDfJ3gND"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/wr9IFo9eKA"
           ls -l packs
       - name: 本地化路径
         run: |
@@ -66,21 +66,12 @@ jobs:
         run: |
           git fetch origin main
           git checkout -B main origin/main
-      - name: 查询并启用 Pages（写入 docs/pages-api.json）
+      - name: 查询 Pages 状态
         run: |
           mkdir -p docs
-          AUTH="Authorization: Bearer ${{ github.token }}"
-          ACC="Accept: application/vnd.github+json"
-          {
-            echo '{"get_before":'
-            curl -s -H "$AUTH" -H "$ACC" "https://api.github.com/repos/${{ github.repository }}/pages" || true
-            echo ', "post":'
-            curl -s -X POST -H "$AUTH" -H "$ACC" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/repos/${{ github.repository }}/pages" -d '{"build_type":"workflow"}' || true
-            echo ', "get_after":'
-            curl -s -H "$AUTH" -H "$ACC" "https://api.github.com/repos/${{ github.repository }}/pages" || true
-            echo '}'
-          } > docs/pages-api.json
-          head -c 1000 docs/pages-api.json
+          curl -s -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" > docs/pages-api.json || true
+          head -c 600 docs/pages-api.json
       - uses: actions/configure-pages@v5
         continue-on-error: true
         with:
@@ -95,7 +86,6 @@ jobs:
         if: always()
         run: |
           code=$(curl -s -o /tmp/pg.html -w "%{http_code}" "https://kkdlm.github.io/yidiantong/" || echo 000)
-          mkdir -p docs
           printf '{\n  "checked_at": "%s",\n  "http_code": %s,\n  "deploy_outcome": "%s",\n  "page_url": "%s"\n}\n' \
             "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
           cat docs/deploy-status.json
