@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: 拉取科目内容、线上壳与管理后台
+      - name: 拉取科目内容、线上壳、管理后台与 PWA 资源
         run: |
           mkdir -p packs admin icons
           curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/83pAr0pePl"
@@ -32,7 +32,15 @@ jobs:
           curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/We6MqkcpDG"
           curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/b4fUHFyegb"
           curl -fsSL -o admin/index.html "https://aka.doubaocdn.com/s/VBnSbDQvjd"
-          ls -l packs admin
+          curl -fsSL -o manifest.webmanifest "https://aka.doubaocdn.com/s/NKmuOL9mNo"
+          curl -fsSL -o icons/favicon-32.png "https://aka.doubaocdn.com/s/JD02EZUAcd"
+          curl -fsSL -o icons/icon-192.png "https://aka.doubaocdn.com/s/rPo7MC9MBj"
+          curl -fsSL -o icons/icon-512.png "https://aka.doubaocdn.com/s/7EAfdyV0Ry"
+          curl -fsSL -o icons/maskable-192.png "https://aka.doubaocdn.com/s/rf4gk8IZqR"
+          curl -fsSL -o icons/maskable-512.png "https://aka.doubaocdn.com/s/9I6hfYvH66"
+          curl -fsSL -o icons/apple-touch-icon.png "https://aka.doubaocdn.com/s/LawVTiqTXT"
+          curl -fsSL -o icons/apple-splash.png "https://aka.doubaocdn.com/s/5zPRkVtKaH"
+          ls -l packs admin icons
       - name: 本地化路径
         run: |
           python3 - <<'PY'
