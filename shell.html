@@ -338,7 +338,7 @@ function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 var DEF={vip:8,vipUntil:'2026-12-01',signDays:2,signedDate:'',daily:0,dDate:'',pInvite:0,invite:0,
   invCode:'FZ-8K2M',fzPct:0,zzPct:0,enPct:0,lastBook:'fz',lastTab:'',ver:'1.3.0.0',
   theme:{fz:100,night:false},stats:{},chat:[],
-  act:{on:true,off:'活动暂时关闭，已经抽到的不会收回'}};
+  act:{on:true,off:'活动暂时关闭，已经抽到的不会收回',signTickets:1,inviteOn:true,inviteTickets:0,inviterDays:0,inviteeDays:0}};
 var ST=load()||{};
 for(var dk in DEF){ if(ST[dk]===undefined||ST[dk]===null) ST[dk]=DEF[dk]; }
 if(!ST.theme||typeof ST.theme!=='object') ST.theme={fz:100,night:false};
@@ -347,6 +347,11 @@ if(ST.theme.night===undefined) ST.theme.night=false;
 if(!ST.act||typeof ST.act!=='object') ST.act={on:true,off:DEF.act.off};
 if(ST.act.on===undefined) ST.act.on=true;
 if(ST.act.off===undefined) ST.act.off=DEF.act.off;
+if(ST.act.signTickets===undefined) ST.act.signTickets=1;
+if(ST.act.inviteOn===undefined) ST.act.inviteOn=true;
+if(ST.act.inviteTickets===undefined) ST.act.inviteTickets=0;
+if(ST.act.inviterDays===undefined) ST.act.inviterDays=0;
+if(ST.act.inviteeDays===undefined) ST.act.inviteeDays=0;
 /* 旧版扁平 stats 迁移为按科目分桶 */
 if(ST.stats&&(typeof ST.stats!=='object'||Array.isArray(ST.stats)||('recite' in ST.stats))) ST.stats={};
 
@@ -783,18 +788,19 @@ S.sign=function(){
   var t=today();
   if(ST.signedDate===t){ toast('今天已经签到了，明天再来'); return; }
   ST.signedDate=t;
-  ST.daily=(ST.daily||0)+1;
-  var m='签到成功 · 抽奖 +1 次（仅今天有效）';
+  var tickets=ST.act.signTickets||1;
+  ST.daily=(ST.daily||0)+tickets;
+  var m='签到成功 · 抽奖 +'+tickets+' 次（仅今天有效）';
   ST.signDays=(ST.signDays||0)+1;
   if(ST.signDays>=7){
     addVip(3); ST.signDays=0;
-    m='满 7 天 · 送 3 天会员，新一轮已开始；抽奖仍 +1 次';
+    m='满 7 天 · 送 3 天会员，新一轮已开始；抽奖仍 +'+tickets+' 次';
   }
   save(); sendTheme(); openSheet('me'); toast(m);
 };
 
 /* ---------- 抽奖 ---------- */
-var PRIZES=[
+var DEFAULT_PRIZES=[
   {n:'会员 30 天',s:'会员30天',d:30,w:1},
   {n:'再来一次',s:'再来一次',d:0,w:12,again:true},
   {n:'会员 3 天',s:'会员3天',d:3,w:6},
@@ -804,7 +810,43 @@ var PRIZES=[
   {n:'再来一次',s:'再来一次',d:0,w:12,again:true},
   {n:'会员 1 天',s:'会员1天',d:1,w:14}
 ];
+var PRIZES=DEFAULT_PRIZES.slice();
 var SEG=360/PRIZES.length, ROT=0, SPIN=false;
+
+/* ---------- 远程配置（Supabase app_config，只读拉取；失败静默用本地默认）---------- */
+var SB_URL='https://lbykbafnkhwxqtfuaoio.supabase.co';
+var SB_ANON='sb_publishable_Jo6sLcvuEpRQEbMJ6nnOHQ_sxA_U5nL';
+function mapPrize(p){
+  var kind=p.kind||'none';
+  var n=String(p.name||'奖项');
+  return {n:n,s:n,d:kind==='vip'?(parseInt(p.days,10)||0):0,w:parseInt(p.w,10)||0,again:kind==='again'};
+}
+function applyRemoteConfig(cfg){
+  var get=function(k){ for(var i=0;i<cfg.length;i++) if(cfg[i].key===k) return cfg[i].val; return undefined; };
+  var le=get('lottery_enabled'); if(le!==undefined) ST.act.on=!!le;
+  var st=get('lottery_sign_tickets'); if(st!==undefined) ST.act.signTickets=Math.max(0,parseInt(st,10)||0);
+  var ie=get('invite_enabled'); if(ie!==undefined) ST.act.inviteOn=!!ie;
+  var lit=get('lottery_invite_tickets'); if(lit!==undefined) ST.act.inviteTickets=Math.max(0,parseInt(lit,10)||0);
+  var ir1=get('invite_reward_inviter'); if(ir1!==undefined) ST.act.inviterDays=parseInt(ir1,10)||0;
+  var ir2=get('invite_reward_invitee'); if(ir2!==undefined) ST.act.inviteeDays=parseInt(ir2,10)||0;
+  var lp=get('lottery_prizes');
+  if(Array.isArray(lp)&&lp.length>=4){
+    var nm=lp.map(mapPrize);
+    if(nm.some(function(x){return x.w>0;})){ PRIZES=nm; SEG=360/PRIZES.length; }
+  }
+  save();
+}
+function fetchRemoteConfig(){
+  if(!window.fetch) return;
+  fetch(SB_URL+'/rest/v1/app_config?select=key,val',{headers:{'apikey':SB_ANON}})
+   .then(function(r){return r.ok?r.json():null;})
+   .then(function(cfg){
+     if(!cfg) return;
+     applyRemoteConfig(cfg);
+     if(sheetKind==='lottery') openSheet('lottery');
+   })
+   .catch(function(){});
+}
 function lotteryHtml(){
   var labs='',stops='';
   PRIZES.forEach(function(p,i){
@@ -866,15 +908,22 @@ S.tipOff=function(){ toast(ST.act.off||'活动暂时关闭'); };
 
 /* ---------- 邀请 ---------- */
 function inviteHtml(){
+  var rewards=[];
+  if(ST.act.inviterDays>0) rewards.push('朋友注册成功，你得 '+ST.act.inviterDays+' 天会员');
+  if(ST.act.inviteTickets>0) rewards.push('朋友注册成功，你得 '+ST.act.inviteTickets+' 次抽奖机会');
+  if(ST.act.inviteeDays>0) rewards.push('朋友也得 '+ST.act.inviteeDays+' 天会员');
+  if(!rewards.length) rewards.push('邀请好友一起学习，奖励实时到账');
+  var rw=rewards.join('<br>');
+  var closed=ST.act.inviteOn===false;
   return '<div class="card" style="text-align:center;background:linear-gradient(160deg,#23513C,#1B4231);color:#EFE7D4;border-color:transparent">'+
     '<div style="display:flex;justify-content:center;margin-bottom:9px"><span style="width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(212,184,124,.2);color:var(--gold2)">'+ic('user-plus')+'</span></div>'+
     '<div style="font-size:12px;opacity:.75;letter-spacing:.5px">我的邀请码</div>'+
     '<div style="font-size:26px;font-weight:700;letter-spacing:2px;margin:3px 0 6px;font-variant-numeric:tabular-nums">'+esc(ST.invCode)+'</div>'+
-    '<div style="font-size:11.5px;color:#D3CAB2;line-height:1.6">朋友用这个码注册，你得 1 次抽奖机会<br>可累积，不清零</div>'+
+    '<div style="font-size:11.5px;color:#D3CAB2;line-height:1.6">'+rw+(closed?'<br>邀请活动当前已关闭':'')+'</div>'+
     '<button class="btn gold sm" style="margin-bottom:0" onclick="S.copyInvite()">'+ic('copy')+'复制邀请链接</button></div>'+
     '<div class="card"><div class="row"><span class="lt"><span class="lead gray">'+ic('user')+'</span>已邀请</span><b>'+ST.invite+' 人</b></div><div class="hr"></div>'+
     '<div class="row"><span class="lt"><span class="lead gold">'+ic('trophy')+'</span>攒着的抽奖次数</span><b>'+ST.pInvite+' 次</b></div></div>'+
-    '<div class="hint" style="text-align:center">邀请奖励实时到账，可用于抽奖，长期有效、不清零。</div>';
+    '<div class="hint" style="text-align:center">邀请奖励实时到账，长期有效、不清零。</div>';
 }
 S.copyInvite=function(){
   /* 用 hash 携带邀请码：线上 CDN 302 会丢 query，fragment 则保留 */
@@ -889,7 +938,7 @@ S.copyInvite=function(){
 S.redeem=function(){
   var v=(($('cdk')||{}).value||'').trim();
   if(v.length<6){ toast('卡密格式不正确，请重新输入'); return; }
-  var m=v.match(/FZ-(\d{1,2})/);
+  var m=v.match(/(?:FZ|YD)-(\d{1,2})/);
   var days=m?(parseInt(m[1],10)||30):30;
   addVip(days);
   save(); closeSheet(); toast('兑换成功 · 会员 +'+days+' 天'); openSheet('me'); sendTheme();
@@ -924,6 +973,8 @@ S.checkVer=function(){
 
 window.S=S;
 window.__ST=ST; window.__FR=FR;
+window.__PRIZES=function(){return PRIZES;};
+fetchRemoteConfig();
 })();
 
 </script>
