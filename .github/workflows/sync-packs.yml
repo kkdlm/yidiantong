@@ -29,7 +29,7 @@ jobs:
           curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/ecyDYfWqHR"
           curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Uklx9QVGnm"
           curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/5CSorQnjlH"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/LsatUBTsZy"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/tI4pi2CB58"
           ls -l packs
       - name: 本地化路径
         run: |
