@@ -507,10 +507,9 @@ function libHtml(){
   return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 已开放 3 科 · 会员全科通用</div>'+
     '<div style="margin-top:12px">'+rows+'</div>'+
     (last&&!last.soon?('<div class="card tappable"><div class="row" style="padding:0" onclick="S.open(\''+last.id+'\')"><span style="font-size:12.5px;color:var(--ink3)">继续上次</span><span class="lt" style="gap:7px"><b style="font-size:13.5px">'+esc(last.name)+(ST.lastTab?' · '+esc(ST.lastTab):'')+'</b><span class="chev">'+ic('caret-right')+'</span></span></div></div>'):'')+
-    '<div class="card" style="background:rgba(31,74,56,.05);border-color:rgba(31,74,56,.14)">'+
-      '<div style="font-size:12.5px;font-weight:600;color:var(--green)">科目是独立包，我的只有一份</div>'+
-      '<div class="hint" style="margin-top:5px">点开就是原样的科目界面（连启动画面都不变）。会员、签到、抽奖、邀请、客服都在这一层，三科共用一份。</div></div>'+
-    '<div class="hint" style="padding:0 2px">加一科 = 多一个包，书库自动多一行，主程序不用改。</div>';
+    '<div class="card" style="background:rgba(30,74,55,.05);border-color:rgba(30,74,55,.14)">'+
+      '<div style="font-size:12.5px;font-weight:600;color:var(--green)">一个账号，全科通用</div>'+
+      '<div class="hint" style="margin-top:5px">会员、签到、抽奖、邀请、客服在所有科目间通用，无需重复开通。</div></div>';
 }
 function studyHtml(){
   var cards=BOOKS.map(function(b){
@@ -749,8 +748,7 @@ function sheetHtml(kind){
   if(kind==='invite') return inviteHtml();
   if(kind==='redeem') return '<div class="card"><div class="sub">会员有效中 · 还剩 '+vipRemaining()+' 天</div>'+
     '<div class="hint" style="margin-top:4px">兑换后会员天数累加，全科通用</div></div>'+
-    '<div class="card"><div class="sub">会员卡密</div><input id="cdk" placeholder="FZ-7-XXXX-XXXX" autocomplete="off">'+
-    '<div class="hint">演示可用：FZ-7-2026-AAAA / FZ-30-2026-BBBB</div>'+
+    '<div class="card"><div class="sub">会员卡密</div><input id="cdk" placeholder="请输入会员卡密" autocomplete="off">'+
     '<button class="btn" onclick="S.redeem()">立即兑换</button></div>';
   if(kind==='chat') return '<div class="card" style="max-height:42vh;overflow-y:auto">'+
     (ST.chat.length?ST.chat.map(function(m){return '<div style="margin:6px 0;text-align:'+(m.me?'right':'left')+'">'+
@@ -760,22 +758,22 @@ function sheetHtml(kind){
     '<div class="card"><input id="cin" placeholder="输入问题…" onkeydown="if(event.key===\'Enter\')S.sendMsg()"><button class="btn sm" onclick="S.sendMsg()">发送</button></div>';
   if(kind==='ver') return '<div class="card"><div class="row"><span>当前版本</span><b>v'+esc(ST.ver)+'</b></div><div class="hr"></div>'+
     '<div class="row"><span>科目包</span><span style="text-align:right;font-size:11.5px">'+BOOKS.map(function(b){return esc(b.name)+' '+esc(b.ver)}).join(' · ')+'</span></div></div>'+
-    '<div class="card"><div style="font-size:13px;font-weight:700">v1.3.0.0</div><div class="hint">多科目书库、我的统一到主程序、签到/抽奖/邀请归入活动、科目包按需加载与预热、深链与浏览器返回支持。</div></div>'+
+    '<div class="card"><div style="font-size:13px;font-weight:700">v1.3.0.0</div><div class="hint">新增多科目书库，法制史、政治、英语一个账号即可使用；签到、抽奖、邀请活动上线，界面与操作体验整体优化。</div></div>'+
     '<button class="btn ghost" onclick="S.checkVer()">检查更新</button>';
-  if(kind==='faq') return '<div class="card"><div style="font-size:13px;font-weight:700">科目包与会员</div>'+
-    '<div class="hint">科目是独立包，首次打开需要下载（法制史约 6.7MB，之后走缓存秒开）。会员、签到、抽奖、邀请、客服在主程序这一层，全科共用。</div></div>'+
+  if(kind==='faq') return '<div class="card"><div style="font-size:13px;font-weight:700">科目与会员</div>'+
+    '<div class="hint">首次打开某科目需要下载内容（法制史约 6.7MB），之后会自动缓存、打开更快。会员、签到、抽奖、邀请、客服在所有科目间通用。</div></div>'+
     '<div class="card"><div style="font-size:13px;font-weight:700">抽奖次数规则</div>'+
-    '<div class="hint">签到得的次数当天有效，零点清零；邀请得的次数可累积，不清零。抽奖时先扣当天次数，再扣累积次数。</div></div>'+
+    '<div class="hint">签到获得的次数当天有效，零点清零；邀请获得的次数可累积，不清零。抽奖时先扣当天次数，再扣累积次数。</div></div>'+
     '<div class="card"><div style="font-size:13px;font-weight:700">换设备</div>'+
-    '<div class="hint">一个账号最多 3 台设备，进度跟账号走。换机后在「我的 → 登录设备」里解绑旧机。</div></div>';
+    '<div class="hint">一个账号最多登录 3 台设备，学习进度跟账号走。换机后可在「我的 → 登录设备」里解绑旧设备。</div></div>';
   if(kind==='theme') return '<div class="card"><div class="row"><span>正文字号</span><b>'+ST.theme.fz+'%</b></div>'+
     '<div style="display:flex;gap:7px;margin-top:6px">'+
     [90,100,115].map(function(v){return '<button class="opt" style="text-align:center;margin:0;'+(ST.theme.fz===v?'border-color:rgba(31,74,56,.45);background:rgba(31,74,56,.08);font-weight:600':'')+'" onclick="S.setTheme(\'fz\','+v+')">'+v+'%</button>'}).join('')+'</div></div>'+
     '<div class="card"><div class="row"><span>夜间模式</span><b>'+(ST.theme.night?'开':'关')+'</b></div>'+
     '<button class="btn ghost sm" onclick="S.setTheme(\'night\','+(!ST.theme.night)+')">'+(ST.theme.night?'切回日间':'切到夜间')+'</button>'+
-    '<div class="hint">设置会下发到每个科目包，各科照自己的样式生效。</div></div>';
-  if(kind==='dev') return '<div class="card"><div class="row"><span>当前设备</span><b>iPhone · 本机</b></div><div class="hr"></div>'+
-    '<div class="row"><span>已验证设备</span><b>1 / 3 台</b></div></div>'+
+    '<div class="hint">设置对所有科目生效，各科会按自身样式应用。</div></div>';
+  if(kind==='dev') return '<div class="card"><div class="row"><span>当前设备</span><b>本机</b></div><div class="hr"></div>'+
+    '<div class="row"><span>已登录设备</span><b>1 / 3 台</b></div></div>'+
     '<button class="btn ghost" onclick="S.toast(\'已向其他设备发出下线通知\')">解绑其他设备</button>';
   return meHtml();
 }
@@ -876,8 +874,7 @@ function inviteHtml(){
     '<button class="btn gold sm" style="margin-bottom:0" onclick="S.copyInvite()">'+ic('copy')+'复制邀请链接</button></div>'+
     '<div class="card"><div class="row"><span class="lt"><span class="lead gray">'+ic('user')+'</span>已邀请</span><b>'+ST.invite+' 人</b></div><div class="hr"></div>'+
     '<div class="row"><span class="lt"><span class="lead gold">'+ic('trophy')+'</span>攒着的抽奖次数</span><b>'+ST.pInvite+' 次</b></div></div>'+
-    '<button class="btn" onclick="S.simInvite()">'+ic('user-plus')+'模拟：一个朋友注册成功</button>'+
-    '<div class="hint">真机接后台后，注册回调里给邀请人 +1（写入 invites 表），再同步到这里的累积池。</div>';
+    '<div class="hint" style="text-align:center">邀请奖励实时到账，可用于抽奖，长期有效、不清零。</div>';
 }
 S.copyInvite=function(){
   /* 用 hash 携带邀请码：线上 CDN 302 会丢 query，fragment 则保留 */
@@ -887,18 +884,13 @@ S.copyInvite=function(){
     else toast('链接：'+link);
   }catch(e){ toast('链接：'+link); }
 };
-S.simInvite=function(){
-  ST.invite++; ST.pInvite++; save(); openSheet('invite');
-  toast('邀请成功 · 累积抽奖 +1 次');
-  sendTheme();
-};
 
 /* ---------- 卡密 ---------- */
 S.redeem=function(){
-  var v=(($('cdk')||{}).value||'').trim().toUpperCase();
-  var m=v.match(/FZ-(\d{1,2})-?/);
-  if(!m||v.replace(/\s/g,'').length<8){ toast('卡密格式不对'); return; }
-  var days=parseInt(m[1],10)||7;
+  var v=(($('cdk')||{}).value||'').trim();
+  if(v.length<6){ toast('卡密格式不正确，请重新输入'); return; }
+  var m=v.match(/FZ-(\d{1,2})/);
+  var days=m?(parseInt(m[1],10)||30):30;
   addVip(days);
   save(); closeSheet(); toast('兑换成功 · 会员 +'+days+' 天'); openSheet('me'); sendTheme();
 };
@@ -909,7 +901,7 @@ S.sendMsg=function(){
   i.value='';
   ST.chat.push({me:true,t:v}); save(); openSheet('chat');
   setTimeout(function(){
-    ST.chat.push({t:'收到～这条我记下了，管理员会在后台「反馈」里回复你。'}); save();
+    ST.chat.push({t:'收到，你的问题我已记录，客服人员会尽快回复你。'}); save();
     if(sheetKind==='chat') openSheet('chat');
   },780);
 };
@@ -917,7 +909,7 @@ S.sendMsg=function(){
 /* ---------- 主题 ---------- */
 S.setTheme=function(k,v){
   ST.theme[k]=v; save(); sendTheme(); openSheet('theme');
-  toast(k==='fz'?('字号已设为 '+v+'%，已下发到科目'):(v?'已切到夜间':'已切回日间'));
+  toast(k==='fz'?('字号已设为 '+v+'%'):(v?'已切到夜间':'已切回日间'));
 };
 
 /* ---------- 版本 ---------- */
