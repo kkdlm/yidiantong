@@ -318,12 +318,12 @@ function libHtml(){
       '<div class="meta"><b>'+esc(b.name)+badge+'</b><span>'+esc(b.desc)+'</span></div>'+btn+'</div>';
   }).join('');
   var last=book(ST.lastBook);
-  return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 一站上岸 · 已开放 3 科</div>'+
+  return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 已开放 3 科 · 会员全科通用</div>'+
     '<div style="margin-top:12px">'+rows+'</div>'+
     (last&&!last.soon?('<div class="card"><div class="row" onclick="S.open(\''+last.id+'\')"><span style="font-size:12.5px;color:var(--ink3)">继续上次</span><b>'+esc(last.name)+(ST.lastTab?' · '+esc(ST.lastTab):'')+' ›</b></div></div>'):'')+
     '<div class="card" style="background:rgba(31,74,56,.05);border-color:rgba(31,74,56,.14)">'+
       '<div style="font-size:12.5px;font-weight:600;color:var(--green)">科目是独立包，我的只有一份</div>'+
-      '<div class="hint" style="margin-top:5px">点开就是原样的科目界面（连启动画面都不变）。会员、签到、抽奖、邀请、客服都在这一层，两个科目共用一份。</div></div>'+
+      '<div class="hint" style="margin-top:5px">点开就是原样的科目界面（连启动画面都不变）。会员、签到、抽奖、邀请、客服都在这一层，三科共用一份。</div></div>'+
     '<div class="hint" style="padding:0 2px">加一科 = 多一个包，书库自动多一行，主程序不用改。</div>';
 }
 function studyHtml(){
