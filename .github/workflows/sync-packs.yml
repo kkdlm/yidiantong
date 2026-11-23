@@ -29,7 +29,7 @@ jobs:
           curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/ecyDYfWqHR"
           curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Uklx9QVGnm"
           curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/5CSorQnjlH"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/0SUBjkWTlD"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/97SO9yBE3r"
           ls -l packs
       - name: 本地化路径
         run: |
@@ -87,7 +87,7 @@ jobs:
         run: |
           code=$(curl -s -o /tmp/pg.html -w "%{http_code}" "https://kkdlm.github.io/yidiantong/" || echo 000)
           printf '{\n  "checked_at": "%s",\n  "http_code": %s,\n  "deploy_outcome": "%s",\n  "page_url": "%s"\n}\n' \
-            "$(date -u +%Y-%m-%dT%H:%M:%SZ)""$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
+            "$(date -u +%Y-%m-%dT%H:%M:%S)""$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
           cat docs/deploy-status.json
           git config user.name "pack-bot"
           git config user.email "pack-bot@users.noreply.github.com"
