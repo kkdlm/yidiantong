@@ -1,4 +1,5 @@
-name: ping
+# 沉浸式顶栏 + PWA + 设置统一（CDN 快速加载版）
+name: sync-packs
 
 on:
   workflow_dispatch:
@@ -9,26 +10,83 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-final
+  cancel-in-progress: false
 
 jobs:
-  ping:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: 诊断 CDN 并写入文件
+        with:
+          fetch-depth: 0
+      - name: 拉取资源（带重试，单文件失败不中断）
         run: |
-          mkdir -p docs
-          {
-            echo '=== DNS ==='
-            getent hosts aka.doubaocdn.com || echo 'DNS解析失败'
-            echo '=== 下载小文件 zz ==='
-            curl -sSIL --connect-timeout 15 --max-time 40 'https://aka.doubaocdn.com/s/VLUm5MzBbM' | head -20 || echo 'HEAD失败'
-            echo '=== 实际下载 ==='
-            curl -sSL --connect-timeout 15 --max-time 90 -o /tmp/zz.html -w 'http:%{http_code} bytes:%{size_download} speed:%{speed_download}\n' 'https://aka.doubaocdn.com/s/VLUm5MzBbM' || echo '下载失败'
-            file /tmp/zz.html 2>/dev/null || true
-          } > docs/cdn-diag.txt 2>&1
+          mkdir -p packs admin icons
+          pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 240 -o "$1" "$2" || echo "WARN 拉取失败 $2"; }
+          pull packs/fz.html 'https://aka.doubaocdn.com/s/zrhw2Iqnjh'
+          pull packs/zz.html 'https://aka.doubaocdn.com/s/VLUm5MzBbM'
+          pull packs/en.html 'https://aka.doubaocdn.com/s/xBWsG9D9IY'
+          pull index_raw.html 'https://aka.doubaocdn.com/s/ClIzn52cK7'
+          pull admin/index.html 'https://aka.doubaocdn.com/s/VBnSbDQvjd'
+          pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
+          pull icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
+          pull icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj'
+          pull icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry'
+          pull icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR'
+          pull icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66'
+          pull icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT'
+          pull icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH'
+          echo '=== 校验 ==='; ls -l packs admin icons; file packs/*.html icons/*.png | head -20
+      - name: 保留 CDN 快速地址
+        run: |
+          cp index_raw.html index.html
+          cp index_raw.html shell.html
+          rm -f index_raw.html
+          grep -c 'aka.doubaocdn.com/s/' index.html
+      - name: 提交
+        run: |
           git config user.name 'pack-bot'
           git config user.email 'pack-bot@users.noreply.github.com'
-          git add docs/cdn-diag.txt
-          git commit -m 'chore: 记录 CDN 诊断' || echo nothing
+          git add packs admin icons index.html shell.html manifest.webmanifest
+          git commit -m 'chore: CDN 快速加载版 1.0.0.0' || echo nothing
           git push
+
+  deploy:
+    needs: sync
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: 拉取最新
+        run: |
+          git fetch origin main
+          git checkout -B main origin/main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: 记录部署结果
+        if: always()
+        run: |
+          sleep 5
+          code=$(curl -s -o /tmp/pg.html -w '%{http_code}' 'https://kkdlm.github.io/yidiantong/' || echo 000)
+          mkdir -p docs
+          printf '{\n  "checked_at": "%s",\n  "http_code": "%s",\n  "deploy_outcome": "%s",\n  "page_url": "%s"\n}\n' "$(date -u +%Y-%m-%dT%H:%M:%S)" "$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
+          cat docs/deploy-status.json
+          git config user.name 'pack-bot'
+          git config user.email 'pack-bot@users.noreply.github.com'
+          git pull --rebase origin main || true
+          git add docs
+          git commit -m 'chore: 记录部署状态' || echo nothing
+          git push || true
