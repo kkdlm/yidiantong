@@ -7,38 +7,57 @@
 <title>法硕一点通 · 书库</title>
 <style>
 :root{
-  --ink:#2A2620; --ink2:#4A4438; --ink3:#7C766A;
-  --green:#1F4A38; --green2:#2C5A44; --red:#A8432F; --gold:#C8A96A;
-  --paper:#F7F4EA; --card:#FFFDF6; --line:rgba(0,0,0,.075);
-  --hdr:56px; --foot:56px; --maxw:640px;
+  --ink:#211D17; --ink2:#464034; --ink3:#857E70; --ink4:#A8A193;
+  --green:#1E4A37; --green2:#2C5C45; --green3:#3A6E54; --red:#A8432F; --red2:#BE5740;
+  --gold:#BE9B57; --gold2:#D4B87C;
+  --paper:#F5F1E6; --paper2:#EFE9DA; --card:#FFFDF7; --card2:#FBF7EC;
+  --line:rgba(33,29,23,.08); --line2:rgba(33,29,23,.12);
+  --r-sm:10px; --r-md:14px; --r-lg:18px; --r-xl:22px;
+  --sh-sm:0 1px 2px rgba(30,26,18,.05),0 2px 8px rgba(30,26,18,.05);
+  --sh-md:0 2px 6px rgba(30,26,18,.05),0 10px 28px rgba(30,26,18,.08);
+  --sh-lg:0 8px 20px rgba(30,26,18,.10),0 24px 60px rgba(30,26,18,.14);
+  --hdr:54px; --foot:60px; --maxw:640px;
   --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{margin:0;background:var(--paper);color:var(--ink);
+body{margin:0;background:linear-gradient(180deg,#F7F3EA 0%,var(--paper) 38%,var(--paper2) 100%);
+  background-attachment:fixed;color:var(--ink);
   font:14px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
   overscroll-behavior:none}
 img{max-width:100%;height:auto}
+svg{display:block}
+[hidden]{display:none!important}
 .bar{position:fixed;left:0;right:0;top:0;z-index:30;height:calc(var(--hdr) + var(--safe-t));
-  padding-top:var(--safe-t);display:flex;align-items:center;gap:9px;padding-left:12px;padding-right:10px;
-  background:linear-gradient(180deg,rgba(247,244,234,.99),rgba(247,244,234,.94));
-  border-bottom:1px solid var(--line);backdrop-filter:saturate(1.4) blur(10px)}
-.seal{width:32px;height:32px;border-radius:8px;background:var(--green);color:#F4EFE2;
-  display:grid;place-items:center;font:700 15px/1 'Songti SC','STSong',serif;flex:0 0 auto}
-.seal.red{background:var(--red)}
-.seal.gray{background:#8C8578}
+  padding-top:var(--safe-t);display:flex;align-items:center;gap:9px;padding-left:14px;padding-right:12px;
+  background:rgba(245,241,230,.82);
+  border-bottom:1px solid transparent;backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px)}
+.bar.bookmode{ border-bottom-color:var(--line); }
+.seal{width:34px;height:34px;border-radius:10px;background:var(--green);color:#F4EFE2;
+  display:grid;place-items:center;font:700 15px/1 'Songti SC','STSong',serif;flex:0 0 auto;
+  box-shadow:0 3px 10px rgba(30,74,55,.25)}
+.seal.red{background:var(--red);box-shadow:0 3px 10px rgba(168,67,47,.25)}
+.seal.gray{background:#8C8578;box-shadow:0 3px 10px rgba(140,133,120,.25)}
 .tt{font:700 16.5px/1.15 'Songti SC','STSong',serif;letter-spacing:.2px;flex:1;min-width:0;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tt small{display:block;font:400 10.5px/1.4 -apple-system,'PingFang SC';color:var(--ink3);
   letter-spacing:.4px;margin-top:2px;overflow:hidden;text-overflow:ellipsis}
-.ico{width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--ink2);
-  display:grid;place-items:center;font-size:17px}
-.ico:active{background:rgba(0,0,0,.05)}
+.ico{width:38px;height:38px;border-radius:11px;border:0;background:transparent;color:var(--ink2);
+  display:grid;place-items:center;cursor:pointer;transition:background .15s,transform .1s}
+.ico svg{width:21px;height:21px}
+.ico:active{background:rgba(33,29,23,.06);transform:scale(.94)}
 .ico[hidden]{display:none!important}
+/* 科目内圆形返回按钮 */
+.navbtn{width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,253,247,.72);
+  color:var(--ink);display:grid;place-items:center;cursor:pointer;
+  box-shadow:var(--sh-sm);backdrop-filter:blur(8px);transition:transform .1s,background .15s}
+.navbtn svg{width:20px;height:20px}
+.navbtn:active{transform:scale(.92);background:var(--card)}
 .chip[hidden]{display:none!important}
-.chip{border:1px solid var(--line);background:rgba(255,252,255,.6);color:var(--ink2);
-  font-size:11.5px;padding:5px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
-.chip.on{background:rgba(31,74,56,.09);border-color:rgba(31,74,56,.25);color:var(--green);font-weight:600}
+.chip{border:1px solid var(--line);background:rgba(255,253,247,.7);color:var(--ink3);
+  font-size:11px;padding:5px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:4px;
+  font-variant-numeric:tabular-nums;letter-spacing:.2px}
+.chip.on{background:rgba(30,74,55,.09);border-color:rgba(30,74,55,.25);color:var(--green);font-weight:600}
 main{position:fixed;left:0;right:0;top:calc(var(--hdr) + var(--safe-t));bottom:calc(var(--foot) + var(--safe-b));
   overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .page{padding:12px 12px 26px;max-width:var(--maxw);margin:0 auto}
@@ -50,58 +69,89 @@ main{position:fixed;left:0;right:0;top:calc(var(--hdr) + var(--safe-t));bottom:c
 .sub{color:var(--ink3);font-size:12px;line-height:1.6}
 .rule{display:flex;align-items:center;gap:8px;margin:16px 0 9px;color:var(--ink3);font-size:11.5px;letter-spacing:.6px}
 .rule:after{content:'';flex:1;height:1px;background:var(--line)}
-.bk{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line);
-  border-radius:14px;padding:11px 12px;margin-bottom:10px;position:relative;overflow:hidden}
-.bk .last{font-style:normal;font-size:10px;color:#8A7B4E;background:rgba(200,169,106,.20);
-  border:1px solid rgba(200,169,106,.35);border-radius:5px;padding:0 5px;margin-left:7px;vertical-align:1px;letter-spacing:.2px}
-.bk .spine{width:44px;height:56px;border-radius:5px;display:grid;place-items:center;flex:0 0 auto;
-  color:#F6F1E3;font:700 17px/1 'Songti SC','STSong',serif;position:relative;
-  box-shadow:inset -7px 0 10px -6px rgba(0,0,0,.42),inset 3px 0 5px -3px rgba(255,255,255,.35)}
-.bk .spine:before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.22)}
+.bk{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-lg);padding:13px 14px;margin-bottom:11px;position:relative;overflow:hidden;
+  box-shadow:var(--sh-sm);transition:transform .12s,box-shadow .2s}
+.bk:active{transform:scale(.985);box-shadow:var(--sh-md)}
+.bk .last{font-style:normal;font-size:10px;color:#8A6E3C;background:rgba(190,155,87,.16);
+  border:1px solid rgba(190,155,87,.32);border-radius:6px;padding:1px 6px;margin-left:7px;letter-spacing:.3px}
+.bk .spine{width:46px;height:60px;border-radius:7px;display:grid;place-items:center;flex:0 0 auto;
+  color:#F6F1E3;font:700 18px/1 'Songti SC','STSong',serif;position:relative;
+  box-shadow:inset -8px 0 12px -7px rgba(0,0,0,.48),inset 4px 0 6px -4px rgba(255,255,255,.4),0 4px 12px rgba(20,16,10,.18)}
+.bk .spine:before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.24)}
 .bk .meta{flex:1;min-width:0}
-.bk .meta b{font-size:15px;display:block;line-height:1.35}
-.bk .meta span{font-size:11px;color:var(--ink3);display:block;margin-top:2px}
-.bk .go{border:0;border-radius:12px;padding:9px 15px;background:var(--green);color:#F4EFE2;font-size:12.5px;font-weight:600}
-.bk .go:active{background:var(--green2)}
-.bk .go.soon{background:#EFEADE;color:#8C8578}
+.bk .meta b{font-size:15.5px;display:block;line-height:1.35;letter-spacing:.2px}
+.bk .meta span{font-size:11px;color:var(--ink3);display:block;margin-top:3px;line-height:1.5}
+.bk .go{border:0;border-radius:11px;padding:10px 15px;background:var(--green);color:#F4EFE2;
+  font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;
+  box-shadow:0 4px 12px rgba(30,74,55,.24);transition:background .15s,transform .1s}
+.bk .go svg{width:14px;height:14px}
+.bk .go:active{background:var(--green2);transform:scale(.95)}
+.bk .go.soon{background:#ECE5D4;color:#8C8578;box-shadow:none}
 .bk .badge{position:absolute;right:10px;top:7px;font-size:10px;color:var(--red);border:1px solid rgba(168,67,47,.3);
   border-radius:6px;padding:1px 5px;background:rgba(168,67,47,.06)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px;
+  margin-bottom:11px;box-shadow:var(--sh-sm)}
+.card.tappable{cursor:pointer;transition:transform .12s,box-shadow .2s}
+.card.tappable:active{transform:scale(.985);box-shadow:var(--sh-md)}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0}
 .row b{font-weight:600}
+.row .chev{color:var(--ink4);display:flex}
+.row .chev svg{width:16px;height:16px}
+.lt{display:flex;align-items:center;gap:11px;min-width:0}
+.lead{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;
+  background:rgba(30,74,55,.09);color:var(--green)}
+.lead svg{width:17px;height:17px}
+.lead.red{background:rgba(168,67,47,.09);color:var(--red)}
+.lead.gold{background:rgba(190,155,87,.16);color:#8A6A2E}
+.lead.gray{background:rgba(33,29,23,.07);color:var(--ink2)}
+.card-title{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700}
+.card-title svg{width:18px;height:18px}
 .hr{height:1px;background:var(--line);margin:2px 0}
-.bar-in{height:6px;border-radius:6px;background:rgba(31,74,56,.12);overflow:hidden;margin:8px 0 2px}
-.bar-in i{display:block;height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:6px;transition:width .5s}
-.pill{font-size:11px;color:var(--green);background:rgba(31,74,56,.08);border-radius:20px;padding:3px 9px}
+.bar-in{height:6px;border-radius:6px;background:rgba(30,74,55,.11);overflow:hidden;margin:8px 0 2px}
+.bar-in i{display:block;height:100%;background:linear-gradient(90deg,var(--green3),var(--green));border-radius:6px;transition:width .5s}
+.pill{font-size:11px;color:var(--green);background:rgba(30,74,55,.08);border-radius:20px;padding:3px 10px;font-weight:500}
 .pill.red{color:var(--red);background:rgba(168,67,47,.08)}
-.pill.gold{color:#7A5C24;background:rgba(200,169,106,.22)}
-.btn{width:100%;border:0;border-radius:12px;padding:12px;background:var(--green);color:#F4EFE2;
-  font-size:14px;font-weight:600;margin-top:8px}
-.btn:active{background:var(--green2)}
-.btn.ghost{background:transparent;color:var(--green);border:1px solid rgba(31,74,56,.28)}
-.btn.ghost:active{background:rgba(31,74,56,.06)}
-.btn.gold{background:linear-gradient(135deg,#C8A96A,#B8933F);color:#3B2E12}
+.pill.gold{color:#7A5C24;background:rgba(190,155,87,.2)}
+.btn{width:100%;border:0;border-radius:var(--r-md);padding:13px;background:var(--green);color:#F4EFE2;
+  font-size:14px;font-weight:600;margin-top:9px;cursor:pointer;
+  box-shadow:0 6px 16px rgba(30,74,55,.22);transition:background .15s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.btn svg{width:16px;height:16px}
+.btn:active{background:var(--green2);transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--green);border:1px solid rgba(30,74,55,.26);box-shadow:none}
+.btn.ghost:active{background:rgba(30,74,55,.06)}
+.btn.gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#3B2E12;box-shadow:0 6px 16px rgba(190,155,87,.25)}
 .btn[disabled]{opacity:.5}
-.btn.sm{padding:9px;font-size:12.5px}
+.btn.sm{padding:10px;font-size:12.5px}
 .foot{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--foot) + var(--safe-b));
   padding-bottom:var(--safe-b);display:flex;align-items:stretch;
-  background:rgba(247,244,234,.985);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
-.foot a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  color:var(--ink3);text-decoration:none;font-size:11px;letter-spacing:.3px;position:relative}
+  background:rgba(245,241,230,.86);border-top:1px solid var(--line);
+  backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px)}
+.foot a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--ink3);text-decoration:none;font-size:10.5px;letter-spacing:.5px;position:relative;cursor:pointer;
+  transition:color .15s,transform .1s;-webkit-user-select:none;user-select:none}
+.foot a .g{display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.foot a .g svg{width:24px;height:24px}
+.foot a:active .g{transform:scale(.88)}
 .foot a.on{color:var(--green);font-weight:600}
-.foot a.on:after{content:'';position:absolute;top:0;width:26px;height:2px;border-radius:2px;background:var(--green)}
-.foot a i{font-style:normal;font-size:17px;line-height:1;opacity:.9}
-.mask{position:fixed;inset:0;background:rgba(30,28,22,.42);z-index:60;opacity:0;pointer-events:none;transition:opacity .22s}
+.foot a.on .g{color:var(--green)}
+.mask{position:fixed;inset:0;background:rgba(28,25,19,.44);backdrop-filter:blur(3px);
+  z-index:60;opacity:0;pointer-events:none;transition:opacity .25s}
 .mask.on{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:70;max-height:92vh;display:flex;flex-direction:column;
-  background:var(--paper);border-radius:22px 22px 0 0;transform:translateY(101%);transition:transform .28s cubic-bezier(.22,.9,.3,1);
-  box-shadow:0 -12px 34px rgba(30,28,22,.16)}
+  background:linear-gradient(180deg,#FAF7EF,var(--paper));border-radius:var(--r-xl) var(--r-xl) 0 0;
+  transform:translateY(101%);transition:transform .32s cubic-bezier(.22,.9,.3,1);
+  box-shadow:var(--sh-lg)}
 .sheet.on{transform:translateY(0)}
-.sheet .grab{width:38px;height:4px;border-radius:4px;background:rgba(0,0,0,.16);margin:8px auto 2px;flex:0 0 auto}
-.sheet .hd{display:flex;align-items:center;gap:8px;padding:6px 16px 10px;flex:0 0 auto}
-.sheet .hd b{font:700 17px/1.2 'Songti SC','STSong',serif}
-.sheet .hd .x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.05);color:var(--ink2);font-size:16px}
-.sheet .bd{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 12px calc(20px + var(--safe-b))}
+.sheet .grab{width:40px;height:4px;border-radius:4px;background:rgba(33,29,23,.15);margin:9px auto 3px;flex:0 0 auto}
+.sheet .hd{display:flex;align-items:center;gap:8px;padding:7px 16px 11px;flex:0 0 auto}
+.sheet .hd b{font:700 17.5px/1.2 'Songti SC','STSong',serif;letter-spacing:.3px}
+.sheet .hd .x{margin-left:auto;width:33px;height:33px;border-radius:50%;border:0;background:rgba(33,29,23,.06);
+  color:var(--ink2);display:grid;place-items:center;cursor:pointer;transition:background .15s,transform .1s}
+.sheet .hd .x svg{width:15px;height:15px}
+.sheet .hd .x:active{background:rgba(33,29,23,.12);transform:scale(.92)}
+.sheet .bd{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 14px calc(20px + var(--safe-b))}
 .wrap{display:flex;flex-direction:column;align-items:center;padding:2px 0 4px}
 .pool{font-size:11.5px;color:var(--ink3);margin:2px 0 10px;text-align:center;line-height:1.6}
 .stage2{position:relative;width:272px;height:272px;margin:2px auto}
@@ -170,10 +220,10 @@ input:focus{border-color:rgba(31,74,56,.4)}
 <body>
 
 <header class="bar" id="bar">
+  <button class="navbtn" id="barBack" onclick="S.backToLib()" hidden aria-label="返回书库"><span id="backIcon"></span></button>
   <div class="seal" id="barSeal">书</div>
   <div class="tt" id="barTitle">法硕一点通<small id="barSub">2027 法硕非法学 · 一站上岸</small></div>
   <button class="chip" id="verChip" onclick="S.showVer()">v1.3.0.0</button>
-  <button class="ico" id="barBack" onclick="S.backToLib()" hidden>‹</button>
 </header>
 
 <main id="stage">
@@ -204,7 +254,7 @@ input:focus{border-color:rgba(31,74,56,.4)}
 <div class="mask" id="mask" onclick="S.closeSheet()"></div>
 <div class="sheet" id="sheet">
   <div class="grab" onclick="S.closeSheet()"></div>
-  <div class="hd"><b id="sheetTitle">我的</b><button class="x" onclick="S.closeSheet()">✕</button></div>
+  <div class="hd"><b id="sheetTitle">我的</b><button class="x" aria-label="关闭" onclick="S.closeSheet()"><span id="xIcon"></span></button></div>
   <div class="bd" id="sheetBody"></div>
 </div>
 
@@ -213,6 +263,55 @@ input:focus{border-color:rgba(31,74,56,.4)}
 <script>
 (function(){
 'use strict';
+var ICONS={
+'books':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M231.65,194.55,198.46,36.75a16,16,0,0,0-19-12.39L132.65,34.42a16.08,16.08,0,0,0-12.3,19l33.19,157.8A16,16,0,0,0,169.16,224a16.25,16.25,0,0,0,3.38-.36l46.81-10.06A16.09,16.09,0,0,0,231.65,194.55ZM136,50.15c0-.06,0-.09,0-.09l46.8-10,3.33,15.87L139.33,66Zm6.62,31.47,46.82-10.05,3.34,15.9L146,97.53Zm6.64,31.57,46.82-10.06,13.3,63.24-46.82,10.06ZM216,197.94l-46.8,10-3.33-15.87L212.67,182,216,197.85C216,197.91,216,197.94,216,197.94ZM104,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V48A16,16,0,0,0,104,32ZM56,48h48V64H56Zm0,32h48v96H56Zm48,128H56V192h48v16Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M231.65,194.55,198.46,36.75a16,16,0,0,0-19-12.39L132.65,34.42a16.08,16.08,0,0,0-12.3,19l33.19,157.8A16,16,0,0,0,169.16,224a16.25,16.25,0,0,0,3.38-.36l46.81-10.06A16.09,16.09,0,0,0,231.65,194.55ZM136,50.15c0-.06,0-.09,0-.09l46.8-10,3.33,15.87L139.33,66Zm10,47.38-3.35-15.9,46.82-10.06,3.34,15.9Zm70,100.41-46.8,10-3.33-15.87L212.67,182,216,197.85C216,197.91,216,197.94,216,197.94ZM104,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V48A16,16,0,0,0,104,32ZM56,48h48V64H56Zm48,160H56V192h48v16Z"/></svg>'},
+'graduation-cap':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M251.76,88.94l-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a130,130,0,0,0,48-8.76V240a8,8,0,0,0,16,0V199.51a115.63,115.63,0,0,0,27.94-22.57A15.91,15.91,0,0,0,224,166.29V117.87l27.76-14.81a8,8,0,0,0,0-14.12ZM128,200c-43.27,0-68.72-21.14-80-33.71V126.4l76.24,40.66a8,8,0,0,0,7.52,0L176,143.47v46.34C163.4,195.69,147.52,200,128,200Zm80-33.75a97.83,97.83,0,0,1-16,14.25V134.93l16-8.53ZM188,118.94l-.22-.13-56-29.87a8,8,0,0,0-7.52,14.12L171,128l-43,22.93L25,96,128,41.07,231,96Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,207.24a119,119,0,0,0,16-7.73V240a8,8,0,0,1-16,0Zm11.76-88.43-56-29.87a8,8,0,0,0-7.52,14.12L171,128l17-9.06Zm64-29.87-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a130,130,0,0,0,48-8.76V130.67L171,128l-43,22.93L43.83,106l0,0L25,96,128,41.07,231,96l-18.78,10-.06,0L188,118.94a8,8,0,0,1,4,6.93v73.64a115.63,115.63,0,0,0,27.94-22.57A15.91,15.91,0,0,0,224,166.29V117.87l27.76-14.81a8,8,0,0,0,0-14.12Z"/></svg>'},
+'user':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M230.93,220a8,8,0,0,1-6.93,4H32a8,8,0,0,1-6.92-12c15.23-26.33,38.7-45.21,66.09-54.16a72,72,0,1,1,73.66,0c27.39,8.95,50.86,27.83,66.09,54.16A8,8,0,0,1,230.93,220Z"/></svg>'},
+'squares-four':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,56v48a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V56A16,16,0,0,1,56,40h48A16,16,0,0,1,120,56Zm80-16H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm-96,96H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm96,0H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Z"/></svg>'},
+'list-bullets':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM68,188a12,12,0,1,1,12-12A12,12,0,0,1,68,188Zm0-48a12,12,0,1,1,12-12A12,12,0,0,1,68,140Zm0-48A12,12,0,1,1,80,80,12,12,0,0,1,68,92Zm124,92H104a8,8,0,0,1,0-16h88a8,8,0,0,1,0,16Zm0-48H104a8,8,0,0,1,0-16h88a8,8,0,0,1,0,16Zm0-48H104a8,8,0,0,1,0-16h88a8,8,0,0,1,0,16Z"/></svg>'},
+'book-open':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,56V200a8,8,0,0,1-8,8H160a24,24,0,0,0-24,23.94,7.9,7.9,0,0,1-5.12,7.55A8,8,0,0,1,120,232a24,24,0,0,0-24-24H24a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H88a32,32,0,0,1,32,32v87.73a8.17,8.17,0,0,0,7.47,8.25,8,8,0,0,0,8.53-8V80a32,32,0,0,1,32-32h64A8,8,0,0,1,240,56Z"/></svg>'},
+'stack':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M230.91,172A8,8,0,0,1,228,182.91l-96,56a8,8,0,0,1-8.06,0l-96-56A8,8,0,0,1,36,169.09l92,53.65,92-53.65A8,8,0,0,1,230.91,172ZM220,121.09l-92,53.65L36,121.09A8,8,0,0,0,28,134.91l96,56a8,8,0,0,0,8.06,0l96-56A8,8,0,1,0,220,121.09ZM24,80a8,8,0,0,1,4-6.91l96-56a8,8,0,0,1,8.06,0l96,56a8,8,0,0,1,0,13.82l-96,56a8,8,0,0,1-8.06,0l-96-56A8,8,0,0,1,24,80Zm23.88,0L128,126.74,208.12,80,128,33.26Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M220,169.09l-92,53.65L36,169.09A8,8,0,0,0,28,182.91l96,56a8,8,0,0,0,8.06,0l96-56A8,8,0,1,0,220,169.09Z"/><path d="M220,121.09l-92,53.65L36,121.09A8,8,0,0,0,28,134.91l96,56a8,8,0,0,0,8.06,0l96-56A8,8,0,1,0,220,121.09Z"/><path d="M28,86.91l96,56a8,8,0,0,0,8.06,0l96-56a8,8,0,0,0,0-13.82l-96-56a8,8,0,0,0-8.06,0l-96,56a8,8,0,0,0,0,13.82Z"/></svg>'},
+'pen':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M227.32,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31l83.67-83.66,3.48,13.9-36.8,36.79a8,8,0,0,0,11.31,11.32l40-40a8,8,0,0,0,2.11-7.6l-6.9-27.61L227.32,96A16,16,0,0,0,227.32,73.37ZM48,179.31,76.69,208H48Zm48,25.38L51.31,160,136,75.31,180.69,120Zm96-96L147.32,64l24-24L216,84.69Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M227.32,73.37,182.63,28.69a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31l83.67-83.66,3.48,13.9-36.8,36.79a8,8,0,0,0,11.31,11.32l40-40a8,8,0,0,0,2.11-7.6l-6.9-27.61L227.32,96A16,16,0,0,0,227.32,73.37ZM192,108.69,147.32,64l24-24L216,84.69Z"/></svg>'},
+'calendar-dot':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-64-56a16,16,0,1,1-16-16A16,16,0,0,1,144,152Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM128,168a16,16,0,1,1,16-16A16,16,0,0,1,128,168Zm80-88H48V48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24Z"/></svg>'},
+'book-open-text':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64ZM160,88h40a8,8,0,0,1,0,16H160a8,8,0,0,1,0-16Zm48,40a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,128Zm0,32a8,8,0,0,1-8,8H160a8,8,0,0,1,0-16h40A8,8,0,0,1,208,160Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,48H168a32,32,0,0,0-32,32v87.73a8.17,8.17,0,0,1-7.47,8.25,8,8,0,0,1-8.53-8V80A32,32,0,0,0,88,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,23.94,7.9,7.9,0,0,0,5.12,7.55A8,8,0,0,0,136,232a24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM208,168H168.27a8.17,8.17,0,0,1-8.25-7.47,8,8,0,0,1,8-8.53h39.73a8.17,8.17,0,0,1,8.25,7.47A8,8,0,0,1,208,168Zm0-32H168.27a8.17,8.17,0,0,1-8.25-7.47,8,8,0,0,1,8-8.53h39.73a8.17,8.17,0,0,1,8.25,7.47A8,8,0,0,1,208,136Zm0-32H168.27A8.17,8.17,0,0,1,160,96.53,8,8,0,0,1,168,88h39.73A8.17,8.17,0,0,1,216,95.47,8,8,0,0,1,208,104Z"/></svg>'},
+'pencil-simple':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>'},
+'caret-left':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M168,48V208a8,8,0,0,1-13.66,5.66l-80-80a8,8,0,0,1,0-11.32l80-80A8,8,0,0,1,168,48Z"/></svg>'},
+'caret-right':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80A8,8,0,0,1,88,208V48a8,8,0,0,1,13.66-5.66l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>'},
+'x':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM181.66,170.34a8,8,0,0,1-11.32,11.32L128,139.31,85.66,181.66a8,8,0,0,1-11.32-11.32L116.69,128,74.34,85.66A8,8,0,0,1,85.66,74.34L128,116.69l42.34-42.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>'},
+'crown':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M248,80a28,28,0,1,0-51.12,15.77l-26.79,33L146,73.4a28,28,0,1,0-36.06,0L85.91,128.74l-26.79-33a28,28,0,1,0-26.6,12L47,194.63A16,16,0,0,0,62.78,208H193.22A16,16,0,0,0,209,194.63l14.47-86.85A28,28,0,0,0,248,80ZM128,40a12,12,0,1,1-12,12A12,12,0,0,1,128,40ZM24,80A12,12,0,1,1,36,92,12,12,0,0,1,24,80ZM193.22,192H62.78L48.86,108.52,81.79,149A8,8,0,0,0,88,152a7.83,7.83,0,0,0,1.08-.07,8,8,0,0,0,6.26-4.74l29.3-67.4a27,27,0,0,0,6.72,0l29.3,67.4a8,8,0,0,0,6.26,4.74A7.83,7.83,0,0,0,168,152a8,8,0,0,0,6.21-3l32.93-40.52ZM220,92a12,12,0,1,1,12-12A12,12,0,0,1,220,92Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M248,80a28,28,0,1,0-51.12,15.77l-26.79,33L146,73.4a28,28,0,1,0-36.06,0L85.91,128.74l-26.79-33a28,28,0,1,0-26.6,12L47,194.63A16,16,0,0,0,62.78,208H193.22A16,16,0,0,0,209,194.63l14.47-86.85A28,28,0,0,0,248,80ZM128,40a12,12,0,1,1-12,12A12,12,0,0,1,128,40ZM24,80A12,12,0,1,1,36,92,12,12,0,0,1,24,80ZM220,92a12,12,0,1,1,12-12A12,12,0,0,1,220,92Z"/></svg>'},
+'calendar-check':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-38.34-85.66a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35A8,8,0,0,1,169.66,122.34Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM169.66,133.66l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35a8,8,0,0,1,11.32,11.32ZM48,80V48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80Z"/></svg>'},
+'trophy':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,64H208V48a8,8,0,0,0-8-8H56a8,8,0,0,0-8,8V64H24A16,16,0,0,0,8,80V96a40,40,0,0,0,40,40h3.65A80.13,80.13,0,0,0,120,191.61V216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V191.58c31.94-3.23,58.44-25.64,68.08-55.58H208a40,40,0,0,0,40-40V80A16,16,0,0,0,232,64ZM48,120A24,24,0,0,1,24,96V80H48v32q0,4,.39,8Zm144-8.9c0,35.52-29,64.64-64,64.9a64,64,0,0,1-64-64V56H192ZM232,96a24,24,0,0,1-24,24h-.5a81.81,81.81,0,0,0,.5-8.9V80h24Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,64H208V48a8,8,0,0,0-8-8H56a8,8,0,0,0-8,8V64H24A16,16,0,0,0,8,80V96a40,40,0,0,0,40,40h3.65A80.13,80.13,0,0,0,120,191.61V216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V191.58c31.94-3.23,58.44-25.64,68.08-55.58H208a40,40,0,0,0,40-40V80A16,16,0,0,0,232,64ZM48,120A24,24,0,0,1,24,96V80H48v32q0,4,.39,8ZM232,96a24,24,0,0,1-24,24h-.5a81.81,81.81,0,0,0,.5-8.9V80h24Z"/></svg>'},
+'gift':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08a13.69,13.69,0,0,1-4.5,10c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51Zm-64.09.36A16.63,16.63,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92-9.72-1-25.44-4-34.92-12.39a13.69,13.69,0,0,1-4.5-10A16.6,16.6,0,0,1,84.87,36.87ZM40,88h80v32H40Zm16,48h64v64H56Zm144,64H136V136h64Zm16-80H136V88h80v32Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16h60a4,4,0,0,0,4-4V120H40V88h80v32h16V88h80v32H136v92a4,4,0,0,0,4,4h60a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM84.51,59a13.69,13.69,0,0,1-4.5-10A16.62,16.62,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92C109.71,70.39,94,67.43,84.51,59Zm87,0c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08,13.69,13.69,0,0,1,171.49,59Z"/></svg>'},
+'ticket':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,104a8,8,0,0,0,8-8V64a16,16,0,0,0-16-16H32A16,16,0,0,0,16,64V96a8,8,0,0,0,8,8,24,24,0,0,1,0,48,8,8,0,0,0-8,8v32a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V160a8,8,0,0,0-8-8,24,24,0,0,1,0-48ZM32,167.2a40,40,0,0,0,0-78.4V64H88V192H32Zm192,0V192H104V64H224V88.8a40,40,0,0,0,0,78.4Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,104a8,8,0,0,0,8-8V64a16,16,0,0,0-16-16H32A16,16,0,0,0,16,64V96a8,8,0,0,0,8,8,24,24,0,0,1,0,48,8,8,0,0,0-8,8v32a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V160a8,8,0,0,0-8-8,24,24,0,0,1,0-48ZM32,167.2a40,40,0,0,0,0-78.4V64H88V192H32Z"/></svg>'},
+'chat-centered':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V184a16,16,0,0,0,16,16h60.43l13.68,23.94a16,16,0,0,0,27.78,0L155.57,200H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,144H150.93a8,8,0,0,0-7,4l-16,28-16-28a8,8,0,0,0-7-4H40V56H216Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M232,56V184a16,16,0,0,1-16,16H155.57l-13.68,23.94a16,16,0,0,1-27.78,0L100.43,200H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Z"/></svg>'},
+'device-mobile':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,16H80A24,24,0,0,0,56,40V216a24,24,0,0,0,24,24h96a24,24,0,0,0,24-24V40A24,24,0,0,0,176,16ZM72,64H184V192H72Zm8-32h96a8,8,0,0,1,8,8v8H72V40A8,8,0,0,1,80,32Zm96,192H80a8,8,0,0,1-8-8v-8H184v8A8,8,0,0,1,176,224Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,16H80A24,24,0,0,0,56,40V216a24,24,0,0,0,24,24h96a24,24,0,0,0,24-24V40A24,24,0,0,0,176,16ZM80,32h96a8,8,0,0,1,8,8v8H72V40A8,8,0,0,1,80,32Zm96,192H80a8,8,0,0,1-8-8v-8H184v8A8,8,0,0,1,176,224Z"/></svg>'},
+'moon':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M235.54,150.21a104.84,104.84,0,0,1-37,52.91A104,104,0,0,1,32,120,103.09,103.09,0,0,1,52.88,57.48a104.84,104.84,0,0,1,52.91-37,8,8,0,0,1,10,10,88.08,88.08,0,0,0,109.8,109.8,8,8,0,0,1,10,10Z"/></svg>'},
+'sun':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm8,24a64,64,0,1,0,64,64A64.07,64.07,0,0,0,128,64ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg>'},
+'question':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,168a12,12,0,1,1,12-12A12,12,0,0,1,128,192Zm8-48.72V144a8,8,0,0,1-16,0v-8a8,8,0,0,1,8-8c13.23,0,24-9,24-20s-10.77-20-24-20-24,9-24,20v4a8,8,0,0,1-16,0v-4c0-19.85,17.94-36,40-36s40,16.15,40,36C168,125.38,154.24,139.93,136,143.28Z"/></svg>'},
+'gear':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,130.16q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.6,107.6,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.29,107.29,0,0,0-26.25-10.86,8,8,0,0,0-7.06,1.48L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.6,107.6,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06ZM128,168a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z"/></svg>'},
+'copy':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32Zm-8,128H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>'},
+'arrow-clockwise':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64l-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,0,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60L224,85.8V56a8,8,0,1,1,16,0Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1-5.66-13.66l17-17-10.55-9.65-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,1,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60l10.93,10L226.34,50.3A8,8,0,0,1,240,56Z"/></svg>'},
+'info':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-4,48a12,12,0,1,1-12,12A12,12,0,0,1,124,72Zm12,112a16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40a8,8,0,0,1,0,16Z"/></svg>'},
+'warning-circle':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-8,56a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm8,104a12,12,0,1,1,12-12A12,12,0,0,1,128,184Z"/></svg>'},
+'sign-out':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40A8,8,0,0,0,176,88v32H112a8,8,0,0,0,0,16h64v32a8,8,0,0,0,13.66,5.66l40-40A8,8,0,0,0,229.66,122.34Z"/></svg>'},
+'user-plus':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136Zm-57.87,58.85a8,8,0,0,1-12.26,10.3C165.75,181.19,138.09,168,108,168s-57.75,13.19-77.87,37.15a8,8,0,0,1-12.25-10.3c14.94-17.78,33.52-30.41,54.17-37.17a68,68,0,1,1,71.9,0C164.6,164.44,183.18,177.07,198.13,194.85ZM108,152a52,52,0,1,0-52-52A52.06,52.06,0,0,0,108,152Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M256,136a8,8,0,0,1-8,8H232v16a8,8,0,0,1-16,0V144H200a8,8,0,0,1,0-16h16V112a8,8,0,0,1,16,0v16h16A8,8,0,0,1,256,136ZM144,157.68a68,68,0,1,0-71.9,0c-20.65,6.76-39.23,19.39-54.17,37.17A8,8,0,0,0,24,208H192a8,8,0,0,0,6.13-13.15C183.18,177.07,164.6,164.44,144,157.68Z"/></svg>'},
+'medal':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,96A88,88,0,1,0,72,163.83V240a8,8,0,0,0,11.58,7.16L128,225l44.43,22.21A8.07,8.07,0,0,0,176,248a8,8,0,0,0,8-8V163.83A87.85,87.85,0,0,0,216,96ZM56,96a72,72,0,1,1,72,72A72.08,72.08,0,0,1,56,96ZM168,227.06l-36.43-18.21a8,8,0,0,0-7.16,0L88,227.06V174.37a87.89,87.89,0,0,0,80,0ZM128,152A56,56,0,1,0,72,96,56.06,56.06,0,0,0,128,152Zm0-96A40,40,0,1,1,88,96,40,40,0,0,1,128,56Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,96A88,88,0,1,0,72,163.83V240a8,8,0,0,0,11.58,7.16L128,225l44.43,22.21A8.07,8.07,0,0,0,176,248a8,8,0,0,0,8-8V163.83A87.85,87.85,0,0,0,216,96ZM56,96a72,72,0,1,1,72,72A72.08,72.08,0,0,1,56,96Zm16,0a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>'},
+'arrow-right':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72A8,8,0,0,1,136,200V136H40a8,8,0,0,1,0-16h96V56a8,8,0,0,1,13.66-5.66l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>'},
+'magic-wand':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M48,64a8,8,0,0,1,8-8H72V40a8,8,0,0,1,16,0V56h16a8,8,0,0,1,0,16H88V88a8,8,0,0,1-16,0V72H56A8,8,0,0,1,48,64ZM184,192h-8v-8a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0v-8h8a8,8,0,0,0,0-16Zm56-48H224V128a8,8,0,0,0-16,0v16H192a8,8,0,0,0,0,16h16v16a8,8,0,0,0,16,0V160h16a8,8,0,0,0,0-16ZM219.31,80,80,219.31a16,16,0,0,1-22.62,0L36.68,198.63a16,16,0,0,1,0-22.63L176,36.69a16,16,0,0,1,22.63,0l20.68,20.68A16,16,0,0,1,219.31,80Zm-54.63,32L144,91.31l-96,96L68.68,208ZM208,68.69,187.31,48l-32,32L176,100.69Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M248,152a8,8,0,0,1-8,8H224v16a8,8,0,0,1-16,0V160H192a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h16A8,8,0,0,1,248,152ZM56,72H72V88a8,8,0,0,0,16,0V72h16a8,8,0,0,0,0-16H88V40a8,8,0,0,0-16,0V56H56a8,8,0,0,0,0,16ZM184,192h-8v-8a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0v-8h8a8,8,0,0,0,0-16ZM219.31,80,80,219.31a16,16,0,0,1-22.62,0L36.68,198.63a16,16,0,0,1,0-22.63L176,36.69a16,16,0,0,1,22.63,0l20.68,20.68A16,16,0,0,1,219.31,80ZM208,68.69,187.31,48l-32,32L176,100.69Z"/></svg>'},
+'eye':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,168a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z"/></svg>'},
+'shield-check':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm-34.32,69.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg>'},
+'megaphone':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M248,120a48.05,48.05,0,0,0-48-48H160.2c-2.91-.17-53.62-3.74-101.91-44.24A16,16,0,0,0,32,40V200a16,16,0,0,0,26.29,12.25c37.77-31.68,77-40.76,93.71-43.3v31.72A16,16,0,0,0,159.12,214l11,7.33A16,16,0,0,0,194.5,212l11.77-44.36A48.07,48.07,0,0,0,248,120ZM48,199.93V40h0c42.81,35.91,86.63,45,104,47.24v65.48C134.65,155,90.84,164.07,48,199.93Zm131,8,0,.11-11-7.33V168h21.6ZM200,152H168V88h32a32,32,0,1,1,0,64Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M200,72H160.2c-2.91-.17-53.62-3.74-101.91-44.24A16,16,0,0,0,32,40V200a16,16,0,0,0,26.29,12.25c37.77-31.68,77-40.76,93.71-43.3v31.72A16,16,0,0,0,159.12,214l11,7.33A16,16,0,0,0,194.5,212l11.77-44.36A48,48,0,0,0,200,72ZM179,207.89l0,.11-11-7.33V168h21.6ZM200,152H168V88h32a32,32,0,1,1,0,64Z"/></svg>'},
+};
+var TAB_ICON={lib:'books',study:'graduation-cap',me:'user',home:'squares-four',
+  browse:'list-bullets',recite:'book-open',topic:'stack',quiz:'pen',
+  today:'calendar-dot',words:'book-open-text',drill:'pencil-simple'};
+function ic(name,fill){
+  var o=ICONS[name]; if(!o) return '';
+  var s=fill?o.f:o.r;
+  return s.replace('<svg','<svg aria-hidden="true"');
+}
+function tabIcon(id,fill){ return ic(TAB_ICON[id]||'question',fill); }
+
 var LS='yidiantong.shell.v1';
 var BOOKS=[
   {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'packs/fz.html',ver:'1.3.0.0',
@@ -274,7 +373,6 @@ rollDay();
 var $=function(id){return document.getElementById(id)};
 function book(id){for(var i=0;i<BOOKS.length;i++) if(BOOKS[i].id===id) return BOOKS[i]; return null}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-var TABS_ICON={home:'▤',browse:'≡',recite:'✎',topic:'◷',quiz:'✓',me:'☺',today:'☉',words:'▤',drill:'✓',cards:'▦'};
 
 /* ---------- iframe 管理 ---------- */
 var FR={}, seq=0, veilTimers={iv:0,to:0};
@@ -320,10 +418,10 @@ function showFrame(id){
   Object.keys(FR).forEach(function(k){ FR[k].el.classList.add('off'); });
   var rec=ensure(id); if(!rec) return;
   rec.el.classList.remove('off'); rec.use=++seq;
-  var b=book(id);
-  $('barSeal').textContent=b.seal; $('barSeal').className='seal'+(b.id==='zz'?' red':(b.id==='en'?' gray':''));
-  $('barTitle').innerHTML=esc(b.name)+'<small>'+esc(b.desc)+'</small>';
+  /* 沉浸式：科目内不重复显示科目名，只留左返回 + 右版本；包内标题是唯一标题 */
+  $('barSeal').hidden=true; $('barTitle').hidden=true;
   $('barBack').hidden=false;
+  $('bar').classList.add('bookmode');
   $('reader').classList.add('on');
   $('lib').style.display='none';
   evict(id);
@@ -383,14 +481,15 @@ function footHtml(){
   var items;
   if(ST.view==='book'&&ST.book){
     var t=tabsOf(ST.book);
-    items=t.filter(function(x){return x.id!=='me'}).map(function(x){return {id:x.id,n:x.n,i:TABS_ICON[x.id]||'·'}});
-    items.push({id:'me',n:'我的',i:'☺'});
+    items=t.filter(function(x){return x.id!=='me'}).map(function(x){return {id:x.id,n:x.n}});
+    items.push({id:'me',n:'我的'});
   } else {
-    items=[{id:'lib',n:'书库',i:'▤'},{id:'study',n:'学习',i:'▦'},{id:'me',n:'我的',i:'☺'}];
+    items=[{id:'lib',n:'书库'},{id:'study',n:'学习'},{id:'me',n:'我的'}];
   }
   var cur=ST.view==='book'?(ST.tab||firstTabId(ST.book)):(ST.view==='lib'?'lib':ST.view);
   return items.map(function(x){
-    return '<a class="'+(x.id===cur?'on':'')+'" onclick="S.nav(\''+x.id+'\')"><i>'+x.i+'</i>'+esc(x.n)+'</a>';
+    var on=x.id===cur;
+    return '<a class="'+(on?'on':'')+'" onclick="S.nav(\''+x.id+'\')"><span class="g">'+tabIcon(x.id,on)+'</span>'+esc(x.n)+'</a>';
   }).join('');
 }
 function paintFoot(){ $('foot').innerHTML=footHtml(); }
@@ -399,7 +498,7 @@ function paintFoot(){ $('foot').innerHTML=footHtml(); }
 function libHtml(){
   var rows=BOOKS.map(function(b){
     var btn=b.soon? '<button class="go soon" onclick="S.open(\''+b.id+'\')">筹备</button>'
-      :'<button class="go" onclick="S.open(\''+b.id+'\')">打开</button>';
+      :'<button class="go" onclick="S.open(\''+b.id+'\')">打开'+ic('arrow-right')+'</button>';
     var badge=(ST.lastBook===b.id&&!b.soon)?'<i class="last">上次</i>':'';
     return '<div class="bk"><i class="spine" style="background:'+b.color+'">'+esc(b.seal)+'</i>'+
       '<div class="meta"><b>'+esc(b.name)+badge+'</b><span>'+esc(b.desc)+'</span></div>'+btn+'</div>';
@@ -407,7 +506,7 @@ function libHtml(){
   var last=book(ST.lastBook);
   return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 已开放 3 科 · 会员全科通用</div>'+
     '<div style="margin-top:12px">'+rows+'</div>'+
-    (last&&!last.soon?('<div class="card"><div class="row" onclick="S.open(\''+last.id+'\')"><span style="font-size:12.5px;color:var(--ink3)">继续上次</span><b>'+esc(last.name)+(ST.lastTab?' · '+esc(ST.lastTab):'')+' ›</b></div></div>'):'')+
+    (last&&!last.soon?('<div class="card tappable"><div class="row" style="padding:0" onclick="S.open(\''+last.id+'\')"><span style="font-size:12.5px;color:var(--ink3)">继续上次</span><span class="lt" style="gap:7px"><b style="font-size:13.5px">'+esc(last.name)+(ST.lastTab?' · '+esc(ST.lastTab):'')+'</b><span class="chev">'+ic('caret-right')+'</span></span></div></div>'):'')+
     '<div class="card" style="background:rgba(31,74,56,.05);border-color:rgba(31,74,56,.14)">'+
       '<div style="font-size:12.5px;font-weight:600;color:var(--green)">科目是独立包，我的只有一份</div>'+
       '<div class="hint" style="margin-top:5px">点开就是原样的科目界面（连启动画面都不变）。会员、签到、抽奖、邀请、客服都在这一层，三科共用一份。</div></div>'+
@@ -432,9 +531,11 @@ function studyHtml(){
 function render(){
   paintFoot();
   if(ST.view==='book'&&ST.book){ return; }
+  $('barSeal').hidden=false; $('barTitle').hidden=false;
   $('barSeal').textContent='书'; $('barSeal').className='seal';
   $('barTitle').innerHTML='法硕一点通<small>2027 法硕非法学 · 一站上岸</small>';
   $('barBack').hidden=true;
+  $('bar').classList.remove('bookmode');
   $('reader').classList.remove('on');
   $('lib').style.display='';
   $('lib').innerHTML=(ST.view==='study')?studyHtml():libHtml();
@@ -561,6 +662,8 @@ S.toast=toast;
    路由态（view/book/tab）只认当前 hash，不继承 localStorage 残留；
    lastBook/lastTab 属于要保留的"上次进度"，不受影响。 */
 ST.view='lib'; ST.book=''; ST.tab='';
+$('xIcon').innerHTML=ic('x');
+$('backIcon').innerHTML=ic('caret-left');
 render();
 applyRoute();
 if(readRoute().kind==='lib') prewarm();
@@ -590,49 +693,55 @@ function poolLine(){
 function meHtml(){
   var days=vipRemaining(); ST.vip=days;
   var barW=Math.min(100,Math.max(4,days*6));
-  return '<div class="card"><div class="row" style="padding:0"><span style="font-size:14px;font-weight:700">会员</span>'+
+  var chev='<span class="chev">'+ic('caret-right')+'</span>';
+  return '<div class="card"><div class="row" style="padding:0"><span class="card-title">'+ic('crown')+'会员</span>'+
     '<span class="pill '+(days>0?'gold':'red')+'">'+(days>0?('还剩 '+days+' 天'):'未开通')+'</span></div>'+
-    '<div class="sub" style="margin-top:3px">有效期至 '+esc(ST.vipUntil)+' · 全部科目通用</div>'+
+    '<div class="sub" style="margin-top:5px">有效期至 '+esc(ST.vipUntil)+' · 全部科目通用</div>'+
     '<div class="bar-in"><i style="width:'+barW+'%"></i></div>'+
     '<button class="btn ghost sm" onclick="S.openSheet(\'redeem\')">续费 · 兑换卡密</button></div>'+
 
-    '<div class="card"><div class="row" style="padding:0"><span style="font-size:13.5px;font-weight:700">每日签到</span>'+
+    '<div class="card"><div class="row" style="padding:0"><span class="card-title">'+ic('calendar-check')+'每日签到</span>'+
     '<span class="sub" style="padding:0">'+(ST.signDays>=7?'已满 7 天 · 送 3 天会员':'已签 '+ST.signDays+' 天 · 还差 '+(7-ST.signDays)+' 天满 7')+'</span></div>'+
     signDots()+
     '<button class="btn '+(ST.signedDate===today()?'ghost':'')+'" onclick="S.sign()">'+
       (ST.signedDate===today()?'今天已签到 · 明天再来':'今天签到 +1 次抽奖')+'</button></div>'+
 
     (actOn()
-    ? '<div class="card lot" style="background:linear-gradient(135deg,#1F4A38,#2C5A44);border-color:rgba(255,255,255,.12)" onclick="S.openSheet(\'lottery\')">'+
-      '<div class="row" style="padding:0;color:#EFE7D4"><div><div style="font-size:11px;opacity:.8">每日一抽</div>'+
-      '<div style="font-family:\'Songti SC\',serif;font-size:15.5px;font-weight:700;padding-top:4px">转盘 · 抽会员</div></div>'+
-      '<div style="text-align:right"><div style="font-family:\'Songti SC\',serif;font-size:24px;line-height:1;font-weight:700">'+pools().total+'</div>'+
-      '<div style="font-size:10px;opacity:.75;margin-top:3px">次机会</div></div></div>'+
-      '<div style="font-size:11px;color:#D8CFB4;padding-top:7px;line-height:1.6">'+poolLine()+'</div></div>'
-    : '<div class="card lot off" style="background:linear-gradient(135deg,#6B675C,#86806F);border-color:rgba(255,255,255,.10);opacity:.94" onclick="S.tipOff()">'+
-      '<div class="row" style="padding:0;color:#F1EBDB"><div><div style="font-size:11px;opacity:.78">每日一抽 · 已关闭</div>'+
-      '<div style="font-family:\'Songti SC\',serif;font-size:15.5px;font-weight:700;padding-top:4px">转盘 · 抽会员</div></div>'+
-      '<div style="text-align:right"><div style="font-family:\'Songti SC\',serif;font-size:22px;line-height:1;font-weight:700;opacity:.7">—</div>'+
-      '<div style="font-size:10px;opacity:.72;margin-top:3px">暂停中 · 未开放</div></div></div>'+
-      '<div style="font-size:11px;color:#EDE6D2;padding-top:7px;line-height:1.6">'+esc(ST.act.off||'活动暂时关闭，已经抽到的不会收回')+'</div></div>')+
+    ? '<div class="card lot tappable" style="background:linear-gradient(140deg,#23513C,#1B4231);border-color:rgba(255,255,255,.1);color:#EFE7D4" onclick="S.openSheet(\'lottery\')">'+
+      '<div class="row" style="padding:0"><div class="lt"><span class="lead" style="background:rgba(212,184,124,.2);color:var(--gold2)">'+ic('trophy')+'</span>'+
+      '<div><div style="font-size:10.5px;opacity:.75;letter-spacing:.5px">每日一抽</div>'+
+      '<div style="font-size:15px;font-weight:700;padding-top:3px">转盘 · 抽会员</div></div></div>'+
+      '<div style="text-align:right"><div style="font-size:24px;line-height:1;font-weight:700;color:var(--gold2)">'+pools().total+'</div>'+
+      '<div style="font-size:10px;opacity:.7;margin-top:3px">次机会</div></div></div>'+
+      '<div style="font-size:11px;color:#D3CAB2;padding-top:9px;line-height:1.6">'+poolLine()+'</div></div>'
+    : '<div class="card lot tappable" style="background:linear-gradient(140deg,#6E6A5E,#837D6C);border-color:rgba(255,255,255,.08);color:#F1EBDB" onclick="S.tipOff()">'+
+      '<div class="row" style="padding:0"><div class="lt"><span class="lead" style="background:rgba(255,255,255,.14);color:#EDE6D2">'+ic('trophy')+'</span>'+
+      '<div><div style="font-size:10.5px;opacity:.75">每日一抽 · 已关闭</div>'+
+      '<div style="font-size:15px;font-weight:700;padding-top:3px">转盘 · 抽会员</div></div></div>'+
+      '<div style="text-align:right"><div style="font-size:22px;line-height:1;font-weight:700;opacity:.7">—</div>'+
+      '<div style="font-size:10px;opacity:.7;margin-top:3px">暂停中</div></div></div>'+
+      '<div style="font-size:11px;color:#EDE6D2;padding-top:9px;line-height:1.6">'+esc(ST.act.off||'活动暂时关闭，已经抽到的不会收回')+'</div></div>')+
 
-    '<div class="card" onclick="S.openSheet(\'invite\')"><div class="row" style="padding:0">'+
-      '<span style="font-size:13.5px;font-weight:700">邀请有礼</span><b>'+(ST.invite?ST.invite+' 人 ›':'去邀请 ›')+'</b></div>'+
-      '<div class="sub" style="margin-top:3px">朋友注册 → 你 +1 次抽奖（可累积，不清零）</div></div>'+
+    '<div class="card tappable" onclick="S.openSheet(\'invite\')"><div class="row" style="padding:0">'+
+      '<span class="lt"><span class="lead gold">'+ic('gift')+'</span><span><b style="font-size:13.5px">邀请有礼</b>'+
+      '<div class="sub" style="margin-top:2px">朋友注册 → 你 +1 次抽奖（可累积）</div></span></span>'+
+      '<span class="chev">'+ic('caret-right')+'</span></div></div>'+
 
-    '<div class="card"><div style="font-size:13.5px;font-weight:700;margin-bottom:2px">学习统计 · 跨科目</div>'+
+    '<div class="card"><div class="card-title" style="margin-bottom:6px">学习统计 · 跨科目</div>'+
       '<div class="row"><span>法制史 · 已背</span><b>'+ST.fzPct+'%</b></div><div class="bar-in"><i style="width:'+ST.fzPct+'%"></i></div>'+
       '<div class="row" style="margin-top:8px"><span>政治 · 已学</span><b>'+ST.zzPct+'%</b></div><div class="bar-in"><i style="width:'+ST.zzPct+'%"></i></div>'+
       '<div class="row" style="margin-top:8px"><span>英语 · 功能句</span><b>'+ST.enPct+'%</b></div><div class="bar-in"><i style="width:'+ST.enPct+'%"></i></div></div>'+
 
-    '<div class="card">'+
-      '<div class="row" onclick="S.openSheet(\'chat\')"><span>在线客服</span><b>›</b></div><div class="hr"></div>'+
-      '<div class="row" onclick="S.openSheet(\'dev\')"><span>登录设备 / 修改密码</span><b>›</b></div><div class="hr"></div>'+
-      '<div class="row" onclick="S.openSheet(\'theme\')"><span>显示设置</span><b>字号 '+ST.theme.fz+'% · '+(ST.theme.night?'夜间':'日间')+'</b></div></div>'+
-    '<div class="card">'+
-      '<div class="row" onclick="S.openSheet(\'faq\')"><span>常见问题</span><b>›</b></div><div class="hr"></div>'+
-      '<div class="row" onclick="S.openSheet(\'ver\')"><span>版本记录 / 检查更新</span><b>v'+esc(ST.ver)+' ›</b></div></div>'+
-    '<div class="hint" style="text-align:center;padding-bottom:6px">会员、签到、抽奖、邀请、客服 · 全科共用一份</div>';
+    '<div class="card" style="padding:4px 14px">'+
+      '<div class="row" onclick="S.openSheet(\'chat\')"><span class="lt"><span class="lead">'+ic('chat-centered')+'</span>在线客服</span>'+chev+'</div><div class="hr"></div>'+
+      '<div class="row" onclick="S.openSheet(\'dev\')"><span class="lt"><span class="lead gray">'+ic('device-mobile')+'</span>登录设备 / 修改密码</span>'+chev+'</div><div class="hr"></div>'+
+      '<div class="row" onclick="S.openSheet(\'theme\')"><span class="lt"><span class="lead gray">'+ic('moon')+'</span>显示设置</span>'+
+      '<span class="chev" style="color:var(--ink3);font-size:11px">'+ST.theme.fz+'% · '+(ST.theme.night?'夜间':'日间')+'</span></div></div>'+
+    '<div class="card" style="padding:4px 14px">'+
+      '<div class="row" onclick="S.openSheet(\'faq\')"><span class="lt"><span class="lead gray">'+ic('question')+'</span>常见问题</span>'+chev+'</div><div class="hr"></div>'+
+      '<div class="row" onclick="S.openSheet(\'ver\')"><span class="lt"><span class="lead gray">'+ic('gear')+'</span>版本记录 / 检查更新</span>'+
+      '<span class="chev" style="color:var(--ink3);font-size:11px">v'+esc(ST.ver)+'</span></div></div>'+
+    '<div class="hint" style="text-align:center;padding:4px 0 6px">会员、签到、抽奖、邀请、客服 · 全科共用一份</div>';
 }
 function sheetHtml(kind){
   if(kind==='me') return meHtml();
@@ -759,12 +868,15 @@ S.tipOff=function(){ toast(ST.act.off||'活动暂时关闭'); };
 
 /* ---------- 邀请 ---------- */
 function inviteHtml(){
-  return '<div class="card"><div style="font-size:13.5px;font-weight:700">我的邀请码 '+esc(ST.invCode)+'</div>'+
-    '<div class="hint">朋友用这个码注册，你得 1 次抽奖机会（可累积，不清零）</div>'+
-    '<button class="btn ghost sm" onclick="S.copyInvite()">复制邀请链接</button></div>'+
-    '<div class="card"><div class="row"><span>已邀请</span><b>'+ST.invite+' 人</b></div><div class="hr"></div>'+
-    '<div class="row"><span>攒着的抽奖次数</span><b>'+ST.pInvite+' 次</b></div></div>'+
-    '<button class="btn" onclick="S.simInvite()">模拟：一个朋友注册成功</button>'+
+  return '<div class="card" style="text-align:center;background:linear-gradient(160deg,#23513C,#1B4231);color:#EFE7D4;border-color:transparent">'+
+    '<div style="display:flex;justify-content:center;margin-bottom:9px"><span style="width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(212,184,124,.2);color:var(--gold2)">'+ic('user-plus')+'</span></div>'+
+    '<div style="font-size:12px;opacity:.75;letter-spacing:.5px">我的邀请码</div>'+
+    '<div style="font-size:26px;font-weight:700;letter-spacing:2px;margin:3px 0 6px;font-variant-numeric:tabular-nums">'+esc(ST.invCode)+'</div>'+
+    '<div style="font-size:11.5px;color:#D3CAB2;line-height:1.6">朋友用这个码注册，你得 1 次抽奖机会<br>可累积，不清零</div>'+
+    '<button class="btn gold sm" style="margin-bottom:0" onclick="S.copyInvite()">'+ic('copy')+'复制邀请链接</button></div>'+
+    '<div class="card"><div class="row"><span class="lt"><span class="lead gray">'+ic('user')+'</span>已邀请</span><b>'+ST.invite+' 人</b></div><div class="hr"></div>'+
+    '<div class="row"><span class="lt"><span class="lead gold">'+ic('trophy')+'</span>攒着的抽奖次数</span><b>'+ST.pInvite+' 次</b></div></div>'+
+    '<button class="btn" onclick="S.simInvite()">'+ic('user-plus')+'模拟：一个朋友注册成功</button>'+
     '<div class="hint">真机接后台后，注册回调里给邀请人 +1（写入 invites 表），再同步到这里的累积池。</div>';
 }
 S.copyInvite=function(){
