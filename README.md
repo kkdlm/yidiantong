@@ -10,30 +10,41 @@
 |---|---|---|---|
 | 法制史 | `packs/fz.html` | 6.70 MB | 169 考点 · 3561 条 · 断代史/专题史 |
 | 政治 | `packs/zz.html` | 1.12 MB | 100 考点 · 596 题 · 完整版 |
-| 英语大作文 | `packs/en.html` | 25 KB | 三段模板 · 24 条功能句 · 范文 · 挖空 · 默写 |
+| 英语大作文 | `packs/en.html` | 363 KB | 404 张卡 · 67 组 · 132 短语 · 六大方面 · 图表词汇 · 替换升级 · SRS |
 
 排除项：政治「真一页」不并入。
+
+## 英语包说明（重要）
+
+英语包不是重做的，而是把原项目 `考研英语大作文背诵`（v1.3.10）**原样嵌入**壳里：卡片数据、六大方面分组、图表词汇、替换升级、SRS 调度、倒计时全部保持原样，只在末尾注入一段 `#packBridge` 做三件事：
+
+1. 隐藏包内自己的底栏，改用壳的底栏
+2. 把「今日 / 词库 / 测试」映射到包内 `#/`、`#/lib`、`#/test`，把「我的」交给壳抽屉
+3. 从 `localStorage['ky_zw_v1']` 读出已掌握卡片数，上报给壳做进度统计
+
+独立打开 `packs/en.html` 时行为与原来完全一样，不受影响。
 
 ## 结构
 
 ```
-index.html            线上壳（书库 + 我的抽屉 + 转盘）
-shell.html            同源开发版壳（BOOKS 指向 packs/*.html）
-build_packs.py        给各科目包注入「壳协议」，输出到 packs/
-packs_src/en.html     英语包源（head + body + js 拼装）
-packs/                构建产物：fz / zz / en
+index.html                线上壳（书库 + 我的抽屉 + 转盘）
+shell.html                同源开发版壳（BOOKS 指向 packs/*.html）
+build_packs.py            给法制史/政治包注入「壳协议」，输出到 packs/
+build_en_pack.py          给英语原项目注入「#packBridge」，输出到 packs/en.html
+packs_src/en_full_src.html  英语原项目原样副本（不改动）
+packs/                    构建产物：fz / zz / en
 ```
 
 ## 站点
 
-- GitHub Pages：`https://kkdlm.github.io/yidiantong/`（工作流 `sync-packs` 自动同步）
+- GitHub Pages：`https://kkdlm.github.io/yidiantong/`（工作流 `sync-packs` 自动同步三包与壳）
 - 本仓库独立于法制史仓库 `kkdlm/fazhishi`，不覆盖、不合并
 
 ## 壳协议（包与壳之间只有三条通道）
 
 - 包 → 壳：`ready(tabs)`、`stat(pct, items)`、`askMe`、`guest`、`toast`
 - 壳 → 包：`theme(night, fz, vip)`、`tab(id)`
-- 包内 `go('me')` 被协议改写为 `askMe`，打开的永远是壳的同一份「我的」
+- 包内「我的」被协议改写为 `askMe`，打开的永远是壳的同一份「我的」
 
 ## 活动规则（已实现）
 
@@ -44,7 +55,7 @@ packs/                构建产物：fz / zz / en
 
 ## 版本
 
-- 1.3.0.0 · 「法硕一点通 · 一站上岸」定名、三科合体、英语包上线、抽奖关闭态收敛
+- 1.3.0.0 · 「法硕一点通 · 一站上岸」定名、三科合体、英语包换回原项目（363 KB）
 
 ## 待办
 
