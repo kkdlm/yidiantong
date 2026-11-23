@@ -3266,23 +3266,37 @@ html.shell body{padding-bottom:74px!important}
 <script id="packBridge">
 (function(){
   var SK='ky_zw_v1';
+  /* 壳底栏 tab → 包内 hash */
   var MAP={today:'#/', words:'#/lib', drill:'#/test', home:'#/', lib:'#/lib', test:'#/test'};
+  /* 包内 hash → 壳底栏 tab（反向，用于高亮同步） */
+  var RMAP={'#/':'today','#/lib':'words','#/test':'drill'};
   function post(m){ try{ if(window.parent!==window) window.parent.postMessage(Object.assign({src:'pack'},m),'*'); }catch(e){} }
   var embedded=(window.parent!==window);
   if(embedded) document.documentElement.classList.add('shell');
+  function curTab(){
+    var h=location.hash||'#/';
+    if(h==='#/lib') return 'words';
+    if(h==='#test'||h.indexOf('#/test')===0) return 'drill';
+    if(h.indexOf('#/check')===0) return 'drill';
+    if(RMAP[h]) return RMAP[h];
+    /* 分组 / 卡片 / 会话等子页归到「今日」高亮 */
+    return 'today';
+  }
   function stat(){
     try{
       var D=(window.__DATA__||{}), cs=(D&&D.cards)||[];
       var st={}; try{ st=JSON.parse(localStorage.getItem(SK)||'{}')||{}; }catch(e){}
-      var c=st.c||{}, seen=0, due=0;
+      var c=st.c||{}, seen=0;
       for(var i=0;i<cs.length;i++){ var r=c[cs[i].id]; if(r&&r.lv>0) seen++; }
-      due=cs.length-seen;
+      var due=cs.length-seen;
       post({t:'stat', pct: cs.length? Math.round(seen/cs.length*100):0, items:{recite:seen,total:cs.length,due:due}});
     }catch(e){}
   }
   window.addEventListener('message',function(e){
+    if(typeof e.data!=='object'||e.data===null) return;
     var d=e.data||{}; if(d.src!=='shell') return;
     if(d.t==='tab'){ var h=MAP[d.id]; if(h!==undefined && location.hash!==h) location.hash=h; }
+    /* theme 消息：原项目只有浅色、固定字号，显式忽略，不报错 */
   });
   /* 包内「我的」一律交给壳 */
   document.addEventListener('click',function(ev){
@@ -3295,11 +3309,15 @@ html.shell body{padding-bottom:74px!important}
   window.addEventListener('hashchange',function(){
     if(!embedded) return;
     setTimeout(stat,120);
-    post({t:'hash',v:location.hash});
+    var t=curTab(); if(t) post({t:'tab',id:t});
   });
   window.addEventListener('load',function(){
     if(!embedded) return;
-    setTimeout(function(){ post({t:'ready'}); stat(); },300);
+    setTimeout(function(){
+      post({t:'ready'});
+      var t=curTab(); if(t) post({t:'tab',id:t});
+      stat();
+    },300);
     setInterval(stat,6000);
   });
 })();

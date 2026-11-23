@@ -36,7 +36,7 @@ img{max-width:100%;height:auto}
 .ico:active{background:rgba(0,0,0,.05)}
 .ico[hidden]{display:none!important}
 .chip[hidden]{display:none!important}
-.chip{border:1px solid var(--line);background:rgba(255,255,255,.6);color:var(--ink2);
+.chip{border:1px solid var(--line);background:rgba(255,252,255,.6);color:var(--ink2);
   font-size:11.5px;padding:5px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
 .chip.on{background:rgba(31,74,56,.09);border-color:rgba(31,74,56,.25);color:var(--green);font-weight:600}
 main{position:fixed;left:0;right:0;top:calc(var(--hdr) + var(--safe-t));bottom:calc(var(--foot) + var(--safe-b));
@@ -154,6 +154,16 @@ input:focus{border-color:rgba(31,74,56,.4)}
 .veil .pb{height:5px;border-radius:5px;background:rgba(31,74,56,.14);overflow:hidden}
 .veil .pb i{display:block;height:100%;width:6%;background:linear-gradient(90deg,var(--green2),var(--green));transition:width .35s}
 .veil .pp{font-size:10.5px;color:var(--ink3);margin-top:8px;font-variant-numeric:tabular-nums}
+.veil .fail{display:none}
+.veil.failed .loadbox{display:none}
+.veil.failed .fail{display:block}
+.veil .fico{width:54px;height:54px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;
+  font-size:24px;background:rgba(168,67,47,.1);color:var(--red);border:1px solid rgba(168,67,47,.25)}
+.veil .ftt{font:700 16px/1.3 'Songti SC','STSong',serif;margin-bottom:5px}
+.veil .fss{font-size:11.5px;color:var(--ink3);line-height:1.6;margin-bottom:15px}
+.retry-btn{border:0;border-radius:11px;padding:10px 22px;background:var(--green);color:#F4EFE2;
+  font-size:13px;font-weight:600}
+.retry-btn:active{background:var(--green2)}
 @media (min-width:700px){ :root{--maxw:700px} .stage2{width:300px;height:300px} }
 </style>
 </head>
@@ -171,11 +181,19 @@ input:focus{border-color:rgba(31,74,56,.4)}
   <div class="reader" id="reader">
     <div class="veil" id="veil">
       <div class="box">
-        <div class="cover" id="veilCover">史</div>
-        <div class="tt2" id="veilTitle">正在打开</div>
-        <div class="ss" id="veilSub">首次打开需要下载科目包</div>
-        <div class="pb"><i id="veilBar"></i></div>
-        <div class="pp" id="veilPct">准备中…</div>
+        <div class="loadbox">
+          <div class="cover" id="veilCover">史</div>
+          <div class="tt2" id="veilTitle">正在打开</div>
+          <div class="ss" id="veilSub">首次打开需要下载科目包</div>
+          <div class="pb"><i id="veilBar"></i></div>
+          <div class="pp" id="veilPct">准备中…</div>
+        </div>
+        <div class="fail">
+          <div class="fico">!</div>
+          <div class="ftt">科目包加载失败</div>
+          <div class="fss">网络中断或包地址失效，你的学习进度不会丢</div>
+          <button class="retry-btn" onclick="S.retryBook()">重新加载</button>
+        </div>
       </div>
     </div>
   </div>
@@ -204,19 +222,52 @@ var BOOKS=[
   {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'packs/en.html',ver:'1.3.10',
    desc:'132 短语 · 六大方面 · 图表词汇 + SRS',tabs:[{id:'today',n:'今日'},{id:'words',n:'词库'},{id:'drill',n:'测试'}]}
 ];
-function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+
+/* ---------- 日期 ---------- */
+function pad(n){return ('0'+n).slice(-2)}
+function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function dateAdd(dstr,n){
+  var d=new Date(dstr+'T00:00:00');
+  if(isNaN(d.getTime())) d=new Date();
+  d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+
+/* ---------- 存储 ---------- */
 function load(){try{var r=localStorage.getItem(LS);return r?JSON.parse(r):null}catch(e){return null}}
+function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 var DEF={vip:8,vipUntil:'2026-12-01',signDays:2,signedDate:'',daily:0,dDate:'',pInvite:0,invite:0,
   invCode:'FZ-8K2M',fzPct:0,zzPct:0,enPct:0,lastBook:'fz',lastTab:'',ver:'1.3.0.0',
   theme:{fz:100,night:false},stats:{},chat:[],
   act:{on:true,off:'活动暂时关闭，已经抽到的不会收回'}};
 var ST=load()||{};
-for(var k in DEF){ if(ST[k]===undefined||ST[k]===null) ST[k]=DEF[k]; }
-if(!ST.theme) ST.theme={fz:100,night:false};
-if(!ST.act) ST.act={on:true,off:'活动暂时关闭，已经抽到的不会收回'};
-function actOn(){ return !(ST.act && ST.act.on===false); }
+for(var dk in DEF){ if(ST[dk]===undefined||ST[dk]===null) ST[dk]=DEF[dk]; }
+if(!ST.theme||typeof ST.theme!=='object') ST.theme={fz:100,night:false};
+if(ST.theme.fz===undefined) ST.theme.fz=100;
+if(ST.theme.night===undefined) ST.theme.night=false;
+if(!ST.act||typeof ST.act!=='object') ST.act={on:true,off:DEF.act.off};
+if(ST.act.on===undefined) ST.act.on=true;
+if(ST.act.off===undefined) ST.act.off=DEF.act.off;
+/* 旧版扁平 stats 迁移为按科目分桶 */
+if(ST.stats&&(typeof ST.stats!=='object'||Array.isArray(ST.stats)||('recite' in ST.stats))) ST.stats={};
 
-function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
+/* ---------- 会员（以 vipUntil 为唯一基准）---------- */
+function vipRemaining(){
+  if(!ST.vipUntil) return 0;
+  var u=new Date(ST.vipUntil+'T00:00:00'), t=new Date(today()+'T00:00:00');
+  if(isNaN(u.getTime())) return 0;
+  var diff=Math.round((u-t)/86400000);
+  return diff>0?diff:0;
+}
+function addVip(n){
+  n=Math.floor(n)||0; if(n<=0) return;
+  var cur=vipRemaining();
+  ST.vip=cur+n;
+  ST.vipUntil=dateAdd(today(),ST.vip);
+}
+ST.vip=vipRemaining();
+
+function actOn(){ return !(ST.act && ST.act.on===false); }
 function rollDay(){var t=today(); if(ST.dDate!==t){ST.dDate=t; ST.daily=0; save();} }
 rollDay();
 
@@ -226,25 +277,43 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 var TABS_ICON={home:'▤',browse:'≡',recite:'✎',topic:'◷',quiz:'✓',me:'☺',today:'☉',words:'▤',drill:'✓',cards:'▦'};
 
 /* ---------- iframe 管理 ---------- */
-var FR={}, seq=0;
+var FR={}, seq=0, veilTimers={iv:0,to:0};
+function tabsOf(id){return (FR[id]&&FR[id].tabs)||(book(id)&&book(id).tabs)||[]}
+function isTabAllowed(id,t){return tabsOf(id).some(function(x){return x.id===t})}
 function ensure(id){
   if(FR[id]) return FR[id];
   var b=book(id); if(!b) return null;
   var el=document.createElement('iframe');
   el.className='fr off'; el.title=b.name; el.setAttribute('loading','eager'); el.src=b.url;
   $('reader').appendChild(el);
-  var rec={el:el,ready:false,tabs:b.tabs,loadAt:0,use:++seq,tab:''};
+  var rec={el:el,ready:false,tabs:b.tabs.slice(),loadAt:0,use:++seq,tab:'',pendingTab:'',failed:false,loadTimer:0};
   FR[id]=rec;
   el.addEventListener('load',function(){
     rec.loadAt=Date.now();
-    setTimeout(function(){ if(!rec.ready) markReady(id,'load'); },760);
+    /* 真正加载成功的包会在 load 后 300~420ms 发 ready；
+       只触发 load、超时未发 ready（如中断/错误页）→ 判定失败 */
+    if(rec.loadTimer) clearTimeout(rec.loadTimer);
+    rec.loadTimer=setTimeout(function(){ if(!rec.ready) failVeil(id); },2000);
   });
+  el.addEventListener('error',function(){ failVeil(id); });
   return rec;
 }
-function markReady(id,how){
+function markReady(id){
   var rec=FR[id]; if(!rec) return;
-  if(!rec.ready){ rec.ready=true; rec.use=++seq;
-    if(how==='msg') hideVeil();
+  if(!rec.ready){
+    rec.ready=true; rec.use=++seq; rec.failed=false;
+    if(rec.loadTimer) clearTimeout(rec.loadTimer);
+    hideVeil();
+    flushPending(id);
+  }
+}
+function flushPending(id){
+  var rec=FR[id]; if(!rec||!rec.pendingTab) return;
+  var t=rec.pendingTab; rec.pendingTab='';
+  /* ready 后直接下发，不依赖 hash 变化（深链 hash 可能已等于目标值） */
+  if(ST.book===id && isTabAllowed(id,t)){
+    ST.tab=t; ST.lastTab=t; save(); paintFoot();
+    send(id,{t:'tab',id:t});
   }
 }
 function showFrame(id){
@@ -252,7 +321,7 @@ function showFrame(id){
   var rec=ensure(id); if(!rec) return;
   rec.el.classList.remove('off'); rec.use=++seq;
   var b=book(id);
-  $('barSeal').textContent=b.seal; $('barSeal').className='seal'+(b.id==='zz'?' red':'');
+  $('barSeal').textContent=b.seal; $('barSeal').className='seal'+(b.id==='zz'?' red':(b.id==='en'?' gray':''));
   $('barTitle').innerHTML=esc(b.name)+'<small>'+esc(b.desc)+'</small>';
   $('barBack').hidden=false;
   $('reader').classList.add('on');
@@ -274,34 +343,52 @@ function send(id,m){
 }
 function showVeil(id){
   var b=book(id);
-  var v=$('veil'); v.classList.add('on');
+  var v=$('veil'); v.classList.remove('failed'); v.classList.add('on');
   $('veilCover').textContent=b.seal; $('veilCover').style.background=b.color;
   $('veilTitle').textContent='正在打开 '+b.name;
   $('veilSub').textContent='首次打开需要下载科目包（'+b.desc.split(' · ').pop()+'），之后就秒开';
   $('veilBar').style.width='6%'; $('veilPct').textContent='准备中…';
-  var p=6,t=0,iv=setInterval(function(){
-    if(!v.classList.contains('on')){ clearInterval(iv); return; }
+  var p=6,t=0;
+  if(veilTimers.iv) clearInterval(veilTimers.iv);
+  if(veilTimers.to) clearTimeout(veilTimers.to);
+  veilTimers.iv=setInterval(function(){
+    if(!$('veil').classList.contains('on')){ clearInterval(veilTimers.iv); return; }
     t++; if(t%3===0) p=Math.min(92,p+Math.max(1,(92-p)/7));
     $('veilBar').style.width=p+'%';
     $('veilPct').textContent=p<40?'下载科目包…':(p<80?'解包与初始化…':'正在渲染首屏…');
   },240);
-  setTimeout(function(){ if($('veil').classList.contains('on')) hideVeil(); }, 14000);
+  veilTimers.to=setTimeout(function(){
+    clearInterval(veilTimers.iv);
+    var r=FR[id];
+    if(r&&!r.ready) failVeil(id); else hideVeil();
+  },14000);
+}
+function failVeil(id){
+  var rec=FR[id]; if(rec) rec.failed=true;
+  var v=$('veil'); v.classList.add('failed','on');
+  if(veilTimers.iv) clearInterval(veilTimers.iv);
 }
 function hideVeil(){
-  $('veil').classList.remove('on');
+  $('veil').classList.remove('on','failed');
+  if(veilTimers.iv) clearInterval(veilTimers.iv);
+  if(veilTimers.to) clearTimeout(veilTimers.to);
 }
 
 /* ---------- 底栏 ---------- */
+function firstTabId(id){
+  var t=tabsOf(id).filter(function(x){return x.id!=='me'});
+  return t.length?t[0].id:'';
+}
 function footHtml(){
   var items;
   if(ST.view==='book'&&ST.book){
-    var t=(FR[ST.book]&&FR[ST.book].tabs)||(book(ST.book)||{}).tabs||[];
+    var t=tabsOf(ST.book);
     items=t.filter(function(x){return x.id!=='me'}).map(function(x){return {id:x.id,n:x.n,i:TABS_ICON[x.id]||'·'}});
     items.push({id:'me',n:'我的',i:'☺'});
   } else {
     items=[{id:'lib',n:'书库',i:'▤'},{id:'study',n:'学习',i:'▦'},{id:'me',n:'我的',i:'☺'}];
   }
-  var cur=ST.view==='book'?(ST.tab||''):(ST.view==='lib'?'lib':ST.view);
+  var cur=ST.view==='book'?(ST.tab||firstTabId(ST.book)):(ST.view==='lib'?'lib':ST.view);
   return items.map(function(x){
     return '<a class="'+(x.id===cur?'on':'')+'" onclick="S.nav(\''+x.id+'\')"><i>'+x.i+'</i>'+esc(x.n)+'</a>';
   }).join('');
@@ -327,20 +414,20 @@ function libHtml(){
     '<div class="hint" style="padding:0 2px">加一科 = 多一个包，书库自动多一行，主程序不用改。</div>';
 }
 function studyHtml(){
-  var s=ST.stats||{};
-  return '<div class="h1">学习</div><div class="sub">跨科目汇总 · 进度由各科目上报</div>'+
-   '<div class="card"><div class="row"><span>本周连续</span><b>6 天</b></div>'+
-   '<div class="row"><span>累计时长</span><b>4 小时 20 分</b></div></div>'+
-   '<div class="card"><div class="row"><span>法制史 · 已背</span><b>'+ST.fzPct+'%</b></div>'+
-   '<div class="bar-in"><i style="width:'+ST.fzPct+'%"></i></div>'+
-   '<div class="row" style="margin-top:10px"><span>政治 · 已学</span><b>'+ST.zzPct+'%</b></div>'+
-   '<div class="bar-in"><i style="width:'+ST.zzPct+'%"></i></div>'+
-   '<div class="row" style="margin-top:10px"><span>英语 · 功能句</span><b>'+ST.enPct+'%</b></div>'+
-   '<div class="bar-in"><i style="width:'+ST.enPct+'%"></i></div></div>'+
-   '<div class="card"><div class="row"><span>今日背诵</span><b>'+(s.recite||0)+' 张</b></div><div class="hr"></div>'+
-   '<div class="row"><span>今日刷题</span><b>'+(s.quiz||0)+' 题</b></div><div class="hr"></div>'+
-   '<div class="row"><span>连续打卡</span><b>'+(ST.signDays||0)+' 天</b></div></div>'+
-   '<div class="hint">数据来自各科目上报的 stat 消息，换科目不清零。</div>';
+  var cards=BOOKS.map(function(b){
+    var pct=ST[b.id+'Pct']||0;
+    var it=(ST.stats&&ST.stats[b.id])||{};
+    return '<div class="card"><div class="row" style="padding:0"><span style="font-size:13.5px;font-weight:700">'+esc(b.name)+'</span>'+
+      '<span class="pill">'+pct+'%</span></div>'+
+      '<div class="bar-in"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="row" style="margin-top:8px"><span>已掌握</span><b>'+(it.recite||0)+' / '+(it.total||0)+'</b></div>'+
+      '<div class="row"><span>待复习</span><b>'+(it.due||0)+'</b></div></div>';
+  }).join('');
+  return '<div class="h1">学习</div><div class="sub">跨科目汇总 · 数据由各科目实时上报</div>'+
+    '<div class="card"><div class="row"><span>当前签到轮次</span><b>'+(ST.signDays||0)+' / 7 天</b></div>'+
+    '<div class="hr"></div><div class="row"><span>攒着的邀请抽奖</span><b>'+ST.pInvite+' 次</b></div></div>'+
+    cards+
+    '<div class="hint">每个科目独立上报，换科目不清零；百分比为该科掌握进度。</div>';
 }
 function render(){
   paintFoot();
@@ -354,91 +441,131 @@ function render(){
   if(ST.view==='study'){ $('barSeal').textContent='学'; $('barTitle').innerHTML='学习<small>跨科目汇总</small>'; }
 }
 
-/* ---------- 对外方法 ---------- */
+/* ---------- 路由（顶层 hash 为唯一事实来源）----------
+   线上壳经 CDN 302 会丢失 query，fragment 则会保留，故路由走 hash：
+   #book=<id>&tab=<t> 科目；#view=study 学习页；空 hash 书库。
+   顶层 hash 与 iframe 内部各自的 hash 完全独立，互不影响。 */
 var S={};
-S.open=function(id,tab){
-  var b=book(id); if(!b) return;
-  if(b.soon){ toast('英语还在筹备，先看看别的'); return; }
-  closeSheet();
+function readRoute(){
+  var p=new URLSearchParams((location.hash||'').replace(/^#/,''));
+  var b=p.get('book');
+  if(b&&book(b)) return {kind:'book',book:b,tab:p.get('tab')||''};
+  if(p.get('view')==='study') return {kind:'study'};
+  return {kind:'lib'};
+}
+/* 纯业务：进入科目（幂等，不修改 hash） */
+function enterBook(id,tab){
+  var b=book(id);
+  if(!b){ ST.view='lib'; render(); return; }
+  if(b.soon){ toast(b.name+' 还在筹备，先看看别的'); return; }
   var rec=ensure(id);
-  ST.view='book'; ST.book=id; ST.lastBook=id; ST.lastTab=''; save();
-  if(!rec.ready){ showVeil(id); }
+  ST.view='book'; ST.book=id; ST.lastBook=id;
+  if(tab&&isTabAllowed(id,tab)){
+    ST.tab=tab; ST.lastTab=tab;
+    if(rec.ready) send(id,{t:'tab',id:tab});
+    else rec.pendingTab=tab;
+  }
+  save();
+  if(!rec.ready) showVeil(id);
   showFrame(id);
   render();
-  S.sendTheme();
-  setTimeout(function(){ S.sendTheme(); }, 900);
-  if(tab) setTimeout(function(){ S.nav(tab); }, 350);
-  try{ history.replaceState(null,'','?book='+id+(tab?('&tab='+tab):'')); }catch(e){}
-};
+  sendTheme();
+  setTimeout(function(){ sendTheme(); },900);
+}
+S.open=function(id,tab){ location.hash='#book='+id+(tab?('&tab='+tab):''); };
+S.openBookById=function(id){ location.hash='#book='+id; };
 S.nav=function(v){
-  if(v==='lib'){ S.backToLib(); return; }
-  if(v==='study'){ ST.view='study'; ST.book=''; render(); return; }
+  if(v==='lib'){ location.hash=''; return; }
+  if(v==='study'){ location.hash='#view=study'; return; }
   if(v==='me'){ openSheet('me'); return; }
   if(ST.view==='book'&&ST.book){
-    ST.tab=v; ST.lastTab=v; save(); paintFoot();
-    send(ST.book,{t:'tab',id:v});
+    if(!isTabAllowed(ST.book,v)) return;
+    location.hash='#book='+ST.book+'&tab='+v;
     return;
   }
 };
-S.backToLib=function(){
+S.backToLib=function(){ closeSheet(); location.hash=''; };
+function applyRoute(){
+  var r=readRoute();
   closeSheet();
-  ST.view='lib'; ST.book=''; save();
-  render();
-  try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  if(r.kind==='book'){ enterBook(r.book,r.tab); }
+  else { ST.view=r.kind; ST.book=''; ST.tab=''; save(); render(); }
+}
+window.addEventListener('hashchange',applyRoute);
+S.retryBook=function(){
+  var id=ST.book; if(!id) return;
+  var old=FR[id];
+  if(old){ try{ old.el.parentNode.removeChild(old.el); }catch(e){} delete FR[id]; }
+  hideVeil();
+  applyRoute();  /* hash 不变，enterBook 会重建该科目 */
 };
-S.openBookById=function(id){ S.open(id); };
-window.S=S;
-S.tipOff=function(){ toast(ST.act.off||'活动暂时关闭'); };
-window.__ST=ST; window.__FR=FR;
 
 /* ---------- 与科目通信 ---------- */
 window.addEventListener('message',function(e){
-  var d=e.data||{}; if(d.src!=='pack') return;
+  if(!e||typeof e.data!=='object'||e.data===null) return;
+  var d=e.data; if(d.src!=='pack') return;
   var id=null;
   Object.keys(FR).forEach(function(k){ if(FR[k].el.contentWindow===e.source) id=k; });
   if(!id) return;
   var rec=FR[id];
-  if(d.t==='ready'){ rec.tabs=d.tabs||rec.tabs; rec.ready=true; rec.use=++seq; hideVeil();
-    send(id,{t:'theme',fz:ST.theme.fz,night:ST.theme.night,vip:ST.vip,days:vipDays()});
-    if(ST.book===id) paintFoot(); }
+  if(d.t==='ready'){
+    if(Array.isArray(d.tabs)&&d.tabs.length) rec.tabs=d.tabs;
+    rec.ready=true; rec.use=++seq; rec.failed=false;
+    if(rec.loadTimer) clearTimeout(rec.loadTimer);
+    hideVeil();
+    var days=vipRemaining();
+    send(id,{t:'theme',fz:ST.theme.fz,night:ST.theme.night,vip:days,days:days});
+    if(ST.book===id) paintFoot();
+    flushPending(id);
+  }
   else if(d.t==='stat'){
     rec.ready=true;
-    if(id==='fz'&&typeof d.pct==='number') ST.fzPct=d.pct;
-    if(id==='zz'&&typeof d.pct==='number') ST.zzPct=d.pct;
-    if(id==='en'&&typeof d.pct==='number') ST.enPct=d.pct;
-    if(d.items){ ST.stats=d.items; }
+    if(Number.isFinite(d.pct)) ST[id+'Pct']=Math.max(0,Math.min(100,Math.round(d.pct)));
+    if(d.items&&typeof d.items==='object'&&!Array.isArray(d.items)) ST.stats[id]=d.items;
     save();
     if(ST.view==='study') render();
   }
   else if(d.t==='askMe'){ openSheet('me'); }
-  else if(d.t==='tab'){ ST.tab=d.id; ST.lastTab=d.id; save(); paintFoot(); }
-  else if(d.t==='toast'){ toast(d.msg||''); }
+  else if(d.t==='tab'){
+    if(typeof d.id==='string'&&isTabAllowed(id,d.id)){
+      ST.tab=d.id; ST.lastTab=d.id; save(); paintFoot();
+      /* 包内回灌属"状态同步"，用 replaceState 修正当前条目，不新增历史 */
+      if(ST.book===id){
+        var want='#book='+id+'&tab='+d.id;
+        if(location.hash!==want){ try{ history.replaceState(null,'',want); }catch(e){} }
+      }
+    }
+  }
+  else if(d.t==='toast'){ if(typeof d.msg==='string') toast(d.msg); }
 });
-S.sendTheme=function(){
-  Object.keys(FR).forEach(function(k){ send(k,{t:'theme',fz:ST.theme.fz,night:ST.theme.night,vip:ST.vip,days:vipDays()}); });
-};
-function vipDays(){ return ST.vip; }
+function sendTheme(){
+  var days=vipRemaining(); ST.vip=days;
+  Object.keys(FR).forEach(function(k){ send(k,{t:'theme',fz:ST.theme.fz,night:ST.theme.night,vip:days,days:days}); });
+}
+S.sendTheme=sendTheme;
 
-/* ---------- 预热 ---------- */
+/* ---------- 预热（深链时不执行，避免抢带宽）---------- */
 function prewarm(){
   var last=ST.lastBook; if(!last||!book(last)||book(last).soon) return;
-  setTimeout(function(){ ensure(last); }, 900);
+  setTimeout(function(){ ensure(last); },1200);
 }
 
 /* ---------- 提示 ---------- */
 function toast(m){
   var t=$('toast'); t.textContent=m; t.classList.add('on');
-  clearTimeout(toast._t); toast._t=setTimeout(function(){ t.classList.remove('on'); }, 2200);
+  clearTimeout(toast._t); toast._t=setTimeout(function(){ t.classList.remove('on'); },2200);
 }
 S.toast=toast;
 
-/* ---------- 启动 ---------- */
+/* ---------- 启动 ----------
+   路由态（view/book/tab）只认当前 hash，不继承 localStorage 残留；
+   lastBook/lastTab 属于要保留的"上次进度"，不受影响。 */
+ST.view='lib'; ST.book=''; ST.tab='';
 render();
-prewarm();
-S.sendTheme();
-var qs=new URLSearchParams(location.search);
-var qb=qs.get('book');
-if(qb&&book(qb)) setTimeout(function(){ S.open(qb,qs.get('tab')||''); },260);
+applyRoute();
+if(readRoute().kind==='lib') prewarm();
+sendTheme();
+
 /* ---------- 我的抽屉 ---------- */
 var sheetKind='';
 function openSheet(kind){
@@ -461,11 +588,12 @@ function poolLine(){
   return p.total>0?('今天剩 <b>'+p.d+'</b> 次（零点清零）· 攒着 <b>'+p.p+'</b> 次'):'今天没有次数了 · 签到或邀请可得';
 }
 function meHtml(){
-  var days=ST.vip;
+  var days=vipRemaining(); ST.vip=days;
+  var barW=Math.min(100,Math.max(4,days*6));
   return '<div class="card"><div class="row" style="padding:0"><span style="font-size:14px;font-weight:700">会员</span>'+
     '<span class="pill '+(days>0?'gold':'red')+'">'+(days>0?('还剩 '+days+' 天'):'未开通')+'</span></div>'+
     '<div class="sub" style="margin-top:3px">有效期至 '+esc(ST.vipUntil)+' · 全部科目通用</div>'+
-    '<div class="bar-in"><i style="width:'+Math.min(100,days*11)+'%"></i></div>'+
+    '<div class="bar-in"><i style="width:'+barW+'%"></i></div>'+
     '<button class="btn ghost sm" onclick="S.openSheet(\'redeem\')">续费 · 兑换卡密</button></div>'+
 
     '<div class="card"><div class="row" style="padding:0"><span style="font-size:13.5px;font-weight:700">每日签到</span>'+
@@ -510,21 +638,20 @@ function sheetHtml(kind){
   if(kind==='me') return meHtml();
   if(kind==='lottery') return lotteryHtml();
   if(kind==='invite') return inviteHtml();
-  if(kind==='redeem') return '<div class="card"><div class="sub">会员有效中 · 还剩 '+ST.vip+' 天</div>'+
+  if(kind==='redeem') return '<div class="card"><div class="sub">会员有效中 · 还剩 '+vipRemaining()+' 天</div>'+
     '<div class="hint" style="margin-top:4px">兑换后会员天数累加，全科通用</div></div>'+
     '<div class="card"><div class="sub">会员卡密</div><input id="cdk" placeholder="FZ-7-XXXX-XXXX" autocomplete="off">'+
     '<div class="hint">演示可用：FZ-7-2026-AAAA / FZ-30-2026-BBBB</div>'+
     '<button class="btn" onclick="S.redeem()">立即兑换</button></div>';
-  if(kind==='invite') return inviteHtml();
   if(kind==='chat') return '<div class="card" style="max-height:42vh;overflow-y:auto">'+
     (ST.chat.length?ST.chat.map(function(m){return '<div style="margin:6px 0;text-align:'+(m.me?'right':'left')+'">'+
       '<span style="display:inline-block;padding:8px 11px;border-radius:10px;font-size:12.5px;line-height:1.6;'+
       (m.me?'background:rgba(31,74,56,.09);color:var(--green);':'background:#fff;border:1px solid var(--line);')+'">'+esc(m.t)+'</span></div>'}).join(''):
       '<div class="hint">你好，这里是法硕一点通客服。签到、抽奖、会员、卡密问题都可以直接问。</div>')+'</div>'+
-    '<div class="card"><input id="cin" placeholder="输入问题…"><button class="btn sm" onclick="S.sendMsg()">发送</button></div>';
+    '<div class="card"><input id="cin" placeholder="输入问题…" onkeydown="if(event.key===\'Enter\')S.sendMsg()"><button class="btn sm" onclick="S.sendMsg()">发送</button></div>';
   if(kind==='ver') return '<div class="card"><div class="row"><span>当前版本</span><b>v'+esc(ST.ver)+'</b></div><div class="hr"></div>'+
-    '<div class="row"><span>科目包</span><b>'+Object.keys(FR).map(function(k){return esc((book(k)||{}).name)}).join(' / ')+'</b></div></div>'+
-    '<div class="card"><div style="font-size:13px;font-weight:700">v1.3.0.0</div><div class="hint">新增：多科目书库、我的统一到主程序、签到/抽奖/邀请归入活动、科目包按需加载与预热。</div></div>'+
+    '<div class="row"><span>科目包</span><span style="text-align:right;font-size:11.5px">'+BOOKS.map(function(b){return esc(b.name)+' '+esc(b.ver)}).join(' · ')+'</span></div></div>'+
+    '<div class="card"><div style="font-size:13px;font-weight:700">v1.3.0.0</div><div class="hint">多科目书库、我的统一到主程序、签到/抽奖/邀请归入活动、科目包按需加载与预热、深链与浏览器返回支持。</div></div>'+
     '<button class="btn ghost" onclick="S.checkVer()">检查更新</button>';
   if(kind==='faq') return '<div class="card"><div style="font-size:13px;font-weight:700">科目包与会员</div>'+
     '<div class="hint">科目是独立包，首次打开需要下载（法制史约 6.7MB，之后走缓存秒开）。会员、签到、抽奖、邀请、客服在主程序这一层，全科共用。</div></div>'+
@@ -548,10 +675,15 @@ function sheetHtml(kind){
 S.sign=function(){
   var t=today();
   if(ST.signedDate===t){ toast('今天已经签到了，明天再来'); return; }
-  ST.signedDate=t; ST.signDays=(ST.signDays||0)+1;
-  if(ST.signDays>=7){ ST.vip+=3; toast('满 7 天 · 送 3 天会员'); }
-  else { ST.daily=(ST.daily||0)+1; toast('签到成功 · 抽奖 +1 次（仅今天有效）'); }
-  save(); S.sendTheme(); openSheet('me');
+  ST.signedDate=t;
+  ST.daily=(ST.daily||0)+1;
+  var m='签到成功 · 抽奖 +1 次（仅今天有效）';
+  ST.signDays=(ST.signDays||0)+1;
+  if(ST.signDays>=7){
+    addVip(3); ST.signDays=0;
+    m='满 7 天 · 送 3 天会员，新一轮已开始；抽奖仍 +1 次';
+  }
+  save(); sendTheme(); openSheet('me'); toast(m);
 };
 
 /* ---------- 抽奖 ---------- */
@@ -573,11 +705,13 @@ function lotteryHtml(){
     stops+=(i%2?'#EBE1C9':'#F8F3E4')+' '+(i*SEG-SEG/2)+'deg '+(i*SEG+SEG/2)+'deg,';
   });
   var p=pools(), on=actOn();
+  var btn=SPIN
+    ? '<button class="go-c off" id="goBtn"><b>…</b><i id="goU">转动中</i></button>'
+    : '<button class="go-c'+(on?'':' off')+'" id="goBtn" onclick="'+(on?'S.spin()':'S.tipOff()')+'"><b>抽</b><i id="goU">'+(on?(p.total>0?('剩 '+p.total):'没次数了'):'已关闭')+'</i></button>';
   return '<div class="wrap"><div class="pool">'+(on?poolLine():'已关闭 · 已抽到的不会收回')+'</div>'+
     '<div class="stage2"><div class="ring"></div>'+
     '<div class="disc" id="disc" style="background:conic-gradient('+stops.slice(0,-1)+')"><div class="labs">'+labs+'</div></div>'+
-    '<div class="pin"></div>'+
-    '<button class="go-c'+(on?'':' off')+'" id="goBtn" onclick="'+(on?'S.spin()':'S.tipOff()')+'"><b>抽</b><i id="goU">'+(on?(p.total>0?('剩 '+p.total):'没次数了'):'已关闭')+'</i></button></div>'+
+    '<div class="pin"></div>'+btn+'</div>'+
     '<div class="resslot" id="ltRes">'+(on?(ST.last?('上次：'+esc(ST.last)):'今天签个到，就能转一次'):esc(ST.act.off||'活动暂时关闭'))+'</div>'+
     (on?'<div class="hint" style="text-align:center;max-width:300px">规则：签到得的次数当天有效（零点清零）；邀请得的可累积。抽奖先扣当天，再扣累积。</div>':'')+'</div>';
 }
@@ -587,28 +721,41 @@ S.spin=function(){
   var p=pools();
   if(p.total<=0){ toast('次数用完了：去签到，或邀请朋友'); return; }
   SPIN=true;
+  var usePool=ST.daily>0?'daily':'pInvite';
   var rnd=Math.random()*PRIZES.reduce(function(a,b){return a+b.w},0), acc=0, idx=0;
   for(var i=0;i<PRIZES.length;i++){ acc+=PRIZES[i].w; if(rnd<=acc){ idx=i; break; } }
   var base=Math.floor(ROT/360)*360, target=base+360*5+(360-idx*SEG);
   ROT=target;
   var d=$('disc'), g=$('goBtn');
   if(d) d.style.transform='rotate('+target+'deg)';
-  if(g){ g.style.opacity=.5; $('goU').textContent='…'; }
+  if(g){ g.style.opacity=.5; }
   setTimeout(function(){
     SPIN=false;
-    if(ST.daily>0) ST.daily--; else if(ST.pInvite>0) ST.pInvite--;
-    var prize=PRIZES[idx], msg='';
-    if(prize.d>0){ ST.vip+=prize.d; ST.last=prize.n; msg='抽中 <b>'+prize.n+'</b> · 会员已到账'; }
-    else if(prize.again){ if(ST.daily>=0) ST.daily+=1; ST.last='再来一次'; msg='<b>再来一次</b> · 次数已回补'; }
-    else { ST.last='谢谢参与'; msg='<b>谢谢参与</b> · 明天再来'; }
+    ST[usePool]=Math.max(0,ST[usePool]-1);
+    var prize=PRIZES[idx], msg='', plain='';
+    if(prize.d>0){
+      addVip(prize.d); ST.last=prize.n;
+      msg='抽中 <b>'+prize.n+'</b> · 会员已到账'; plain='抽中 '+prize.n+' · 会员已到账';
+    } else if(prize.again){
+      ST[usePool]+=1; ST.last='再来一次';
+      msg='<b>再来一次</b> · 次数已回补'; plain='再来一次 · 次数已回补';
+    } else {
+      ST.last='谢谢参与'; msg='<b>谢谢参与</b> · 明天再来'; plain='谢谢参与 · 明天再来';
+    }
     save();
-    var res=$('ltRes'); var pp=pools();
-    if(res) res.innerHTML=msg+'<div class="sub" style="padding-top:3px">还剩 '+pp.total+' 次（当天 '+pp.d+' · 攒着 '+pp.p+'）</div>';
-    if($('goU')) $('goU').textContent=(pp.total>0?('剩 '+pp.total):'没次数了');
-    if(g) g.style.opacity=(pp.total>0?1:.55);
-    S.sendTheme();
+    var pp=pools();
+    if(sheetKind==='lottery'){
+      var res=$('ltRes');
+      if(res) res.innerHTML=msg+'<div class="sub" style="padding-top:3px">还剩 '+pp.total+' 次（当天 '+pp.d+' · 攒着 '+pp.p+'）</div>';
+      if($('goU')) $('goU').textContent=(pp.total>0?('剩 '+pp.total):'没次数了');
+      if(g) g.style.opacity=(pp.total>0?1:.55);
+    } else {
+      toast(plain);
+    }
+    sendTheme();
   },2470);
 };
+S.tipOff=function(){ toast(ST.act.off||'活动暂时关闭'); };
 
 /* ---------- 邀请 ---------- */
 function inviteHtml(){
@@ -618,17 +765,20 @@ function inviteHtml(){
     '<div class="card"><div class="row"><span>已邀请</span><b>'+ST.invite+' 人</b></div><div class="hr"></div>'+
     '<div class="row"><span>攒着的抽奖次数</span><b>'+ST.pInvite+' 次</b></div></div>'+
     '<button class="btn" onclick="S.simInvite()">模拟：一个朋友注册成功</button>'+
-    '<div class="hint">真机接后台后，注册回调里给邀请人 +1（写入 supabase 的 invites 表），再同步到这里的累积池。</div>';
+    '<div class="hint">真机接后台后，注册回调里给邀请人 +1（写入 invites 表），再同步到这里的累积池。</div>';
 }
 S.copyInvite=function(){
-  var link=location.origin+location.pathname+'?ref='+ST.invCode;
-  try{ navigator.clipboard.writeText(link); toast('邀请链接已复制'); }
-  catch(e){ toast('链接：'+link); }
+  /* 用 hash 携带邀请码：线上 CDN 302 会丢 query，fragment 则保留 */
+  var link=location.origin+location.pathname+'#ref='+ST.invCode;
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(link); toast('邀请链接已复制'); }
+    else toast('链接：'+link);
+  }catch(e){ toast('链接：'+link); }
 };
 S.simInvite=function(){
   ST.invite++; ST.pInvite++; save(); openSheet('invite');
   toast('邀请成功 · 累积抽奖 +1 次');
-  S.sendTheme();
+  sendTheme();
 };
 
 /* ---------- 卡密 ---------- */
@@ -637,22 +787,24 @@ S.redeem=function(){
   var m=v.match(/FZ-(\d{1,2})-?/);
   if(!m||v.replace(/\s/g,'').length<8){ toast('卡密格式不对'); return; }
   var days=parseInt(m[1],10)||7;
-  ST.vip+=days;
-  var d=new Date(); d.setDate(d.getDate()+ST.vip);
-  ST.vipUntil=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
-  save(); closeSheet(); toast('兑换成功 · 会员 +'+days+' 天'); openSheet('me'); S.sendTheme();
+  addVip(days);
+  save(); closeSheet(); toast('兑换成功 · 会员 +'+days+' 天'); openSheet('me'); sendTheme();
 };
 
 /* ---------- 客服 ---------- */
 S.sendMsg=function(){
   var i=$('cin'), v=(i&&i.value||'').trim(); if(!v) return;
+  i.value='';
   ST.chat.push({me:true,t:v}); save(); openSheet('chat');
-  setTimeout(function(){ ST.chat.push({t:'收到～这条我记下了，管理员会在后台「反馈」里回复你。'}); save(); if(sheetKind==='chat') openSheet('chat'); },780);
+  setTimeout(function(){
+    ST.chat.push({t:'收到～这条我记下了，管理员会在后台「反馈」里回复你。'}); save();
+    if(sheetKind==='chat') openSheet('chat');
+  },780);
 };
 
 /* ---------- 主题 ---------- */
 S.setTheme=function(k,v){
-  ST.theme[k]=v; save(); S.sendTheme(); openSheet('theme');
+  ST.theme[k]=v; save(); sendTheme(); openSheet('theme');
   toast(k==='fz'?('字号已设为 '+v+'%，已下发到科目'):(v?'已切到夜间':'已切回日间'));
 };
 
@@ -666,6 +818,8 @@ S.checkVer=function(){
   }).catch(function(){ toast('已是最新 v'+ST.ver); });
 };
 
+window.S=S;
+window.__ST=ST; window.__FR=FR;
 })();
 
 </script>
