@@ -28,8 +28,8 @@ jobs:
           mkdir -p packs
           curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/ecyDYfWqHR"
           curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Uklx9QVGnm"
-          curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/i51mAgFSFE"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/wr9IFo9eKA"
+          curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/WRTy6O1gvO"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/LXTPcBuL2e"
           ls -l packs
       - name: 本地化路径
         run: |
@@ -38,7 +38,7 @@ jobs:
           s = io.open('index_raw.html', encoding='utf-8').read()
           s = s.replace('https://aka.doubaocdn.com/s/ecyDYfWqHR', 'packs/fz.html')
           s = s.replace('https://aka.doubaocdn.com/s/Uklx9QVGnm', 'packs/zz.html')
-          s = s.replace('https://aka.doubaocdn.com/s/i51mAgFSFE', 'packs/en.html')
+          s = s.replace('https://aka.doubaocdn.com/s/WRTy6O1gvO', 'packs/en.html')
           io.open('index.html', 'w', encoding='utf-8').write(s)
           io.open('shell.html', 'w', encoding='utf-8').write(s)
           print('index bytes', len(s))
