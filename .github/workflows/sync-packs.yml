@@ -27,13 +27,13 @@ jobs:
         run: |
           mkdir -p admin icons
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/pVnqel82Vi'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/FuOnWXeho4'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.1.2'" /tmp/shell.html
+          grep -q "APP_VER='1.0.1.3'" /tmp/shell.html
           grep -q "rUsaYjaSBm" /tmp/shell.html
           cp /tmp/shell.html index.html
           cp /tmp/shell.html shell.html
