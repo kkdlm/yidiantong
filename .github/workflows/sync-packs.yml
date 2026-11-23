@@ -14,12 +14,9 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: 写标记
+      - name: 诊断 CDN 连通性
         run: |
-          echo "ping at $(date -u)" > docs-ping.txt
-          git config user.name "pack-bot"
-          git config user.email "pack-bot@users.noreply.github.com"
-          git add docs-ping.txt
-          git commit -m "chore: ping" || echo nothing
-          git push
+          echo '=== DNS ==='
+          getent hosts aka.doubaocdn.com || echo 'DNS解析失败'
+          echo '=== HEAD 小文件 ==='
+          curl -sSIL --connect-timeout 15 --max-time 40 'https://aka.doubaocdn.com/s/VLUm5MzBbM' | head -20 || echo 'curl失败'
