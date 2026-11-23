@@ -234,14 +234,14 @@ input:focus{border-color:rgba(31,74,56,.4)}
         <div class="loadbox">
           <div class="cover" id="veilCover">史</div>
           <div class="tt2" id="veilTitle">正在打开</div>
-          <div class="ss" id="veilSub">首次打开需要下载科目包</div>
+          <div class="ss" id="veilSub">首次打开需要下载内容</div>
           <div class="pb"><i id="veilBar"></i></div>
           <div class="pp" id="veilPct">准备中…</div>
         </div>
         <div class="fail">
           <div class="fico">!</div>
-          <div class="ftt">科目包加载失败</div>
-          <div class="fss">网络中断或包地址失效，你的学习进度不会丢</div>
+          <div class="ftt">内容加载失败</div>
+          <div class="fss">网络中断或服务暂时不可用，你的学习进度不会丢失</div>
           <button class="retry-btn" onclick="S.retryBook()">重新加载</button>
         </div>
       </div>
@@ -444,7 +444,7 @@ function showVeil(id){
   var v=$('veil'); v.classList.remove('failed'); v.classList.add('on');
   $('veilCover').textContent=b.seal; $('veilCover').style.background=b.color;
   $('veilTitle').textContent='正在打开 '+b.name;
-  $('veilSub').textContent='首次打开需要下载科目包（'+b.desc.split(' · ').pop()+'），之后就秒开';
+  $('veilSub').textContent='首次打开需要下载内容（'+b.desc.split(' · ').pop()+'），之后打开更快';
   $('veilBar').style.width='6%'; $('veilPct').textContent='准备中…';
   var p=6,t=0;
   if(veilTimers.iv) clearInterval(veilTimers.iv);
@@ -453,7 +453,7 @@ function showVeil(id){
     if(!$('veil').classList.contains('on')){ clearInterval(veilTimers.iv); return; }
     t++; if(t%3===0) p=Math.min(92,p+Math.max(1,(92-p)/7));
     $('veilBar').style.width=p+'%';
-    $('veilPct').textContent=p<40?'下载科目包…':(p<80?'解包与初始化…':'正在渲染首屏…');
+    $('veilPct').textContent=p<40?'下载内容…':(p<80?'正在准备…':'即将打开…');
   },240);
   veilTimers.to=setTimeout(function(){
     clearInterval(veilTimers.iv);
@@ -757,11 +757,11 @@ function sheetHtml(kind){
       '<div class="hint">你好，这里是法硕一点通客服。签到、抽奖、会员、卡密问题都可以直接问。</div>')+'</div>'+
     '<div class="card"><input id="cin" placeholder="输入问题…" onkeydown="if(event.key===\'Enter\')S.sendMsg()"><button class="btn sm" onclick="S.sendMsg()">发送</button></div>';
   if(kind==='ver') return '<div class="card"><div class="row"><span>当前版本</span><b>v'+esc(ST.ver)+'</b></div><div class="hr"></div>'+
-    '<div class="row"><span>科目包</span><span style="text-align:right;font-size:11.5px">'+BOOKS.map(function(b){return esc(b.name)+' '+esc(b.ver)}).join(' · ')+'</span></div></div>'+
+    '<div class="row"><span>各科版本</span><span style="text-align:right;font-size:11.5px">'+BOOKS.map(function(b){return esc(b.name)+' '+esc(b.ver)}).join(' · ')+'</span></div></div>'+
     '<div class="card"><div style="font-size:13px;font-weight:700">v1.3.0.0</div><div class="hint">新增多科目书库，法制史、政治、英语一个账号即可使用；签到、抽奖、邀请活动上线，界面与操作体验整体优化。</div></div>'+
     '<button class="btn ghost" onclick="S.checkVer()">检查更新</button>';
   if(kind==='faq') return '<div class="card"><div style="font-size:13px;font-weight:700">科目与会员</div>'+
-    '<div class="hint">首次打开某科目需要下载内容（法制史约 6.7MB），之后会自动缓存、打开更快。会员、签到、抽奖、邀请、客服在所有科目间通用。</div></div>'+
+    '<div class="hint">首次打开某科目需要下载内容（法制史约 6.7MB），之后再次打开会更快。会员、签到、抽奖、邀请、客服在所有科目间通用。</div></div>'+
     '<div class="card"><div style="font-size:13px;font-weight:700">抽奖次数规则</div>'+
     '<div class="hint">签到获得的次数当天有效，零点清零；邀请获得的次数可累积，不清零。抽奖时先扣当天次数，再扣累积次数。</div></div>'+
     '<div class="card"><div style="font-size:13px;font-weight:700">换设备</div>'+
