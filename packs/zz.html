@@ -4518,9 +4518,9 @@ html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0;cursor:pointer}
 html.shell #shellBack svg{width:19px;height:19px}
 html.shell #shellBack:active{transform:scale(.92)}
-/* 底部学习导航：统一品牌米黄采样色（iOS 26 边缘取色不再回退白），毛玻璃一致 */
-html.shell nav.nav{background-color:rgba(245,241,230,.84)!important;
-  backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4)}
+/* 底部学习导航：不透明连续背景（含安全区），品牌米黄采样色，iOS 26 不回退白、无空白感 */
+html.shell nav.nav{background-color:#F1ECE1!important;
+  backdrop-filter:none;-webkit-backdrop-filter:none}
 /* 顶部设置入口：fz 底部导航已有“我的”，隐藏齿轮；zz 底部导航无“我的”，
    保留齿轮作为进入壳「我的」的入口（openSettings 已桥接 askMe） */
 

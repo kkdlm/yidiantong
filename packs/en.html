@@ -3264,9 +3264,9 @@ input,textarea{font:inherit;color:inherit}
    不隐藏 nav、不改 body 留白，沿用源文件安全区，独立打开行为一致 */
 /* 嵌入态隐藏英语单科「已更新至 v1.3.10」横幅，版本统一由壳管理 */
 html.shell #verbar{display:none!important}
-/* 底部导航：统一品牌米黄采样色（根治近白 #FFFCF7），补毛玻璃原生质感 */
-html.shell .nav{background-color:rgba(245,241,230,.92)!important;
-  backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3)}
+/* 底部导航：不透明连续背景（含安全区），品牌米黄采样色，根治近白与空白感 */
+html.shell .nav{background-color:#F1ECE1!important;
+  backdrop-filter:none;-webkit-backdrop-filter:none}
 /* 壳内返回键：悬浮在英语包顶栏左侧，标题右移避让 */
 html.shell .hd{padding-left:54px!important}
 html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 10px);
