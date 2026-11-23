@@ -67,28 +67,40 @@ jobs:
         run: |
           git fetch origin main
           git checkout -B main origin/main
-      - name: 查询 Pages 状态
+      - name: 启用 GitHub Pages（workflow 源）
         run: |
           mkdir -p docs
-          curl -s -H "Authorization: Bearer ${{ github.token }}" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pages" > docs/pages-api.json || true
-          head -c 600 docs/pages-api.json
+          code=$(curl -s -o /tmp/pg_create.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"build_type":"workflow"}')
+          echo "POST /pages HTTP=$code"
+          head -c 500 /tmp/pg_create.json; echo
+          if [ "$code" != "201" ] && [ "$code" != "200" ]; then
+            echo "尝试 PUT 切换为 workflow 源"
+            curl -s -X PUT \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/pages" \
+              -d '{"build_type":"workflow"}' | head -c 400
+            echo
+          fi
+          cp /tmp/pg_create.json docs/pages-api.json || true
+          sleep 4
       - uses: actions/configure-pages@v5
-        continue-on-error: true
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
-        continue-on-error: true
       - name: 记录部署结果
         if: always()
         run: |
+          sleep 5
           code=$(curl -s -o /tmp/pg.html -w "%{http_code}" "https://kkdlm.github.io/yidiantong/" || echo 000)
-          printf '{\n  "checked_at": "%s",\n  "http_code": %s,\n  "deploy_outcome": "%s",\n  "page_url": "%s"\n}\n' \
-            "$(date -u +%Y-%m-%dT%H:%M:%S)""$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
+          printf '{\n  "checked_at": "%s",\n  "http_code": "%s",\n  "deploy_outcome": "%s",\n  "page_url": "%s"\n}\n' \
+            "$(date -u +%Y-%m-%dT%H:%M:%S)" "$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
           cat docs/deploy-status.json
           git config user.name "pack-bot"
           git config user.email "pack-bot@users.noreply.github.com"
