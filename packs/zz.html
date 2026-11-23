@@ -4506,9 +4506,8 @@ if('serviceWorker' in navigator){
 </script>
 
 <style id="shellCSS">
-html.shell nav.nav{display:none!important}
-html.shell .view{padding-bottom:4px!important}
-html.shell .totop{bottom:16px!important}
+/* 保留包内原生底部学习导航（总览/速览/背诵/专题/刷题），仅“我的”收敛到壳；
+   不隐藏 nav、不改 view 留白、totop 沿用源文件避让值，独立打开行为完全一致 */
 /* 壳内返回键：悬浮在包顶栏左侧，顶栏内容右移避让，视觉融入包内 */
 html.shell .topbar .wrap{padding-left:54px!important}
 html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 8px);
@@ -4519,8 +4518,9 @@ html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0;cursor:pointer}
 html.shell #shellBack svg{width:19px;height:19px}
 html.shell #shellBack:active{transform:scale(.92)}
-/* 嵌入态隐藏书内独立设置入口，设置统一由壳「我的」管理 */
-html.shell .icon-btn{display:none!important}
+/* 顶部设置入口：fz 底部导航已有“我的”，隐藏齿轮；zz 底部导航无“我的”，
+   保留齿轮作为进入壳「我的」的入口（openSettings 已桥接 askMe） */
+
 </style>
 <script id="shellProto">
 /* 壳协议：被主程序嵌入时生效，独立打开完全不受影响 */

@@ -3260,8 +3260,8 @@ input,textarea{font:inherit;color:inherit}
 </script>
 
 <style id="packShellCSS">
-html.shell .nav{display:none!important}
-html.shell body{padding-bottom:74px!important}
+/* 保留英语包原生底部导航（今日/词库/测试/我的），“我的”点击已拦截到壳；
+   不隐藏 nav、不改 body 留白，沿用源文件安全区，独立打开行为一致 */
 /* 嵌入态隐藏英语单科「已更新至 v1.3.10」横幅，版本统一由壳管理 */
 html.shell #verbar{display:none!important}
 /* 壳内返回键：悬浮在英语包顶栏左侧，标题右移避让 */

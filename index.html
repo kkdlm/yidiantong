@@ -15,21 +15,25 @@
 <meta name="apple-mobile-web-app-title" content="法硕一点通">
 <style>
 :root{
-  --ink:#211D17; --ink2:#464034; --ink3:#857E70; --ink4:#A8A193;
-  --green:#1E4A37; --green2:#2C5C45; --green3:#3A6E54; --red:#A8432F; --red2:#BE5740;
-  --gold:#BE9B57; --gold2:#D4B87C;
-  --paper:#F5F1E6; --paper2:#EFE9DA; --card:#FFFDF7; --card2:#FBF7EC;
-  --line:rgba(33,29,23,.08); --line2:rgba(33,29,23,.12);
-  --r-sm:10px; --r-md:14px; --r-lg:18px; --r-xl:22px;
-  --sh-sm:0 1px 2px rgba(30,26,18,.05),0 2px 8px rgba(30,26,18,.05);
-  --sh-md:0 2px 6px rgba(30,26,18,.05),0 10px 28px rgba(30,26,18,.08);
-  --sh-lg:0 8px 20px rgba(30,26,18,.10),0 24px 60px rgba(30,26,18,.14);
-  --hdr:54px; --foot:60px; --maxw:640px;
+  --ink:#1E1A14; --ink2:#423C31; --ink3:#7A7365; --ink4:#A39C8E;
+  --green:#1C4735; --green2:#27563F; --green3:#356850; --red:#A2402C; --red2:#BC543D;
+  --gold:#B89451; --gold2:#D2B578;
+  --paper:#F4F0E5; --paper2:#ECE6D6; --card:#FFFFFF; --card2:#FAF6EC;
+  --line:rgba(30,26,18,.07); --line2:rgba(30,26,18,.11);
+  --r-sm:12px; --r-md:16px; --r-lg:18px; --r-xl:24px;
+  --sh-sm:0 1px 2px rgba(28,24,16,.05),0 2px 6px rgba(28,24,16,.04);
+  --sh-md:0 2px 4px rgba(28,24,16,.04),0 8px 20px rgba(28,24,16,.08);
+  --sh-lg:0 8px 16px rgba(28,24,16,.08),0 20px 48px rgba(28,24,16,.14);
+  --hdr:54px; --foot:62px; --maxw:640px;
   --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{margin:0;background:linear-gradient(180deg,#F7F3EA 0%,var(--paper) 38%,var(--paper2) 100%);
+/* iOS 26 透明根背景会回退成白色：html/body 显式声明不透明纯色，供 Safari 工具栏/安全区采样；
+   渐变作为 background-image 叠加，纯色始终兜底 */
+html{background-color:#F5F1E6}
+body{margin:0;background-color:#F5F1E6;
+  background-image:linear-gradient(180deg,#F7F3EA 0%,var(--paper) 38%,var(--paper2) 100%);
   background-attachment:fixed;color:var(--ink);
   font:14px/1.5 -apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
   overscroll-behavior:none}
@@ -82,10 +86,10 @@ body.inbook .reader{top:0}
 .sub{color:var(--ink3);font-size:12px;line-height:1.6}
 .rule{display:flex;align-items:center;gap:8px;margin:16px 0 9px;color:var(--ink3);font-size:11.5px;letter-spacing:.6px}
 .rule:after{content:'';flex:1;height:1px;background:var(--line)}
-.bk{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);
-  border-radius:var(--r-lg);padding:13px 14px;margin-bottom:11px;position:relative;overflow:hidden;
-  box-shadow:var(--sh-sm);transition:transform .12s,box-shadow .2s}
-.bk:active{transform:scale(.985);box-shadow:var(--sh-md)}
+.bk{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid transparent;
+  border-radius:var(--r-lg);padding:14px 15px;margin-bottom:12px;position:relative;overflow:hidden;
+  box-shadow:var(--sh-md);transition:transform .14s,box-shadow .22s}
+.bk:active{transform:scale(.982);box-shadow:var(--sh-lg)}
 .bk .last{font-style:normal;font-size:10px;color:#8A6E3C;background:rgba(190,155,87,.16);
   border:1px solid rgba(190,155,87,.32);border-radius:6px;padding:1px 6px;margin-left:7px;letter-spacing:.3px}
 .bk .spine{width:46px;height:60px;border-radius:7px;display:grid;place-items:center;flex:0 0 auto;
@@ -103,10 +107,10 @@ body.inbook .reader{top:0}
 .bk .go.soon{background:#ECE5D4;color:#8C8578;box-shadow:none}
 .bk .badge{position:absolute;right:10px;top:7px;font-size:10px;color:var(--red);border:1px solid rgba(168,67,47,.3);
   border-radius:6px;padding:1px 5px;background:rgba(168,67,47,.06)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px;
-  margin-bottom:11px;box-shadow:var(--sh-sm)}
-.card.tappable{cursor:pointer;transition:transform .12s,box-shadow .2s}
-.card.tappable:active{transform:scale(.985);box-shadow:var(--sh-md)}
+.card{background:var(--card);border:1px solid transparent;border-radius:var(--r-lg);padding:15px;
+  margin-bottom:12px;box-shadow:var(--sh-md)}
+.card.tappable{cursor:pointer;transition:transform .14s,box-shadow .22s}
+.card.tappable:active{transform:scale(.982);box-shadow:var(--sh-lg)}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0}
 .row b{font-weight:600}
 .row .chev{color:var(--ink4);display:flex}
@@ -139,8 +143,8 @@ body.inbook .reader{top:0}
 .btn.sm{padding:10px;font-size:12.5px}
 .foot{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--foot) + var(--safe-b));
   padding-bottom:var(--safe-b);display:flex;align-items:stretch;
-  background:rgba(245,241,230,.86);border-top:1px solid var(--line);
-  backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px)}
+  background:rgba(244,240,229,.76);border-top:1px solid rgba(30,26,18,.05);
+  backdrop-filter:saturate(1.8) blur(22px);-webkit-backdrop-filter:saturate(1.8) blur(22px)}
 .foot a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   color:var(--ink3);text-decoration:none;font-size:10.5px;letter-spacing:.5px;position:relative;cursor:pointer;
   transition:color .15s,transform .1s;-webkit-user-select:none;user-select:none}
@@ -150,8 +154,8 @@ body.inbook .reader{top:0}
 .foot a.on{color:var(--green);font-weight:600}
 .foot a.on .g{color:var(--green)}
 .mask{position:fixed;inset:0;background:rgba(28,25,19,.44);backdrop-filter:blur(3px);
-  z-index:60;opacity:0;pointer-events:none;transition:opacity .25s}
-.mask.on{opacity:1;pointer-events:auto}
+  z-index:60;display:none;opacity:0;pointer-events:none;transition:opacity .25s}
+.mask.on{display:block;opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:70;max-height:92vh;display:flex;flex-direction:column;
   background:linear-gradient(180deg,#FAF7EF,var(--paper));border-radius:var(--r-xl) var(--r-xl) 0 0;
   transform:translateY(101%);transition:transform .32s cubic-bezier(.22,.9,.3,1);
@@ -327,11 +331,11 @@ function tabIcon(id,fill){ return ic(TAB_ICON[id]||'question',fill); }
 
 var LS='yidiantong.shell.v1';
 var BOOKS=[
-  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/zrhw2Iqnjh',ver:'1.0.0.0',
+  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/kcTV23m0j3',ver:'1.0.0.0',
    desc:'169 考点 · 3561 条 · 6.70 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/VLUm5MzBbM',ver:'1.0.0.0',
+  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/FUL6CUZJAV',ver:'1.0.0.0',
    desc:'100 考点 · 596 题 · 1.12 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/xBWsG9D9IY',ver:'1.0.0.0',
+  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/gOcPrpcjdA',ver:'1.0.0.0',
    desc:'132 短语 · 六大方面 · 图表词汇 + SRS',tabs:[{id:'today',n:'今日'},{id:'words',n:'词库'},{id:'drill',n:'测试'}]}
 ];
 
@@ -523,7 +527,7 @@ function libHtml(){
   return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 已开放 3 科 · 会员全科通用</div>'+
     '<div style="margin-top:12px">'+rows+'</div>'+
     (last&&!last.soon?('<div class="card tappable"><div class="row" style="padding:0" onclick="S.open(\''+last.id+'\')"><span style="font-size:12.5px;color:var(--ink3)">继续上次</span><span class="lt" style="gap:7px"><b style="font-size:13.5px">'+esc(last.name)+(ST.lastTab?' · '+esc(ST.lastTab):'')+'</b><span class="chev">'+ic('caret-right')+'</span></span></div></div>'):'')+
-    '<div class="card" style="background:rgba(30,74,55,.05);border-color:rgba(30,74,55,.14)">'+
+    '<div class="card" style="background:rgba(28,71,53,.06);border-color:transparent">'+
       '<div style="font-size:12.5px;font-weight:600;color:var(--green)">一个账号，全科通用</div>'+
       '<div class="hint" style="margin-top:5px">会员、签到、抽奖、邀请、客服在所有科目间通用，无需重复开通。</div></div>';
 }
