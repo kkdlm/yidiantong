@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-fs="m">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta id="metaTheme" name="theme-color" content="#F2ECDD">
+<title>英语大作文 · 背诵</title>
+<style>
+:root{
+  --fs:1;
+  --ink:#2A2620;--ink2:#4A4438;--ink3:#7C766A;
+  --green:#1F4A38;--green2:#2C5A44;--red:#A8432F;--gold:#C8A96A;
+  --paper:#F7F4EA;--card:#FFFDF6;--line:rgba(0,0,0,.075);
+}
+html[data-fs="s"]{--fs:.94}
+html[data-fs="l"]{--fs:1.09}
+html[data-theme="night"]{
+  --ink:#EDE8DA;--ink2:#D6CFBE;--ink3:#9E9684;--paper:#14110D;--card:#1D1A14;
+  --line:rgba(255,255,255,.10);--green:#8FBF9F;--green2:#A9D2B6;--red:#D98C78;--gold:#C8A96A;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--ink);font-size:calc(14px * var(--fs));
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB',sans-serif;
+  -webkit-font-smoothing:antialiased;padding-bottom:10px}
+a{color:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 12px}
+.view{display:none;padding:12px 0 20px}
+.view.on{display:block}
+.h1{font:700 calc(19px * var(--fs))/1.25 'Songti SC','STSong',serif;margin:4px 0 3px}
+.sub{color:var(--ink3);font-size:calc(12px * var(--fs));line-height:1.65}
+.card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0}
+.row b{font-weight:600}
+.hr{height:1px;background:var(--line);margin:2px 0}
+.bar{height:6px;border-radius:6px;background:rgba(31,74,56,.14);overflow:hidden;margin:8px 0 2px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:6px;transition:width .45s}
+.pill{font-size:calc(11px * var(--fs));color:var(--green);background:rgba(31,74,56,.09);border-radius:20px;padding:3px 9px}
+.btn{width:100%;border:0;border-radius:11px;padding:11px;background:var(--green);color:#F4EFE2;
+  font-size:calc(13.5px * var(--fs));font-weight:600;margin-top:8px}
+.btn.ghost{background:transparent;color:var(--green);border:1px solid rgba(31,74,56,.3)}
+.btn.sm{padding:8px;font-size:calc(12px * var(--fs))}
+.en{font-family:'Georgia','Times New Roman',serif;font-size:calc(14.5px * var(--fs));line-height:1.95;letter-spacing:.1px;white-space:pre-line}
+.zh{color:var(--ink3);font-size:calc(12px * var(--fs));line-height:1.8;margin-top:8px;white-space:pre-line}
+.tag{display:inline-block;font-size:calc(10.5px * var(--fs));color:var(--red);border:1px solid rgba(168,67,47,.3);
+  border-radius:6px;padding:1px 6px;background:rgba(168,67,47,.06);margin-bottom:6px}
+.qtag{font-size:calc(10.5px * var(--fs));color:var(--ink3);letter-spacing:.4px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:10px;
+  padding:10px 11px;margin-top:7px;background:rgba(255,255,255,.55);font-size:calc(12.5px * var(--fs));color:var(--ink)}
+.opt.ok{border-color:rgba(31,74,56,.45);background:rgba(31,74,56,.09);font-weight:600}
+.opt.bad{border-color:rgba(168,67,47,.45);background:rgba(168,67,47,.09)}
+input{width:100%;border:1px solid rgba(0,0,0,.14);border-radius:9px;padding:10px;font-size:calc(13px * var(--fs));
+  background:#fff;color:var(--ink);outline:none;font-family:inherit}
+html[data-theme="night"] input{background:#242018;border-color:rgba(255,255,255,.16)}
+.hint{font-size:calc(11.5px * var(--fs));color:var(--ink3);line-height:1.7;margin-top:7px}
+.chap{font:700 calc(13px * var(--fs))/1.4 'Songti SC',serif;color:var(--green);margin:10px 0 4px;letter-spacing:.4px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;height:56px;
+  padding-bottom:env(safe-area-inset-bottom,0px);background:rgba(247,244,234,.985);border-top:1px solid var(--line);
+  backdrop-filter:blur(10px)}
+html[data-theme="night"] .nav{background:rgba(20,17,13,.98)}
+.nav button{flex:1;border:0;background:transparent;color:var(--ink3);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;font-size:calc(11px * var(--fs));position:relative}
+.nav button.on{color:var(--green);font-weight:600}
+.nav button.on:before{content:'';position:absolute;top:0;width:24px;height:2px;border-radius:2px;background:var(--green)}
+.nav button i{font-style:normal;font-size:17px;line-height:1}
+.blank{color:var(--red);border-bottom:1px dashed rgba(168,67,47,.45);padding:0 4px;cursor:pointer;display:inline-block;min-width:58px;text-align:center}
+.blank.on{color:var(--green);border-bottom-color:rgba(31,74,56,.45)}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <section class="view on" id="v-home">
+    <div class="h1">今日计划</div>
+    <div class="sub">图画作文 · 三段式 · 24 条功能句</div>
+
+    <div class="card">
+      <div class="row" style="padding:0"><span style="font-weight:600">背诵进度</span><span class="pill" id="pPill">0 / 24</span></div>
+      <div class="bar"><i id="pBar" style="width:0%"></i></div>
+      <div class="hint">标记「已掌握」即计入进度，进度会同步到主程序的跨科目统计。</div>
+    </div>
+
+    <div class="card">
+      <div class="chap" style="margin-top:0">三段骨架</div>
+      <div class="row"><span>首段 · 描述图画 + 点明寓意</span><b>6 句</b></div>
+      <div class="hr"></div>
+      <div class="row"><span>中段 · 分析原因 / 意义</span><b>9 句</b></div>
+      <div class="hr"></div>
+      <div class="row"><span>末段 · 结论 + 建议</span><b>9 句</b></div>
+      <div class="hint">每段背 2 个开头句 + 1 个收束句，考场上按图换词即可。</div>
+    </div>
+
+    <div class="card">
+      <div class="chap" style="margin-top:0">今日任务</div>
+      <div class="row" onclick="go('recite')"><span>挖空背诵</span><b>8 句 ›</b></div>
+      <div class="hr"></div>
+      <div class="row" onclick="go('browse')"><span>读一遍范文</span><b>160 词 ›</b></div>
+      <div class="hr"></div>
+      <div class="row" onclick="go('quiz')"><span>默写自测</span><b>6 条 ›</b></div>
+    </div>
+
+    <div class="card" style="background:rgba(31,74,56,.05);border-color:rgba(31,74,56,.14)">
+      <div style="font-size:calc(12.5px * var(--fs));font-weight:600;color:var(--green)">用法</div>
+      <div class="hint" style="margin-top:5px">模板句是骨架，不是全文。考试时先用首段句描述图画，再用中段两句展开原因，末段给具体建议。省略号处换成题目里的主体。</div>
+    </div>
+  </section>
+
+  <section class="view" id="v-browse">
+    <div class="h1">范文 · 低头族</div>
+    <div class="sub">图画作文 · 约 160 词 · 中英对照</div>
+    <div class="card">
+      <div class="tag">Reading version</div>
+      <div class="en" id="essay"></div>
+      <div class="hr" style="margin:12px 0"></div>
+      <div class="zh" id="essayZh"></div>
+    </div>
+    <div class="card">
+      <div class="chap" style="margin-top:0">这篇用到的功能句</div>
+      <div class="hint">首段 2 句 + 中段 4 句 + 末段 3 句，全部来自本包「功能句」页。</div>
+      <button class="btn ghost sm" onclick="go('topic')">去看这 9 句</button>
+    </div>
+  </section>
+
+  <section class="view" id="v-recite">
+    <div class="h1">挖空背诵</div>
+    <div class="sub">点红色空格看答案 · 再点「我记住了」</div>
+    <div id="reciteList"></div>
+    <div class="hint" style="text-align:center;padding:6px 0 2px">标记后自动进入「功能句」页的已掌握列表。</div>
+  </section>
+
+  <section class="view" id="v-topic">
+    <div class="h1">功能句 · 24 条</div>
+    <div class="sub">按段落分组 · 点句子可标为已掌握</div>
+    <div id="topicList"></div>
+  </section>
+
+  <section class="view" id="v-quiz">
+    <div class="h1">默写自测</div>
+    <div class="sub">看中文，把空格处的英文写出来</div>
+    <div id="quizBox"></div>
+  </section>
+
+</main>
+
+<nav class="nav">
+  <button class="on" data-v="home" onclick="go('home')"><i>▤</i>总览</button>
+  <button data-v="browse" onclick="go('browse')"><i>▥</i>范文</button>
+  <button data-v="recite" onclick="go('recite')"><i>✎</i>背诵</button>
+  <button data-v="topic" onclick="go('topic')"><i>◷</i>功能句</button>
+  <button data-v="quiz" onclick="go('quiz')"><i>✓</i>默写</button>
+</nav>
+<script>
+var KEY='en2027.v1';
+var LINES=[
+{s:1,en:'It is vividly depicted in the cartoon that ___, which has aroused wide public concern.',b:'a young man is absorbed in his phone',zh:'图画生动地展现了一个年轻人沉浸在手机里，这引起了公众的广泛关注。'},
+{s:1,en:'What the drawing subtly ___ is that face-to-face communication is being eroded.',b:'conveys',zh:'这幅画含蓄传达的是：面对面的交流正在被侵蚀。'},
+{s:1,en:'The cartoonist intends to remind us that ___ deserves our serious attention.',b:'this worrying trend',zh:'漫画作者想提醒我们，这一令人担忧的趋势值得认真关注。'},
+{s:1,en:'A thought-provoking scene is presented in the picture: ___ while others are talking.',b:'one girl keeps staring at the screen',zh:'画面呈现了一个发人深省的场景：别人在交谈，一个女孩却一直盯着屏幕。'},
+{s:1,en:'Behind this seemingly simple image lies ___ that we can hardly ignore.',b:'a social problem',zh:'这幅看似简单的画背后，是一个我们难以忽视的社会问题。'},
+{s:1,en:'This phenomenon mirrors ___ in today\'s society.',b:'a common tendency',zh:'这一现象映照出当今社会的一种普遍倾向。'},
+{s:2,en:'Several factors may ___ this trend.',b:'account for',zh:'多种因素可以解释这一趋势。'},
+{s:2,en:'To begin with, social media provides ___ that makes offline talk seem dull.',b:'instant gratification',zh:'首先，社交媒体提供的即时满足让线下交谈显得乏味。'},
+{s:2,en:'In addition, the convenience of digital tools has weakened ___ to read others\' faces.',b:'our ability',zh:'其次，数字工具的便利削弱了我们读懂他人表情的能力。'},
+{s:2,en:'Last but not least, many people simply ___, believing that silence is safer than speaking.',b:'follow the crowd',zh:'最后同样重要的是，很多人只是随大流，认为沉默比开口更安全。'},
+{s:2,en:'One of the primary reasons is that ___.',b:'young people are under heavy pressure',zh:'主要原因之一是年轻人承受着巨大的压力。'},
+{s:2,en:'What deserves special emphasis is that ___ plays an equally important role.',b:'parental guidance',zh:'尤其需要强调的是，父母的引导同样起着重要作用。'},
+{s:2,en:'A case in point is ___ who talk to each other only through screens.',b:'those families',zh:'一个恰当的例子是那些只通过屏幕交流的家庭。'},
+{s:2,en:'Such a situation, if left unaddressed, may ___ in the long run.',b:'give rise to loneliness',zh:'这种情况若不加以应对，长期看可能引发孤独感。'},
+{s:2,en:'Conversely, real conversation may ___ that no emoji can offer.',b:'bring about warmth',zh:'相反，真实的交谈能带来任何表情符号都给不了的温暖。'},
+{s:3,en:'Therefore, it is high time that we ___ to reverse this trend.',b:'took effective measures',zh:'因此，我们早该采取有效措施扭转这一趋势。'},
+{s:3,en:'Only in this way can we ___ without losing the warmth of human contact.',b:'enjoy the convenience of technology',zh:'只有这样，我们才能在享受技术便利的同时不丢失人际温度。'},
+{s:3,en:'From my perspective, both individuals and society should ___.',b:'shoulder their responsibilities',zh:'在我看来，个人与社会都应承担各自的责任。'},
+{s:3,en:'It is advisable that ___ be encouraged on campus.',b:'face-to-face discussion',zh:'宜在校园中鼓励面对面的讨论。'},
+{s:3,en:'What we should bear in mind is that ___ is not merely a matter of habit.',b:'phone addiction',zh:'我们应牢记，手机成瘾不只是习惯问题。'},
+{s:3,en:'To sum up, ___ is a reflection of what we value most.',b:'the way we communicate',zh:'总之，我们沟通的方式映照出我们最看重的东西。'},
+{s:3,en:'Concrete steps, such as ___, should be taken without delay.',b:'setting phone-free hours',zh:'应毫不拖延地采取具体措施，例如设置无手机时段。'},
+{s:3,en:'I am firmly convinced that ___ will pay off in the long run.',b:'our efforts',zh:'我坚信，我们的努力长期看会有回报。'},
+{s:3,en:'With joint efforts, ___ will surely become a warmer place.',b:'our campus',zh:'在共同努力下，我们的校园必将变得更温暖。'}
+];
+var ESSAY='It is vividly depicted in the cartoon that a group of young people are sitting around a table, each staring at a phone instead of talking to one another. What the drawing subtly conveys is that face-to-face communication is being eroded by excessive reliance on mobile devices.\n\n'+
+'Several factors may account for this trend. To begin with, social media provides instant gratification that makes offline interaction seem tedious. In addition, the convenience of digital tools has gradually weakened our ability to read others\' expressions. Last but not least, many people simply follow the crowd, believing that silence is safer than speaking.\n\n'+
+'Therefore, it is high time that we took effective measures. Individuals should set aside phone-free time for family and friends, and schools may encourage group activities that require real conversation. Only in this way can we enjoy the convenience of technology without losing the warmth of human connection.';
+var ESSAY_ZH='图画生动地展现了一群年轻人围坐一桌，每个人却都盯着手机，而不是彼此交谈。这幅画含蓄传达的是：面对面的交流正被对移动设备的过度依赖所侵蚀。\n\n'+
+'多种因素可以解释这一趋势。首先，社交媒体提供的即时满足让线下互动显得乏味。其次，数字工具的便利逐渐削弱了我们读懂他人表情的能力。最后同样重要的是，很多人只是随大流，认为沉默比开口更安全。\n\n'+
+'因此，我们早该采取有效措施。个人应为家人和朋友留出无手机的时间，学校也可鼓励需要真实对话的集体活动。只有这样，我们才能在享受技术便利的同时，不丢失人际连接的温暖。';
+
+var ST={mastered:[],quizDone:0,quizRight:0,reciteDone:{}};
+try{var raw=localStorage.getItem(KEY); if(raw){var o=JSON.parse(raw); if(o&&o.v)ST=o.v;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({v:ST,saved:new Date().toISOString().slice(0,10)}))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function isDone(i){return ST.mastered.indexOf(i)>=0}
+function mark(i){
+  var k=ST.mastered.indexOf(i);
+  if(k>=0)ST.mastered.splice(k,1);else ST.mastered.push(i);
+  save();paint();pushStat();toast(isDone(i)?'已计入掌握':'已取消掌握');
+}
+function toast(t){
+  var d=document.getElementById('__toast');
+  if(!d){d=document.createElement('div');d.id='__toast';
+    d.style.cssText='position:fixed;left:50%;top:72px;transform:translateX(-50%);background:rgba(42,38,32,.92);color:#F4EFE2;padding:8px 14px;border-radius:20px;font-size:12.5px;z-index:50;opacity:0;transition:opacity .2s';
+    document.body.appendChild(d);}
+  d.textContent=t;d.style.opacity='1';clearTimeout(toast._t);
+  toast._t=setTimeout(function(){d.style.opacity='0'},1400);
+}
+function go(v){
+  var views=document.querySelectorAll('.view');
+  for(var i=0;i<views.length;i++)views[i].classList.toggle('on',views[i].id==='v-'+v);
+  var btns=document.querySelectorAll('.nav a, .nav button');
+  for(var j=0;j<btns.length;j++)btns[j].classList.toggle('on',btns[j].dataset.v===v);
+  window.scrollTo(0,0);
+  if(v==='recite')buildRecite();
+  if(v==='topic')buildTopic();
+  if(v==='quiz'){ if(!Q.length||QN>=Q.length) buildQuiz(); else drawQ(); }
+  try{history.replaceState(null,'','#'+v)}catch(e){}
+}
+function blankHtml(en,b){
+  var parts=String(en).split('___');
+  if(parts.length<2)return esc(en);
+  var out='',i;
+  for(i=0;i<parts.length;i++){
+    out+=esc(parts[i]);
+    if(i<parts.length-1)out+='<span class="blank" onclick="reveal(this)" data-ans="'+esc(b)+'">____</span>';
+  }
+  return out;
+}
+function reveal(el){
+  if(el.classList.contains('on')){el.textContent='____';el.classList.remove('on');}
+  else {el.textContent=el.dataset.ans;el.classList.add('on');}
+}
+
+var RI=0,RIDS=[];
+function buildRecite(){
+  RIDS=[];for(var i=0;i<LINES.length;i++)if(!isDone(i))RIDS.push(i);
+  if(!RIDS.length){document.getElementById('reciteList').innerHTML='<div class="card" style="text-align:center"><div class="chap">24 条全部掌握</div><div class="hint">可以去「默写」页做一次完整自测。</div><button class="btn sm" onclick="go(&#39;quiz&#39;)">去默写</button></div>';return;}
+  RI=(RI+0)%RIDS.length;
+  document.getElementById('reciteList').innerHTML='<div class="card"><div class="qtag">未掌握 '+RIDS.length+' 条 · 第 '+(RI+1)+' 条</div>'+
+    '<div class="en" style="margin-top:8px">'+blankHtml(LINES[RIDS[RI]].en,LINES[RIDS[RI]].b)+'</div>'+
+    '<div class="zh">'+esc(LINES[RIDS[RI]].zh)+'</div>'+
+    '<button class="btn" onclick="reciteNext()">我记住了 · 下一条</button>'+
+    '<button class="btn ghost sm" onclick="go(&#39;topic&#39;)">回到全表</button></div>';
+}
+function reciteNext(){
+  if(RIDS.length){mark(RIDS[RI]);}
+  buildRecite();
+}
+
+function buildTopic(){
+  var html='',seg=[1,2,3],names={1:'首段 · 描述与点题',2:'中段 · 原因与意义',3:'末段 · 结论与建议'};
+  for(var g=0;g<3;g++){
+    var sg=seg[g],n=0;
+    for(var i=0;i<LINES.length;i++)if(LINES[i].s===sg)n++;
+    html+='<div class="chap">'+names[sg]+' · '+n+' 句</div>';
+    for(var k=0;k<LINES.length;k++){
+      if(LINES[k].s!==sg)continue;
+      html+='<div class="card" style="padding:11px">'+
+        '<div class="en">'+esc(LINES[k].en).replace(/___/g,'<span style="color:var(--red);font-style:italic">'+esc(LINES[k].b)+'</span>')+'</div>'+
+        '<div class="zh">'+esc(LINES[k].zh)+'</div>'+
+        '<div class="row" style="padding-bottom:0"><span class="qtag">'+(isDone(k)?'已掌握':'待掌握')+'</span>'+
+        '<button class="btn sm" style="width:auto;margin:0;padding:6px 12px;'+(isDone(k)?'background:rgba(31,74,56,.12);color:var(--green)':'')+'" onclick="mark('+k+');buildTopic()">'+(isDone(k)?'取消':'标为已掌握')+'</button></div></div>';
+    }
+  }
+  document.getElementById('topicList').innerHTML=html;
+}
+
+var Q=[],QN=0,QR=0;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function norm(x){
+  return String(x).toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\b(a|an|the)\b/g,' ').replace(/\s+/g,' ').trim();
+}
+function buildQuiz(){
+  if(Q.length){Q=[];}
+  var all=[];for(var i=0;i<LINES.length;i++)all.push(i);
+  Q=shuffle(all).slice(0,6);QN=0;QR=0;
+  drawQ();
+}
+function drawQ(){
+  if(QN>=Q.length){
+    document.getElementById('quizBox').innerHTML='<div class="card" style="text-align:center">'+
+      '<div class="chap">本轮 '+QR+' / '+Q.length+' 正确</div>'+
+      '<div class="hint">'+(QR>=5?'很稳。考试时按这个节奏换词即可。':QR>=3?'句式已记住大半，重点补开会卡的那两句。':'先把「背诵」页过一遍再来默写。')+'</div>'+
+      '<button class="btn" onclick="buildQuiz()">再来一轮</button></div>';
+    return;
+  }
+  var i=Q[QN];
+  document.getElementById('quizBox').innerHTML='<div class="card">'+
+    '<div class="qtag">第 '+(QN+1)+' / '+Q.length+' 题 · 第'+LINES[i].s+'段</div>'+
+    '<div class="zh" style="color:var(--ink);font-size:calc(13px * var(--fs));margin-top:8px">'+esc(LINES[i].zh)+'</div>'+
+    '<div class="en" style="margin:10px 0 8px">'+blankHtml(LINES[i].en,LINES[i].b)+'</div>'+
+    '<input id="qIn" placeholder="把空格处的英文写出来" autocomplete="off">'+
+    '<div id="qFb" class="hint"></div>'+
+    '<button class="btn" onclick="checkQ()">提交</button>'+
+    '<button class="btn ghost sm" onclick="showAns()">不会 · 看答案</button></div>';
+  var el=document.getElementById('qIn');
+  if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter')checkQ();});
+}
+function checkQ(){
+  var i=Q[QN],v=document.getElementById('qIn').value;
+  var fb=document.getElementById('qFb');
+  if(!v.trim()){fb.textContent='先写一句，或者点「不会」。';return;}
+  var a=norm(LINES[i].b),u=norm(v);
+  var ok=(u===a)||(u.length>=a.length*0.6&&a.indexOf(u)>=0)||(a.length>=u.length*0.6&&u.indexOf(a)>=0);
+  if(ok){QR++;ST.quizRight=(ST.quizRight||0)+1;fb.innerHTML='<span style="color:var(--green);font-weight:600">对了 · '+esc(LINES[i].b)+'</span>';
+    if(!isDone(i)){ST.mastered.push(i);}
+    save();paint();pushStat();setTimeout(nextQ,700);}
+  else{fb.innerHTML='<span style="color:var(--red)">再想想 · 正确答案：'+esc(LINES[i].b)+'</span>';}
+}
+function showAns(){
+  var i=Q[QN],b=LINES[i].b;
+  var sp=document.querySelectorAll('#quizBox .blank');
+  for(var k=0;k<sp.length;k++){sp[k].textContent=b;sp[k].classList.add('on');}
+  document.getElementById('qFb').textContent='答案已显示，记住这句再往下走。';
+}
+function nextQ(){QN++;drawQ();}
+
+/* ---- paint / stats ---- */
+function paint(){
+  var n=ST.mastered.length,t=LINES.length;
+  var pill=document.getElementById('pPill'),bar=document.getElementById('pBar');
+  if(pill)pill.textContent=n+' / '+t;
+  if(bar)bar.style.width=Math.round(n/t*100)+'%';
+}
+function pushStat(){
+  try{
+    if(window.parent===window)return;
+    window.parent.postMessage({src:'pack',t:'stat',pct:Math.round(ST.mastered.length/LINES.length*100),
+      items:{recite:ST.mastered.length,total:LINES.length,due:LINES.length-ST.mastered.length}}, '*');
+  }catch(e){}
+}
+function stats(){return {ok:ST.mastered.length,total:LINES.length,due:LINES.length-ST.mastered.length,fav:0};}
+
+/* ---- theme / fs ---- */
+function setTheme(t){
+  var night=(t==='night'||t==='dark');
+  document.documentElement.dataset.theme=night?'night':'light';
+  var m=document.getElementById('metaTheme');if(m)m.setAttribute('content',night?'#14110D':'#F2ECDD');
+}
+function setFs(f){document.documentElement.dataset.fs=(f==='s'||f==='l')?f:'m';}
+
+/* ---- 默认身份接口（壳会覆写） ---- */
+window.__VIP=false;
+if(typeof window.isVip!=='function')window.isVip=function(){return !!window.__VIP;};
+if(typeof window.blocked!=='function')window.blocked=function(){return false;};
+if(typeof window.authOk!=='function')window.authOk=function(){return true;};
+
+window.addEventListener('load',function(){
+  paint();
+  var h=(location.hash||'').replace('#','');
+  if(h&&document.getElementById('v-'+h))go(h);
+});
+document.getElementById('essay').textContent=ESSAY;
+document.getElementById('essayZh').textContent=ESSAY_ZH;
+window.go=go;window.stats=stats;window.setTheme=setTheme;window.setFs=setFs;
+</script>
+
+<style id="shellCSS">
+html.shell nav.nav{display:none!important}
+html.shell .view{padding-bottom:4px!important}
+html.shell .totop{bottom:16px!important}
+</style>
+<script id="shellProto">
+/* 壳协议：被主程序嵌入时生效，独立打开完全不受影响 */
+(function(){
+  try{
+    if(window.parent===window && !/[?&]shell=1/.test(location.search)) return;
+    document.documentElement.classList.add('shell');
+    var TABS=[{"id": "home", "n": "总览"}, {"id": "browse", "n": "范文"}, {"id": "recite", "n": "背诵"}, {"id": "topic", "n": "功能句"}, {"id": "quiz", "n": "默写"}];
+    function post(m){ try{ parent.postMessage(Object.assign({src:'pack'},m),'*'); }catch(e){} }
+    var _go=(typeof go==='function')?go:null;
+    if(_go){
+      window.go=function(v){
+        if(v==='me'){ post({t:'askMe'}); return; }
+        try{ _go(v); }catch(e){}
+        setTimeout(function(){ post({t:'tab',id:v}); },0);
+      };
+    }
+    function hideGate(){ var g=document.getElementById('gate'); if(g&&!g.hidden){ g.hidden=true; } }
+    hideGate(); setInterval(hideGate, 400);
+    var SHELL_VIP=0;
+    var _isVip=(typeof isVip==='function')?isVip:null;
+    if(_isVip){ window.isVip=function(){ try{ return SHELL_VIP>0?true:_isVip(); }catch(e){ return false; } }; }
+    if(typeof blocked==='function'){ window.blocked=function(){ return false; }; }
+    /* 演示态：没有登录时把 gate 收起，壳层负责身份；真机登录后不触发 */
+    setTimeout(function(){
+      try{
+        if(typeof authOk==='function' && authOk()) return;
+        var g=document.getElementById('gate'); if(g){ g.hidden=true; g.style.display='none'; }
+        post({t:'guest'});
+      }catch(e){}
+    }, 700);
+    window.addEventListener('message',function(e){
+      var d=e.data||{}; if(d.src!=='shell') return;
+      if(d.t==='tab'){ try{ if(_go) _go(d.id); }catch(err){} }
+      else if(d.t==='theme'){
+        try{
+          if(d.vip!==undefined) SHELL_VIP=d.vip||0;
+          if(typeof setTheme==='function') setTheme(d.night?'night':'light');
+          if(typeof setFs==='function') setFs(d.fz>=110?'l':(d.fz<=95?'s':'m'));
+        }catch(err){}
+      }
+    });
+    function stat(){
+      try{
+        if(typeof stats!=='function') return;
+        var st=stats();
+        post({t:'stat', pct: st.total? Math.round((st.ok||0)/st.total*100):0,
+              items:{recite:st.ok||0,total:st.total||0,due:st.due||0}});
+      }catch(e){}
+    }
+    setTimeout(function(){ post({t:'ready',tabs:TABS}); stat(); }, 420);
+    setInterval(stat, 6000);
+  }catch(e){}
+})();
+</script>
+
+</body>
+</html>
