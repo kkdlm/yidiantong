@@ -1,2 +1,18 @@
-probe ran at Mon Nov 23 16:32:24 UTC 2026
-runner: Linux runnervm0hi8g 7.0.0-1020-azure #21-Ubuntu SMP PREEMPT Tue Oct 27 22:34:38 UTC 2026 x86_64 GNU/Linux
+=== CDN diag Mon Nov 23 16:44:25 UTC 2026 ===
+--- DNS ---
+2404:2280:187:0:3::40c aka.doubaocdn.com.230b2a2545cfa773.queniuck.com aka.doubaocdn.com aka.doubaocdn.com.bytedns3.com
+2404:2280:187:0:3::40d aka.doubaocdn.com.230b2a2545cfa773.queniuck.com aka.doubaocdn.com aka.doubaocdn.com.bytedns3.com
+2404:2280:1b7:0:3::63 p3-flow-sign.byteimg.com.230b2a2545cfa773.queniubg.com p3-flow-sign.byteimg.com
+2404:2280:1b7:0:3::62 p3-flow-sign.byteimg.com.230b2a2545cfa773.queniubg.com p3-flow-sign.byteimg.com
+--- 短链重定向（不跟随）---
+short http:302 redirect:https://p3-flow-sign.byteimg.com/tos-cn-i-ik7evvg4ik/rc/pc/super_tool/fbbe8a0b2c464284b8813b3372986d85.html?lk3s=8e244e95&rcl=20261123233641D6AB57CDA4183545CB62&rrcfp=cb23d0ed&x-expires=1796053509&x-signature=E%2FKBDe0%2FptsX45pIcEgihh%2Bv1J4%3D
+--- 各资源完整拉取 ---
+[fz]
+http:200 size:6711939 total:2.372893s start:1.022909s speed:2828588
+<!DOCTYPE html> <html lang="zh-CN" data-theme="light" data-fs="m"> <head> <meta 
+[shell]
+http:200 size:118841 total:2.572602s start:2.087471s speed:46194
+<!DOCTYPE html> <html lang="zh-CN"> <head> <meta charset="utf-8"> <meta name="vi
+[zz]
+http:200 size:1133876 total:2.496231s start:1.443134s speed:454235
+<!DOCTYPE html> <html lang="zh-CN" data-theme="light" data-fs="m"> <head> <meta 
