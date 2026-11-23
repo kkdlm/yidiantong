@@ -1,0 +1,23 @@
+name: probe
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: write marker
+        run: |
+          echo "probe ran at $(date -u)" > probe-marker.txt
+          echo "runner: $(uname -a)" >> probe-marker.txt
+          git config user.name probe
+          git config user.email probe@users.noreply.github.com
+          git add probe-marker.txt
+          git commit -m "probe marker" || echo nothing
+          for i in 1 2 3; do git pull --rebase origin main && break; git rebase --abort 2>/dev/null; sleep 2; done
+          git push origin main || true
