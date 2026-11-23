@@ -1,4 +1,4 @@
-# 沉浸式顶栏 + PWA + 三科统一云端同步（CDN 快速加载版：1.0.0.3 横条/阅读器安全区修复）
+# 沉浸式顶栏 + PWA + 三科统一云端同步（CDN 快速加载版：1.0.0.3 横条/阅读器安全区修复·重试）
 name: sync-packs
 
 on:
@@ -54,6 +54,7 @@ jobs:
           git config user.email 'pack-bot@users.noreply.github.com'
           git add packs admin icons index.html shell.html manifest.webmanifest
           git commit -m 'fix: 1.0.0.3 横条/阅读器安全区（提示条藏净/关闭按钮可点）' || echo nothing
+          git pull --rebase origin main || true
           git push
 
   deploy:
