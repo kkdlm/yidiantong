@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#F7F4EA">
-<title>一点通 · 多科目主程序</title>
+<title>法硕一点通 · 书库</title>
 <style>
 :root{
   --ink:#2A2620; --ink2:#4A4438; --ink3:#7C766A;
@@ -161,7 +161,7 @@ input:focus{border-color:rgba(31,74,56,.4)}
 
 <header class="bar" id="bar">
   <div class="seal" id="barSeal">书</div>
-  <div class="tt" id="barTitle">一点通 · 书库<small id="barSub">2027 法硕非法学</small></div>
+  <div class="tt" id="barTitle">法硕一点通<small id="barSub">2027 法硕非法学 · 一站上岸</small></div>
   <button class="chip" id="verChip" onclick="S.showVer()">v1.3.0.0</button>
   <button class="ico" id="barBack" onclick="S.backToLib()" hidden>‹</button>
 </header>
@@ -318,7 +318,7 @@ function libHtml(){
       '<div class="meta"><b>'+esc(b.name)+badge+'</b><span>'+esc(b.desc)+'</span></div>'+btn+'</div>';
   }).join('');
   var last=book(ST.lastBook);
-  return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 已开放 3 科 · 会员全科通用</div>'+
+  return '<div class="h1">我的书目</div><div class="sub">2027 法硕非法学 · 一站上岸 · 已开放 3 科</div>'+
     '<div style="margin-top:12px">'+rows+'</div>'+
     (last&&!last.soon?('<div class="card"><div class="row" onclick="S.open(\''+last.id+'\')"><span style="font-size:12.5px;color:var(--ink3)">继续上次</span><b>'+esc(last.name)+(ST.lastTab?' · '+esc(ST.lastTab):'')+' ›</b></div></div>'):'')+
     '<div class="card" style="background:rgba(31,74,56,.05);border-color:rgba(31,74,56,.14)">'+
@@ -346,7 +346,7 @@ function render(){
   paintFoot();
   if(ST.view==='book'&&ST.book){ return; }
   $('barSeal').textContent='书'; $('barSeal').className='seal';
-  $('barTitle').innerHTML='一点通 · 书库<small>2027 法硕非法学</small>';
+  $('barTitle').innerHTML='法硕一点通<small>2027 法硕非法学 · 一站上岸</small>';
   $('barBack').hidden=true;
   $('reader').classList.remove('on');
   $('lib').style.display='';
@@ -520,7 +520,7 @@ function sheetHtml(kind){
     (ST.chat.length?ST.chat.map(function(m){return '<div style="margin:6px 0;text-align:'+(m.me?'right':'left')+'">'+
       '<span style="display:inline-block;padding:8px 11px;border-radius:10px;font-size:12.5px;line-height:1.6;'+
       (m.me?'background:rgba(31,74,56,.09);color:var(--green);':'background:#fff;border:1px solid var(--line);')+'">'+esc(m.t)+'</span></div>'}).join(''):
-      '<div class="hint">你好，这里是一点通客服。签到、抽奖、会员、卡密问题都可以直接问。</div>')+'</div>'+
+      '<div class="hint">你好，这里是法硕一点通客服。签到、抽奖、会员、卡密问题都可以直接问。</div>')+'</div>'+
     '<div class="card"><input id="cin" placeholder="输入问题…"><button class="btn sm" onclick="S.sendMsg()">发送</button></div>';
   if(kind==='ver') return '<div class="card"><div class="row"><span>当前版本</span><b>v'+esc(ST.ver)+'</b></div><div class="hr"></div>'+
     '<div class="row"><span>科目包</span><b>'+Object.keys(FR).map(function(k){return esc((book(k)||{}).name)}).join(' / ')+'</b></div></div>'+
