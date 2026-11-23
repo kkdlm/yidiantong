@@ -4509,6 +4509,16 @@ if('serviceWorker' in navigator){
 html.shell nav.nav{display:none!important}
 html.shell .view{padding-bottom:4px!important}
 html.shell .totop{bottom:16px!important}
+/* 壳内返回键：悬浮在包顶栏左侧，顶栏内容右移避让，视觉融入包内 */
+html.shell .topbar .wrap{padding-left:54px!important}
+html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 8px);
+  width:36px;height:36px;border-radius:50%;z-index:60;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--paper,#F5F1E6) 74%,transparent);
+  box-shadow:0 2px 10px rgba(30,26,18,.14);color:var(--ink,#211D17);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0;cursor:pointer}
+html.shell #shellBack svg{width:19px;height:19px}
+html.shell #shellBack:active{transform:scale(.92)}
 </style>
 <script id="shellProto">
 /* 壳协议：被主程序嵌入时生效，独立打开完全不受影响 */
@@ -4518,6 +4528,15 @@ html.shell .totop{bottom:16px!important}
     document.documentElement.classList.add('shell');
     var TABS=[{"id": "home", "n": "总览"}, {"id": "browse", "n": "速览"}, {"id": "recite", "n": "背诵"}, {"id": "topic", "n": "专题"}, {"id": "quiz", "n": "刷题"}];
     function post(m){ try{ parent.postMessage(Object.assign({src:'pack'},m),'*'); }catch(e){} }
+    /* 壳内返回键：挂到包顶栏左侧，点击通知壳回书库 */
+    (function(){
+      var b=document.createElement('button');
+      b.id='shellBack'; b.setAttribute('aria-label','返回书库');
+      b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+      b.onclick=function(){ post({t:'back'}); };
+      function mount(){ (document.body||document.documentElement).appendChild(b); }
+      if(document.body) mount(); else document.addEventListener('DOMContentLoaded',mount);
+    })();
     var _go=(typeof go==='function')?go:null;
     if(_go){
       window.go=function(v){

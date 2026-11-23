@@ -3262,6 +3262,15 @@ input,textarea{font:inherit;color:inherit}
 <style id="packShellCSS">
 html.shell .nav{display:none!important}
 html.shell body{padding-bottom:74px!important}
+/* 壳内返回键：悬浮在英语包顶栏左侧，标题右移避让 */
+html.shell .hd{padding-left:54px!important}
+html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 10px);
+  width:36px;height:36px;border-radius:50%;z-index:60;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,253,247,.78);box-shadow:0 2px 10px rgba(30,26,18,.13);
+  color:#3a352b;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:0;cursor:pointer}
+html.shell #shellBack svg{width:19px;height:19px}
+html.shell #shellBack:active{transform:scale(.92)}
 </style>
 <script id="packBridge">
 (function(){
@@ -3271,6 +3280,15 @@ html.shell body{padding-bottom:74px!important}
   /* 包内 hash → 壳底栏 tab（反向，用于高亮同步） */
   var RMAP={'#/':'today','#/lib':'words','#/test':'drill'};
   function post(m){ try{ if(window.parent!==window) window.parent.postMessage(Object.assign({src:'pack'},m),'*'); }catch(e){} }
+  /* 壳内返回键 */
+  (function(){
+    var b=document.createElement('button');
+    b.id='shellBack'; b.setAttribute('aria-label','返回书库');
+    b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+    b.onclick=function(){ post({t:'back'}); };
+    function mount(){ (document.body||document.documentElement).appendChild(b); }
+    if(document.body) mount(); else document.addEventListener('DOMContentLoaded',mount);
+  })();
   var embedded=(window.parent!==window);
   if(embedded) document.documentElement.classList.add('shell');
   function curTab(){

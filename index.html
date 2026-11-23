@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#F7F4EA">
 <title>法硕一点通 · 书库</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="apple-touch-startup-image" href="icons/apple-splash.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="法硕一点通">
 <style>
 :root{
   --ink:#211D17; --ink2:#464034; --ink3:#857E70; --ink4:#A8A193;
@@ -60,6 +68,11 @@ svg{display:block}
 .chip.on{background:rgba(30,74,55,.09);border-color:rgba(30,74,55,.25);color:var(--green);font-weight:600}
 main{position:fixed;left:0;right:0;top:calc(var(--hdr) + var(--safe-t));bottom:calc(var(--foot) + var(--safe-b));
   overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+/* 书内：壳横条与底栏全部隐去，包界面顶到安全区，返回键由包内原生承载 */
+body.inbook #bar{display:none}
+body.inbook .foot{display:none}
+body.inbook main{top:0;bottom:0;overflow:hidden}
+body.inbook .reader{top:0}
 .page{padding:12px 12px 26px;max-width:var(--maxw);margin:0 auto}
 .reader{position:absolute;inset:0;background:var(--paper);display:none}
 .reader.on{display:block}
@@ -423,10 +436,8 @@ function showFrame(id){
   Object.keys(FR).forEach(function(k){ FR[k].el.classList.add('off'); });
   var rec=ensure(id); if(!rec) return;
   rec.el.classList.remove('off'); rec.use=++seq;
-  /* 沉浸式：科目内不重复显示科目名，只留左返回 + 右版本；包内标题是唯一标题 */
-  $('barSeal').hidden=true; $('barTitle').hidden=true;
-  $('barBack').hidden=false;
-  $('bar').classList.add('bookmode');
+  /* 沉浸式：壳横条整条隐去，包内顶栏成为唯一顶部，返回键融入包内 */
+  document.body.classList.add('inbook');
   $('reader').classList.add('on');
   $('lib').style.display='none';
   evict(id);
@@ -539,6 +550,7 @@ function render(){
   $('barSeal').textContent='书'; $('barSeal').className='seal';
   $('barTitle').innerHTML='法硕一点通<small>2027 法硕非法学 · 一站上岸</small>';
   $('barBack').hidden=true;
+  document.body.classList.remove('inbook');
   $('bar').classList.remove('bookmode');
   $('reader').classList.remove('on');
   $('lib').style.display='';
@@ -631,6 +643,7 @@ window.addEventListener('message',function(e){
     if(ST.view==='study') render();
   }
   else if(d.t==='askMe'){ openSheet('me'); }
+  else if(d.t==='back'){ S.backToLib(); }
   else if(d.t==='tab'){
     if(typeof d.id==='string'&&isTabAllowed(id,d.id)){
       ST.tab=d.id; ST.lastTab=d.id; save(); paintFoot();
