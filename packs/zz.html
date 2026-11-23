@@ -6,17 +6,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F4EEE0" id="metaTheme">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%238E2723'/%3E%3Crect x='5' y='5' width='54' height='54' rx='4' fill='none' stroke='%23E7D6AE' stroke-width='1.6' opacity='.55'/%3E%3Ctext x='32' y='45' font-family='Songti SC,serif' font-size='38' fill='%23FCF4E2' text-anchor='middle'%3E%E6%94%BF%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="167x167" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon.png">
-<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="startup-1290x2796.png">
-<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="startup-1179x2556.png">
-<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="startup-1170x2532.png">
 <title>政治一页纸</title>
 <style id="splash-critical">
 /* 最早解析：弱网下整个文档未下完时先给窗口米色背景，避免白屏；并兜底启动屏与进度条（不依赖后面的变量） */
@@ -4531,6 +4520,14 @@ html.shell nav.nav{background-color:#F1ECE1!important;
   try{
     if(window.parent===window && !/[?&]shell=1/.test(location.search)) return;
     document.documentElement.classList.add('shell');
+    /* 嵌入壳禁用源包 SW：sw.js 未随包发布，注册会 404；离线由壳 PWA 承担 */
+    try{
+      if('serviceWorker' in navigator){
+        var fakeReg={update:function(){return Promise.resolve();},addEventListener:function(){}};
+        navigator.serviceWorker.register=function(){return Promise.resolve(fakeReg);};
+        navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});}).catch(function(){});
+      }
+    }catch(swErr){}
     var TABS=[{"id": "home", "n": "总览"}, {"id": "browse", "n": "速览"}, {"id": "recite", "n": "背诵"}, {"id": "topic", "n": "专题"}, {"id": "quiz", "n": "刷题"}];
     function post(m){ try{ parent.postMessage(Object.assign({src:'pack'},m),'*'); }catch(e){} }
     /* 壳内返回键：挂到包顶栏左侧，点击通知壳回书库 */
@@ -4594,7 +4591,130 @@ html.shell nav.nav{background-color:#F1ECE1!important;
           if(typeof setFs==='function') setFs(d.fz>=110?'l':(d.fz<=95?'s':'m'));
         }catch(err){}
       }
+      else if(d.t==='auth'){ __adoptSession(d.session); }
+      else if(d.t==='cloudPull'){ __doCloudPull(); }
     });
+    
+var SB_URL='https://lbykbafnkhwxqtfuaoio.supabase.co';
+var SB_ANON='sb_publishable_Jo6sLcvuEpRQEbMJ6nnOHQ_sxA_U5nL';
+var ZAUTH=null, ZREV=0, ZSYNCAT=0, ZSYNCING=false, ZPUSH_TIMER=0, ZRETRY=0;
+function __adoptSession(s){ ZAUTH=s||null; if(s) scheduleZPush(); }
+function __doCloudPull(){ zPull(false); }
+function zNowISO(){ return new Date().toISOString(); }
+function zReq(path,opt){
+  opt=opt||{};
+  if(!ZAUTH) return Promise.reject(new Error('未登录'));
+  var h={'apikey':SB_ANON,'Content-Type':'application/json','Authorization':'Bearer '+ZAUTH.access_token};
+  if(opt.prefer) h['Prefer']=opt.prefer;
+  return new Promise(function(resolve,reject){
+    var ctl=new AbortController();
+    var to=setTimeout(function(){ctl.abort();},opt.timeout||20000);
+    fetch(SB_URL+path,{method:opt.method||'GET',headers:h,
+      body:opt.body?JSON.stringify(opt.body):undefined,signal:ctl.signal})
+    .then(function(r){
+      return r.text().then(function(txt){
+        var j=null; try{j=txt?JSON.parse(txt):null;}catch(e){j=txt;}
+        if(!r.ok){
+          if(r.status===401&&!opt.__retry){
+            return new Promise(function(res2){
+              function hh(ev){ var d=ev.data; if(d&&d.src==='shell'&&d.t==='auth'){ window.removeEventListener('message',hh); ZAUTH=d.session; res2(); } }
+              window.addEventListener('message',hh); post({t:'refreshAuth'});
+              setTimeout(function(){window.removeEventListener('message',hh);reject(new Error('登录已过期'));},15000);
+            }).then(function(){ return zReq(path,Object.assign({},opt,{__retry:true})); });
+          }
+          var msg=(j&&(j.msg||j.message||j.error_description))||('HTTP '+r.status);
+          throw new Error(msg);
+        }
+        return j;
+      });
+    }).then(function(v){clearTimeout(to);resolve(v);})
+    .catch(function(e){clearTimeout(to);reject(e);});
+  });
+}
+function zCloudPack(){
+  return {status:S.status,fav:S.fav,due:S.due,seen:S.seen,log:S.log,ient:S.ient,srs:S.srs,
+    notes:S.notes,quizLog:S.quizLog,qwrong:S.qwrong,qdone:S.qdone,today:S.today,last:S.last,goal:S.goal};
+}
+function zApplyCloud(row){
+  var d=(row&&row.data)||{};
+  ['status','fav','due','seen','log','ient','srs','notes','quizLog','qwrong','qdone','today','last','goal'].forEach(function(k){
+    if(d[k]!==undefined) S[k]=d[k];
+  });
+  ZREV=parseInt(row.rev||'0',10)||0;
+  ZSYNCAT=Date.parse(row.updated_at||'')||0;
+  try{ normalizeState(); }catch(e){}
+  save();
+  try{ renderAll(); }catch(e){}
+}
+function scheduleZPush(){
+  if(!ZAUTH) return;
+  clearTimeout(ZPUSH_TIMER);
+  ZPUSH_TIMER=setTimeout(function(){ zPush(false); },2200);
+}
+function zPush(force){
+  if(!ZAUTH){ return Promise.resolve(false); }
+  if(ZSYNCING&&!force) return Promise.resolve(false);
+  ZSYNCING=true;
+  ZREV=ZREV+1;
+  var at=zNowISO();
+  return zReq('/rest/v1/progress',{method:'POST',
+      prefer:'resolution=merge-duplicates,return=minimal',
+      body:{uid:ZAUTH.uid,subject:'zz',data:zCloudPack(),rev:ZREV,updated_at:at}})
+    .then(function(){
+      ZSYNCAT=Date.parse(at); ZRETRY=0; save(); return true;
+    })
+    .catch(function(e){
+      if(ZRETRY<3){ var w=[30,120,300][ZRETRY]*1000; ZRETRY++; setTimeout(function(){zPush(false);},w); }
+      return false;
+    })
+    .then(function(v){ ZSYNCING=false; return v; });
+}
+function zPull(manual){
+  if(!ZAUTH){ return; }
+  zReq('/rest/v1/progress?uid=eq.'+ZAUTH.uid+'&subject=eq.zz&select=*')
+    .then(function(rows){
+      var row=rows&&rows[0];
+      if(!row){ zPush(true); return; }
+      var localHas=Object.keys(S.status||{}).length+Object.keys(S.srs||{}).length+(S.fav||[]).length>0;
+      if(!localHas){ zApplyCloud(row); return; }
+      var cloudTs=Date.parse(row.updated_at||0)||0;
+      if(!ZSYNCAT||cloudTs>ZSYNCAT+60000){ zMerge(row); }
+      else { zPush(true); }
+    })
+    .catch(function(){});
+}
+/* 合并：两边掌握的考点并集，复习排期取更晚；与 fz useBoth 同策略 */
+function zMerge(row){
+  var d=(row&&row.data)||{};
+  ['status','due','seen','ient','notes','quizLog','qdone'].forEach(function(k){
+    S[k]=Object.assign({},(d[k]||{}),(S[k]||{}));
+  });
+  S.fav=Array.from(new Set([].concat(d.fav||[],S.fav||[])));
+  S.qwrong=Array.from(new Set([].concat(d.qwrong||[],S.qwrong||[])));
+  ['srs','log'].forEach(function(k){
+    var a=d[k]||{},b=S[k]||{},o={};
+    Object.keys(a).concat(Object.keys(b)).forEach(function(x){
+      var ad=Number(a[x]&&a[x].d)||Number(a[x])||0, bd=Number(b[x]&&b[x].d)||Number(b[x])||0;
+      o[x]=(bd>=ad)?b[x]:a[x];
+    });
+    S[k]=o;
+  });
+  if(d.today&&!S.today) S.today=d.today;
+  try{ normalizeState(); }catch(e){}
+  save(); renderAll(); zPush(true);
+}
+/* 包装本地 save：每次状态落盘即触发一次防抖云推，无需逐个改触发点 */
+(function(){
+  var _save=window.save;
+  if(typeof _save==='function'){
+    window.save=function(){ var r=_save.apply(this,arguments); scheduleZPush(); return r; };
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'&&ZAUTH){ zPull(false); }
+  });
+  window.addEventListener('online',function(){ if(ZAUTH){ zPush(false); } });
+})();
+
     function stat(){
       try{
         if(typeof stats!=='function') return;
