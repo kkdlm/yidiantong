@@ -1,4 +1,4 @@
-# 法硕一点通 · 拉取 CDN 资源后直接部署（不做 self-push，避免 rebase/冲突）
+# 法硕一点通 · 拉取 CDN 资源后直接部署（带完整诊断，单文件失败不中断）
 name: deploy-site
 
 on:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -22,29 +22,55 @@ jobs:
       - uses: actions/checkout@v4
       - name: 拉取 CDN 资源
         run: |
-          set -x
           mkdir -p packs admin icons
-          pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 300 -o "$1" "$2"; }
-          pullopt(){ curl -fsSL --retry 2 --retry-all-errors --connect-timeout 20 --max-time 120 -o "$1" "$2" || echo "WARN 可选资源失败 $2"; }
-          pull packs/fz.html 'https://aka.doubaocdn.com/s/kk8hf2nljj'
-          pull packs/zz.html 'https://aka.doubaocdn.com/s/QVBGvNu9yZ'
-          pull packs/en.html 'https://aka.doubaocdn.com/s/DbSSFtLR2y'
-          pull /tmp/shell.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw'
-          cp /tmp/shell.html index.html
-          cp /tmp/shell.html shell.html
-          pullopt admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9'
-          pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
-          pullopt icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
-          pullopt icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj'
-          pullopt icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry'
-          pullopt icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR'
-          pullopt icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66'
-          pullopt icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT'
-          pullopt icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH'
-          echo '=== 校验 ==='
-          ls -l packs index.html shell.html
-          grep -c "APP_VER='1.0.0.4'" index.html
-          file packs/*.html | head
+          LOG=deploy-diag.txt
+          echo "deploy diag $(date -u)" > "$LOG"
+          pull(){
+            dst="$1"; url="$2"
+            for n in 1 2 3 4; do
+              if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 480 -o "$dst" "$url"; then
+                echo "OK $dst $(wc -c < "$dst") bytes" >> "$LOG"; return 0
+              fi
+              echo "retry $n for $dst" >> "$LOG"; sleep 4
+            done
+            echo "FAIL $dst $url" >> "$LOG"; return 1
+          }
+          pull packs/fz.html 'https://aka.doubaocdn.com/s/kk8hf2nljj' || true
+          pull packs/zz.html 'https://aka.doubaocdn.com/s/QVBGvNu9yZ' || true
+          pull packs/en.html 'https://aka.doubaocdn.com/s/DbSSFtLR2y' || true
+          pull /tmp/shell.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw' || true
+          if [ -s /tmp/shell.html ]; then
+            cp /tmp/shell.html index.html
+            cp /tmp/shell.html shell.html
+            echo "shell copied" >> "$LOG"
+          else
+            echo "FAIL shell missing, keep existing" >> "$LOG"
+          fi
+          pull admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9' || true
+          pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo' || true
+          pull icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd' || true
+          pull icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj' || true
+          pull icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry' || true
+          pull icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR' || true
+          pull icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66' || true
+          pull icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT' || true
+          pull icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH' || true
+          echo '=== 校验 ===' >> "$LOG"
+          ls -l packs index.html shell.html >> "$LOG" 2>&1
+          echo "--- 关键校验 ---"
+          grep -q "APP_VER='1.0.0.4'" index.html
+          test "$(wc -c < packs/fz.html)" -gt 1000000
+          test "$(wc -c < packs/zz.html)" -gt 100000
+          test "$(wc -c < packs/en.html)" -gt 50000
+          echo "关键文件校验通过"
+      - name: 提交诊断到仓库
+        run: |
+          git config user.name 'pack-bot'
+          git config user.email 'pack-bot@users.noreply.github.com'
+          git add deploy-diag.txt
+          git commit -m 'chore: 部署诊断日志' || echo nothing
+          for i in 1 2 3; do git pull --rebase origin main && break; git rebase --abort 2>/dev/null; sleep 2; done
+          git push origin main || true
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -54,5 +80,5 @@ jobs:
       - name: 回读验证
         if: always()
         run: |
-          sleep 4
+          sleep 5
           curl -s -o /dev/null -w '部署后站点 HTTP:%{http_code}\n' 'https://kkdlm.github.io/yidiantong/' || true
