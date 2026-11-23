@@ -4,10 +4,17 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['.github/workflows/sync-packs.yml']
+    paths:
+      - '.github/workflows/sync-packs.yml'
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   sync:
@@ -23,15 +30,15 @@ jobs:
           curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Uklx9QVGnm"
           curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/i51mAgFSFE"
           curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/U99RVM6lyS"
-          ls -l packs index_raw.html
+          ls -l packs
       - name: 本地化路径
         run: |
           python3 - <<'PY'
           import io
           s = io.open('index_raw.html', encoding='utf-8').read()
-          s = s.replace("https://aka.doubaocdn.com/s/ecyDYfWqHR", "packs/fz.html")
-          s = s.replace("https://aka.doubaocdn.com/s/Uklx9QVGnm", "packs/zz.html")
-          s = s.replace("https://aka.doubaocdn.com/s/i51mAgFSFE", "packs/en.html")
+          s = s.replace('https://aka.doubaocdn.com/s/ecyDYfWqHR', 'packs/fz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/Uklx9QVGnm', 'packs/zz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/i51mAgFSFE', 'packs/en.html')
           io.open('index.html', 'w', encoding='utf-8').write(s)
           io.open('shell.html', 'w', encoding='utf-8').write(s)
           print('index bytes', len(s))
@@ -44,3 +51,26 @@ jobs:
           git add packs index.html shell.html
           git commit -m "chore: 同步三科包与线上壳" || echo "nothing to commit"
           git push
+
+  deploy:
+    needs: sync
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: 更新到最新提交
+        run: |
+          git fetch origin main
+          git checkout -B main origin/main
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
