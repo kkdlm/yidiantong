@@ -1,4 +1,4 @@
-# 法硕一点通 · 单 job 部署（声明 pages 环境，无 git 写操作）
+# 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
 name: deploy-site
 
 on:
@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: pages-final
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build-deploy:
@@ -23,27 +23,34 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: 拉取线上壳与静态资源
+      - name: 拉取线上壳
         run: |
-          pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 25 --max-time 300 -o "$1" "$2"; }
           mkdir -p admin icons
-          pull /tmp/shell.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw'
+          for n in 1 2 3; do
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw'; then
+              echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
+            fi
+            echo "retry $n"; sleep 5
+          done
+          test -s /tmp/shell.html
+          grep -q "APP_VER='1.0.0.4'" /tmp/shell.html
+          grep -q "kk8hf2nljj" /tmp/shell.html
           cp /tmp/shell.html index.html
           cp /tmp/shell.html shell.html
-          pull admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9'
-          pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
-          pull icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
-          pull icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj'
-          pull icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry'
-          pull icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR'
-          pull icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66'
-          pull icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT'
-          pull icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH'
-          echo "=== 校验 ==="
-          ls -l index.html admin icons | head -20
-          grep -c "APP_VER='1.0.0.4'" index.html
-          grep -c "kk8hf2nljj" index.html
-          echo "shell $(wc -c < index.html) bytes"
+          echo "壳校验通过"
+      - name: 更新静态资源（失败保留仓库已有）
+        run: |
+          opt(){ curl -fsSL --connect-timeout 15 --max-time 45 -o "$1" "$2" || echo "warn: 沿用已有 $1"; }
+          opt admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9'
+          opt manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
+          opt icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
+          opt icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj'
+          opt icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry'
+          opt icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR'
+          opt icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66'
+          opt icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT'
+          opt icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH'
+          ls -l index.html admin icons | head -15
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -53,5 +60,5 @@ jobs:
       - name: 回读
         if: always()
         run: |
-          sleep 5
-          curl -s -o /dev/null -w 'site HTTP:%{http_code}\n' 'https://kkdlm.github.io/yidiantong/' || true
+          sleep 6
+          curl -s -o /dev/null -w 'site HTTP:%{http_code}\n' "https://kkdlm.github.io/yidiantong/?cb=$RANDOM" || true
