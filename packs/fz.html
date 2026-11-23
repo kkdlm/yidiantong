@@ -11851,6 +11851,8 @@ html.shell .icon-btn{display:none!important}
     })();
     /* 书内设置统一交给壳「我的」，不再弹独立设置面板 */
     window.openSettings=function(){ post({t:'askMe'}); };
+    /* 包内版本记录同样交给壳，避免显示单科旧版本号 */
+    window.openChangelog=function(){ post({t:'askMe'}); };
     var _go=(typeof go==='function')?go:null;
     if(_go){
       window.go=function(v){

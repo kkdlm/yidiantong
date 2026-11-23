@@ -3262,6 +3262,8 @@ input,textarea{font:inherit;color:inherit}
 <style id="packShellCSS">
 html.shell .nav{display:none!important}
 html.shell body{padding-bottom:74px!important}
+/* 嵌入态隐藏英语单科「已更新至 v1.3.10」横幅，版本统一由壳管理 */
+html.shell #verbar{display:none!important}
 /* 壳内返回键：悬浮在英语包顶栏左侧，标题右移避让 */
 html.shell .hd{padding-left:54px!important}
 html.shell #shellBack{position:fixed;left:10px;top:calc(env(safe-area-inset-top,0px) + 10px);
@@ -3316,6 +3318,8 @@ html.shell #shellBack:active{transform:scale(.92)}
     if(d.t==='tab'){ var h=MAP[d.id]; if(h!==undefined && location.hash!==h) location.hash=h; }
     /* theme 消息：原项目只有浅色、固定字号，显式忽略，不报错 */
   });
+  /* 包内更新记录统一交给壳，不再显示单科旧版本面板 */
+  window.showVerLog=function(){ post({t:'askMe'}); };
   /* 包内「我的」一律交给壳 */
   document.addEventListener('click',function(ev){
     var el=ev.target;
