@@ -320,8 +320,10 @@ input:focus{border-color:rgba(31,74,56,.4)}
   display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:15px;
   background:linear-gradient(180deg,#234f3c,#1A4030);color:#F2EDE0;
   box-shadow:0 14px 34px -12px rgba(15,40,29,.6),inset 0 1px 0 rgba(255,255,255,.12);
-  transform:translateY(160%);transition:transform .38s cubic-bezier(.22,.9,.3,1)}
-.verbar.show{transform:translateY(0)}
+  transform:translateY(calc(100% + var(--safe-b) + 30px));visibility:hidden;
+  transition:transform .38s cubic-bezier(.22,.9,.3,1),visibility 0s linear .38s}
+.verbar.show{transform:translateY(0);visibility:visible;
+  transition:transform .38s cubic-bezier(.22,.9,.3,1),visibility 0s linear 0s}
 .verbar .vb-txt{flex:1;font-size:12.5px;line-height:1.45;min-width:0}
 .verbar .vb-act{flex:0 0 auto;border:0;border-radius:10px;padding:8px 15px;background:#F2EDE0;
   color:#1A4030;font-size:13px;font-weight:700;cursor:pointer}
@@ -370,7 +372,7 @@ input:focus{border-color:rgba(31,74,56,.4)}
   <button class="navbtn" id="barBack" onclick="S.backToLib()" hidden aria-label="返回书库"><span id="backIcon"></span></button>
   <div class="seal" id="barSeal">书</div>
   <div class="tt" id="barTitle">法硕一点通<small id="barSub">2027 法硕非法学 · 一站上岸</small></div>
-  <button class="chip" id="verChip" onclick="S.showVer()">v1.0.0.2</button>
+  <button class="chip" id="verChip" onclick="S.showVer()">v1.0.0.3</button>
 </header>
 
 <main id="stage">
@@ -432,7 +434,7 @@ input:focus{border-color:rgba(31,74,56,.4)}
 'use strict';
 /* 版本号单一事实来源：四段 主.次.修.序，每次发布只 +1，严禁跳号；
    所有显示与检测都引用 APP_VER，不再各处写死 */
-var APP_VER='1.0.0.2';
+var APP_VER='1.0.0.3';
 /* 版本辅助存储前缀：必须在顶部定义，因为启动段的 bootVer 会立即引用（变量赋值不提升）*/
 var VER_LS='yidiantong.shell.ver';
 var ICONS={
@@ -497,6 +499,13 @@ var BOOKS=[
 /* ---------- 更新日志（最新一条版本号必须等于 APP_VER）---------- */
 var KIND={feat:'新增',fix:'修复',ui:'界面',opt:'优化'};
 var CHANGELOG=[
+  {v:'1.0.0.3',d:'2026-11-23',kind:'fix',sum:'修复更新提示条藏不净、底部挤出一截墨绿横条的问题；原书阅读器顶栏避让灵动岛，关闭按钮恢复可点',
+   items:[
+    '修复更新提示条在带安全区的机型上隐藏位移不足、顶部一截墨绿色始终露在屏幕底部的问题：隐藏位移改为随安全区自适应，并在隐藏时彻底不可见、不拦截触摸',
+    '原书扫描阅读器顶部栏补上顶部安全区留白，灵动岛/刘海机型不再与状态栏重叠，右上角“关闭”按钮恢复正常可点',
+    '阅读器底部工具栏补上底部安全区留白，避让 Home 指示条，翻页按钮不再被遮挡',
+    '阅读器顶栏、底栏固定不被压缩，中间扫描页区域独立滚动，长图查看更稳'
+   ]},
   {v:'1.0.0.2',d:'2026-11-23',kind:'ui',sum:'底部导航改为悬浮圆角卡片，上下贴合、消除底部空白，原生 App 质感更统一',
    items:[
     '书库、学习、我的三个主页面的底部导航，从通栏改成左右留边的悬浮圆角卡片，毛玻璃半透明白底加柔和阴影',

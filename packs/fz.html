@@ -48,11 +48,11 @@ html{background:var(--paper) !important}
 .jj-page{width:100%;height:auto;display:block;border-radius:10px;margin:10px 0 2px;border:1px solid var(--line-2);background:#fff}
 .jj-pagebar{font-size:calc(10.5px*var(--fs));color:var(--ink-3);text-align:center;margin-bottom:10px}
 #jjReader{position:fixed;inset:0;background:#0b0d0c;z-index:9998;display:none;flex-direction:column;color:#e8e8e3}
-.jjr-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;font-size:13px}
+.jjr-bar{display:flex;align-items:center;justify-content:space-between;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;font-size:13px;flex:0 0 auto}
 .jjr-bar button{background:none;border:1px solid #3a3f3b;color:#cfd2c8;border-radius:999px;padding:3px 12px;font-size:12px}
 .jjr-stage{flex:1 1 auto;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;padding:6px}
 .jjr-stage img{max-width:100%;height:auto}
-.jjr-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid #222}
+.jjr-foot{display:flex;align-items:center;justify-content:space-between;padding:8px 14px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #222;flex:0 0 auto}
 .jjr-foot button{background:#1c211d;border:1px solid #333;color:#dfe2d8;border-radius:10px;padding:6px 14px;font-size:13px}
 .jjr-foot span{font-size:12px;color:#9aa094}
 .tl-more-b{display:block;width:100%;margin:2px 0 6px;padding:6px 0;border:0;background:transparent;color:#9a6a3a;font:500 12px/1.4 -apple-system,"PingFang SC",sans-serif;letter-spacing:.04em}
