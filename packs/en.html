@@ -13,18 +13,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="color-scheme" content="light">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="apple-touch-icon" sizes="180x180" href="https://aka.doubaocdn.com/s/AFIshVQVMS">
-<link rel="apple-touch-icon" sizes="167x167" href="https://aka.doubaocdn.com/s/AFIshVQVMS">
-<link rel="apple-touch-icon" sizes="152x152" href="https://aka.doubaocdn.com/s/AFIshVQVMS">
-<link rel="apple-touch-icon" sizes="120x120" href="https://aka.doubaocdn.com/s/AFIshVQVMS">
-<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="https://aka.doubaocdn.com/s/chNTVr14Fh">
-<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="https://aka.doubaocdn.com/s/jQMXjxZ6tk">
-<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="https://aka.doubaocdn.com/s/IWijNpecxQ">
-<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="https://aka.doubaocdn.com/s/hHJoNVI2uw">
-<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="https://aka.doubaocdn.com/s/NuRxHTeKkP">
-<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="https://aka.doubaocdn.com/s/81wOoRPSCN">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 :root{
@@ -519,8 +507,7 @@ input,textarea{font:inherit;color:inherit}
 
   try {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js', { scope: './', updateViaCache: 'none' })
-        .catch(function () { });
+      Promise.resolve().catch(function () { });
     }
   } catch (e) { }
 
@@ -3296,6 +3283,14 @@ html.shell #shellBack:active{transform:scale(.92)}
   })();
   var embedded=(window.parent!==window);
   if(embedded) document.documentElement.classList.add('shell');
+  /* 嵌入壳禁用源包 SW：sw.js 未随包发布，注册会 404；离线由壳 PWA 承担 */
+  try{
+    if('serviceWorker' in navigator){
+      var fakeReg={update:function(){return Promise.resolve();},addEventListener:function(){}};
+      navigator.serviceWorker.register=function(){return Promise.resolve(fakeReg);};
+      navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});}).catch(function(){});
+    }
+  }catch(swErr){}
   function curTab(){
     var h=location.hash||'#/';
     if(h==='#/lib') return 'words';
@@ -3319,8 +3314,113 @@ html.shell #shellBack:active{transform:scale(.92)}
     if(typeof e.data!=='object'||e.data===null) return;
     var d=e.data||{}; if(d.src!=='shell') return;
     if(d.t==='tab'){ var h=MAP[d.id]; if(h!==undefined && location.hash!==h) location.hash=h; }
+    else if(d.t==='auth'){ EN_AUTH=d.session||null; if(d.session) enPull(); }
+    else if(d.t==='cloudPull'){ enPull(); }
     /* theme 消息：原项目只有浅色、固定字号，显式忽略，不报错 */
   });
+  
+var SB_URL='https://lbykbafnkhwxqtfuaoio.supabase.co';
+var SB_ANON='sb_publishable_Jo6sLcvuEpRQEbMJ6nnOHQ_sxA_U5nL';
+var EN_AUTH=null, EN_REV=0, EN_SYNCAT=0, EN_PUSH_TIMER=0, EN_RETRY=0, EN_SYNCING=false;
+function enRead(){ try{ return JSON.parse(localStorage.getItem(SK)||'null'); }catch(e){ return null; } }
+function enCloudPack(){
+  var S=enRead()||{};
+  return {c:S.c||{}, st:S.st||{}, custom:S.custom||[], set:S.set, first:S.first, v:S.v};
+}
+function enReq(path,opt){
+  opt=opt||{};
+  if(!EN_AUTH) return Promise.reject(new Error('未登录'));
+  var h={'apikey':SB_ANON,'Content-Type':'application/json','Authorization':'Bearer '+EN_AUTH.access_token};
+  if(opt.prefer) h['Prefer']=opt.prefer;
+  return new Promise(function(resolve,reject){
+    var ctl=new AbortController();
+    var to=setTimeout(function(){ctl.abort();},opt.timeout||20000);
+    window.fetch(SB_URL+path,{method:opt.method||'GET',headers:h,
+      body:opt.body?JSON.stringify(opt.body):undefined,signal:ctl.signal})
+    .then(function(r){
+      return r.text().then(function(txt){
+        var j=null; try{j=txt?JSON.parse(txt):null;}catch(e){j=txt;}
+        if(!r.ok){
+          if(r.status===401&&!opt.__retry){
+            return new Promise(function(res2){
+              function hh(ev){ var d=ev.data; if(d&&d.src==='shell'&&d.t==='auth'){ window.removeEventListener('message',hh); EN_AUTH=d.session; res2(); } }
+              window.addEventListener('message',hh); post({t:'refreshAuth'});
+              setTimeout(function(){window.removeEventListener('message',hh);reject(new Error('登录已过期'));},15000);
+            }).then(function(){ return enReq(path,Object.assign({},opt,{__retry:true})); });
+          }
+          var msg=(j&&(j.msg||j.message||j.error_description))||('HTTP '+r.status);
+          throw new Error(msg);
+        }
+        return j;
+      });
+    }).then(function(v){clearTimeout(to);resolve(v);})
+    .catch(function(e){clearTimeout(to);reject(e);});
+  });
+}
+function scheduleEnPush(){
+  if(!EN_AUTH) return;
+  clearTimeout(EN_PUSH_TIMER);
+  EN_PUSH_TIMER=setTimeout(function(){ enPush(false); },2200);
+}
+function enPush(force){
+  if(!EN_AUTH) return Promise.resolve(false);
+  if(EN_SYNCING&&!force) return Promise.resolve(false);
+  EN_SYNCING=true; EN_REV=EN_REV+1;
+  var at=new Date().toISOString();
+  return enReq('/rest/v1/progress',{method:'POST',
+      prefer:'resolution=merge-duplicates,return=minimal',
+      body:{uid:EN_AUTH.uid,subject:'en',data:enCloudPack(),rev:EN_REV,updated_at:at}})
+    .then(function(){ EN_SYNCAT=Date.parse(at); EN_RETRY=0; return true; })
+    .catch(function(e){
+      if(EN_RETRY<3){ var w=[30,120,300][EN_RETRY]*1000; EN_RETRY++; setTimeout(function(){enPush(false);},w); }
+      return false;
+    })
+    .then(function(v){ EN_SYNCING=false; return v; });
+}
+function enMergeWrite(row){
+  var d=(row&&row.data)||{}, cur=enRead()||{};
+  cur.c=Object.assign({},d.c,cur.c);
+  cur.st=Object.assign({},d.st,cur.st);
+  cur.custom=Array.from(new Set([].concat(d.custom||[],cur.custom||[])));
+  if(d.set&&!cur.set) cur.set=d.set;
+  if(d.first&&!cur.first) cur.first=d.first;
+  cur.v=1;
+  localStorage.setItem(SK,JSON.stringify(cur));
+  EN_REV=parseInt(row.rev||'0',10)||0;
+  EN_SYNCAT=Date.parse(row.updated_at||'')||0;
+}
+function enPull(){
+  if(!EN_AUTH) return;
+  enReq('/rest/v1/progress?uid=eq.'+EN_AUTH.uid+'&subject=eq.en&select=*')
+    .then(function(rows){
+      var row=rows&&rows[0];
+      if(!row){ enPush(true); return; }
+      var cloudTs=Date.parse(row.updated_at||'')||0;
+      if(sessionStorage.getItem('enSkipReload')==='1'){
+        sessionStorage.removeItem('enSkipReload');
+        EN_REV=parseInt(row.rev||'0',10)||0; EN_SYNCAT=cloudTs; return;
+      }
+      if(!EN_SYNCAT||cloudTs>EN_SYNCAT+60000){
+        enMergeWrite(row);
+        sessionStorage.setItem('enSkipReload','1');
+        location.reload();
+      } else { enPush(false); }
+    })
+    .catch(function(){});
+}
+(function(){
+  var p=Storage.prototype, _set=p.setItem;
+  p.setItem=function(k,v){
+    var r=_set.apply(this,arguments);
+    if(k===SK) scheduleEnPush();
+    return r;
+  };
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'&&EN_AUTH) enPull();
+  });
+  window.addEventListener('online',function(){ if(EN_AUTH) enPush(false); });
+})();
+
   /* 包内更新记录统一交给壳，不再显示单科旧版本面板 */
   window.showVerLog=function(){ post({t:'askMe'}); };
   window.checkNow=function(){ post({t:'open',kind:'ver'}); };

@@ -8,14 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="法制史一点通">
 <meta name="application-name" content="法制史一点通">
 <meta name="theme-color" content="#EAEDE1" id="metaTheme">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%232E5344'/%3E%3Crect x='5.5' y='5.5' width='53' height='53' rx='6' fill='none' stroke='%23C9DCCB' stroke-width='1.6' opacity='.55'/%3E%3Ctext x='32' y='44' font-family='Songti SC,serif' font-size='38' fill='%23F3F6EC' text-anchor='middle'%3E%E5%8F%B2%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="167x167" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon.png">
-<link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
 <title>法制史一点通</title>
 <style id="splash-critical">
 /* 最早解析：弱网下文档没下完时先给窗口米色背景并画出启动屏，避免白屏 */
@@ -11841,6 +11833,14 @@ html.shell .icon-btn{display:none!important}
   try{
     if(window.parent===window && !/[?&]shell=1/.test(location.search)) return;
     document.documentElement.classList.add('shell');
+    /* 嵌入壳禁用源包 SW：sw.js 未随包发布，注册会 404；离线由壳 PWA 承担 */
+    try{
+      if('serviceWorker' in navigator){
+        var fakeReg={update:function(){return Promise.resolve();},addEventListener:function(){}};
+        navigator.serviceWorker.register=function(){return Promise.resolve(fakeReg);};
+        navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});}).catch(function(){});
+      }
+    }catch(swErr){}
     var TABS=[{"id": "home", "n": "总览"}, {"id": "browse", "n": "速览"}, {"id": "recite", "n": "背诵"}, {"id": "topic", "n": "专题"}, {"id": "quiz", "n": "刷题"}, {"id": "me", "n": "我的"}];
     function post(m){ try{ parent.postMessage(Object.assign({src:'pack'},m),'*'); }catch(e){} }
     /* 壳内返回键：挂到包顶栏左侧，点击通知壳回书库 */
@@ -11904,7 +11904,54 @@ html.shell .icon-btn{display:none!important}
           if(typeof setFs==='function') setFs(d.fz>=110?'l':(d.fz<=95?'s':'m'));
         }catch(err){}
       }
+      else if(d.t==='auth'){ __adoptSession(d.session); }
+      else if(d.t==='cloudPull'){ __doCloudPull(); }
     });
+    
+function __adoptSession(s){
+  try{
+    if(!s||typeof adoptSession!=='function') return;
+    adoptSession({access_token:s.access_token,refresh_token:s.refresh_token,
+      expires_in:Math.max(60,Math.round(((s.expires_at||0)-Date.now())/1000)),token_type:'bearer',
+      user:{id:s.uid,email:s.email||''}});
+  }catch(e){}
+}
+function __doCloudPull(){ try{ if(typeof pullCloud==='function') pullCloud(false); }catch(e){} }
+(function(){
+  var __of=window.fetch.bind(window);
+  function waitShellRefresh(){
+    return new Promise(function(resolve){
+      function h(ev){ var d=ev.data; if(d&&d.src==='shell'&&d.t==='auth'){ window.removeEventListener('message',h); resolve(d.session); } }
+      window.addEventListener('message',h);
+      post({t:'refreshAuth'});
+      setTimeout(function(){window.removeEventListener('message',h);resolve(null);},15000);
+    });
+  }
+  window.fetch=function(input,init){
+    var url=(typeof input==='string')?input:((input&&input.url)||'');
+    if(url.indexOf('/auth/v1/token')>=0&&url.indexOf('refresh_token')>=0){
+      return waitShellRefresh().then(function(s){
+        if(!s) throw new Error('登录已过期，请重新登录');
+        return new Response(JSON.stringify({access_token:s.access_token,refresh_token:s.refresh_token,
+          expires_in:Math.max(60,Math.round(((s.expires_at||0)-Date.now())/1000)),token_type:'bearer',
+          user:{id:s.uid,email:s.email||''}}),{status:200,headers:{'Content-Type':'application/json'}});
+      });
+    }
+    if(url.indexOf('/rest/v1/progress')>=0){
+      var method=(init&&init.method)||'GET';
+      if(method==='GET'){
+        if(url.indexOf('subject=')<0) url=url+(url.indexOf('?')>=0?'&':'?')+'subject=eq.fz';
+        return __of(url,init);
+      }
+      if(init&&typeof init.body==='string'){
+        try{ var b=JSON.parse(init.body); b.subject='fz'; init=Object.assign({},init,{body:JSON.stringify(b)}); }catch(e){}
+      }
+      return __of(input,init);
+    }
+    return __of(input,init);
+  };
+})();
+
     function stat(){
       try{
         if(typeof stats!=='function') return;

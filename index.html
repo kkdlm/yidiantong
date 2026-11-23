@@ -231,6 +231,52 @@ input:focus{border-color:rgba(31,74,56,.4)}
   font-size:13px;font-weight:600}
 .retry-btn:active{background:var(--green2)}
 @media (min-width:700px){ :root{--maxw:700px} .stage2{width:300px;height:300px} }
+
+/* ========== 全屏账号页（原生 App 风格，去网页感） ========== */
+.auth{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;visibility:hidden;
+  background:linear-gradient(180deg,#F8F4EB 0%,#F1EBDC 55%,#EDE6D5 100%);
+  padding:calc(var(--safe-t) + 10px) 20px calc(var(--safe-b) + 14px);
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.22,.9,.3,1),visibility 0s linear .4s}
+.auth.on{transform:translateY(0);visibility:visible;transition:transform .4s cubic-bezier(.22,.9,.3,1),visibility 0s}
+.auth .a-scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column}
+.auth .a-close{width:34px;height:34px;border-radius:50%;border:0;background:rgba(33,29,23,.07);
+  color:var(--ink2);display:grid;place-items:center;cursor:pointer;align-self:flex-start;transition:transform .1s}
+.auth .a-close:active{transform:scale(.9)}
+.auth .a-close svg{width:16px;height:16px}
+.auth .a-brand{display:flex;flex-direction:column;align-items:center;text-align:center;margin:26px 0 24px}
+.auth .a-logo{width:74px;height:74px;border-radius:20px;display:grid;place-items:center;
+  background:linear-gradient(150deg,#27563F,#16382A);color:#F4EFE2;
+  font:700 34px/1 'Songti SC','STSong',serif;
+  box-shadow:0 12px 28px rgba(24,60,44,.32),inset 0 1px 0 rgba(255,255,255,.18)}
+.auth .a-name{font:700 23px/1.2 'Songti SC','STSong',serif;letter-spacing:.5px;margin-top:16px}
+.auth .a-slogan{font-size:12px;color:var(--ink3);margin-top:7px;letter-spacing:.4px}
+.auth .a-seg{display:flex;background:rgba(33,29,23,.07);border-radius:12px;padding:3px;margin-bottom:18px}
+.auth .a-seg button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 0;
+  font-size:13px;font-weight:600;color:var(--ink3);cursor:pointer;transition:all .2s}
+.auth .a-seg button.on{background:#fff;color:var(--green);box-shadow:0 2px 7px rgba(28,24,16,.1)}
+.auth .a-group{background:#fff;border-radius:15px;overflow:hidden;box-shadow:var(--sh-sm);margin-bottom:14px}
+.auth .a-group .field{display:flex;align-items:center;padding:13px 15px;gap:11px}
+.auth .a-group .field+.field{border-top:1px solid var(--line)}
+.auth .a-group .field label{flex:0 0 52px;font-size:12.5px;color:var(--ink3);font-weight:600}
+.auth .a-group .field input{border:0;border-radius:0;padding:0;background:transparent;font-size:14px;flex:1;min-width:0}
+.auth .a-group .field input:focus{border:0}
+.auth .a-group .field .code-btn{flex:0 0 auto;border:0;background:transparent;color:var(--green);
+  font-size:12.5px;font-weight:600;cursor:pointer;padding-left:10px;border-left:1px solid var(--line)}
+.auth .a-group .field .code-btn[disabled]{color:var(--ink4);cursor:default}
+.auth .a-primary{width:100%;border:0;border-radius:14px;padding:15px;background:var(--green);color:#F4EFE2;
+  font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.5px;
+  box-shadow:0 10px 22px rgba(28,66,49,.28);transition:transform .1s,background .15s}
+.auth .a-primary:active{transform:scale(.98);background:var(--green2)}
+.auth .a-primary[disabled]{opacity:.55;box-shadow:none}
+.auth .a-alt{display:flex;gap:10px;margin-top:11px}
+.auth .a-alt button{flex:1;border:1px solid rgba(30,74,55,.24);border-radius:13px;padding:12px 0;
+  background:transparent;color:var(--green);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.auth .a-alt button:active{background:rgba(30,74,55,.06)}
+.auth .a-foot{font-size:11px;color:var(--ink3);line-height:1.7;text-align:center;margin-top:18px;padding-bottom:6px}
+.auth .a-foot b{color:var(--ink2)}
+.auth .a-err{display:none;background:rgba(168,67,47,.1);border:1px solid rgba(168,67,47,.25);
+  color:var(--red);border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.6;margin-bottom:12px}
+.auth .a-err.on{display:block}
 </style>
 </head>
 <body>
@@ -275,6 +321,26 @@ input:focus{border-color:rgba(31,74,56,.4)}
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="auth" id="auth" aria-hidden="true">
+  <button class="a-close" id="authClose" aria-label="关闭"></button>
+  <div class="a-scroll">
+    <div class="a-brand">
+      <div class="a-logo">硕</div>
+      <div class="a-name">法硕一点通</div>
+      <div class="a-slogan">2027 法硕非法学 · 一个账号三科通用</div>
+    </div>
+    <div class="a-seg">
+      <button id="segPwd" onclick="Auth.setMode('pwd')">密码登录</button>
+      <button id="segOtp" onclick="Auth.setMode('otp')">验证码登录</button>
+    </div>
+    <div class="a-err" id="authErr"></div>
+    <div id="authForm"></div>
+    <button class="a-primary" id="authPrimary"></button>
+    <div class="a-alt" id="authAlt"></div>
+    <div class="a-foot">登录即代表同意<b>一个账号、三科通用</b>：会员、签到、抽奖、邀请、客服与学习进度全部跟账号走，换机不丢进度。</div>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -330,11 +396,11 @@ function tabIcon(id,fill){ return ic(TAB_ICON[id]||'question',fill); }
 
 var LS='yidiantong.shell.v1';
 var BOOKS=[
-  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/MSwlD1G6sW',ver:'1.0.0.0',
+  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/48PUdXVZX3',ver:'1.0.0.0',
    desc:'169 考点 · 3561 条 · 6.70 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/76V1YkUVqK',ver:'1.0.0.0',
+  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/QVBGvNu9yZ',ver:'1.0.0.0',
    desc:'100 考点 · 596 题 · 1.12 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/wdxI2z0EAt',ver:'1.0.0.0',
+  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/DbSSFtLR2y',ver:'1.0.0.0',
    desc:'132 短语 · 六大方面 · 图表词汇 + SRS',tabs:[{id:'today',n:'今日'},{id:'words',n:'词库'},{id:'drill',n:'测试'}]}
 ];
 
@@ -635,6 +701,8 @@ window.addEventListener('message',function(e){
     hideVeil();
     var days=vipRemaining();
     send(id,{t:'theme',fz:ST.theme.fz,night:ST.theme.night,vip:days,days:days});
+    send(id,{t:'auth',session:AUTH||null});
+    if(authOk()) send(id,{t:'cloudPull'});
     if(ST.book===id) paintFoot();
     flushPending(id);
   }
@@ -662,6 +730,15 @@ window.addEventListener('message',function(e){
     }
   }
   else if(d.t==='toast'){ if(typeof d.msg==='string') toast(d.msg); }
+  /* 科目包请求统一认证能力 */
+  else if(d.t==='askAuth'){
+    if(authOk()){ ensureToken(false).then(function(){ send(id,{t:'auth',session:AUTH}); }); }
+    else Auth.open();
+  }
+  else if(d.t==='askLogin'){ Auth.open(); }
+  else if(d.t==='refreshAuth'){
+    ensureToken(true).then(function(){ send(id,{t:'auth',session:AUTH}); });
+  }
 });
 function sendTheme(){
   var days=vipRemaining(); ST.vip=days;
@@ -688,10 +765,15 @@ S.toast=toast;
 ST.view='lib'; ST.book=''; ST.tab='';
 $('xIcon').innerHTML=ic('x');
 $('backIcon').innerHTML=ic('caret-left');
+loadAuth();
 render();
 applyRoute();
 if(readRoute().kind==='lib') prewarm();
 sendTheme();
+/* 会话维护：定时提前刷新 token；回前台检查；上线后重试 */
+setInterval(function(){ if(authOk()) ensureToken(false); },4*60*1000);
+document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'&&authOk()) ensureToken(false); });
+window.addEventListener('online',function(){ if(authOk()) ensureToken(true); });
 
 /* ---------- 我的抽屉 ---------- */
 var sheetKind='';
@@ -718,7 +800,17 @@ function meHtml(){
   var days=vipRemaining(); ST.vip=days;
   var barW=Math.min(100,Math.max(4,days*6));
   var chev='<span class="chev">'+ic('caret-right')+'</span>';
-  return '<div class="card"><div class="row" style="padding:0"><span class="card-title">'+ic('crown')+'会员</span>'+
+  var accountCard = authOk()
+    ? '<div class="card"><div class="row" style="padding:0"><span class="card-title">'+ic('shield-check')+'云端账号</span>'+
+      '<span class="pill">已登录 · 同步中</span></div>'+
+      '<div class="row" style="margin-top:7px"><span>账号</span><b style="font-size:12px;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(AUTH.email||AUTH.uid)+'</b></div>'+
+      '<button class="btn ghost sm" onclick="shellSignOut()">退出登录</button></div>'
+    : '<div class="card"><div class="row" style="padding:0"><span class="card-title">'+ic('shield-check')+'账号</span>'+
+      '<span class="pill red">访客模式</span></div>'+
+      '<div class="hint" style="margin-top:6px">登录后三科学习进度自动云端同步，换设备、重装都不丢；一个账号三科通用。</div>'+
+      '<button class="btn" onclick="Auth.open()">登录 / 注册</button></div>';
+  return accountCard +
+    '<div class="card"><div class="row" style="padding:0"><span class="card-title">'+ic('crown')+'会员</span>'+
     '<span class="pill '+(days>0?'gold':'red')+'">'+(days>0?('还剩 '+days+' 天'):'未开通')+'</span></div>'+
     '<div class="sub" style="margin-top:5px">有效期至 '+esc(ST.vipUntil)+' · 全部科目通用</div>'+
     '<div class="bar-in"><i style="width:'+barW+'%"></i></div>'+
@@ -866,6 +958,181 @@ function fetchRemoteConfig(){
    })
    .catch(function(){});
 }
+/* ================= 统一认证（壳层是唯一认证入口） ================= */
+var AUTH_SKEY='yidiantong.shell.auth.v1';
+var AUTH=null;
+function loadAuth(){ try{ AUTH=JSON.parse(localStorage.getItem(AUTH_SKEY)||'null'); }catch(e){ AUTH=null; } return AUTH; }
+function saveAuth(){ try{ if(AUTH&&AUTH.access_token) localStorage.setItem(AUTH_SKEY,JSON.stringify(AUTH)); else localStorage.removeItem(AUTH_SKEY); }catch(e){} }
+function authOk(){ return !!(AUTH&&AUTH.access_token&&AUTH.uid); }
+function onSessionLost(){
+  AUTH=null; saveAuth(); broadcastAuth();
+  toast('登录已过期：重新登录一次，进度都在云端');
+}
+function adoptSession(j){
+  if(!j||!j.access_token||!j.user) return null;
+  AUTH={access_token:j.access_token,refresh_token:j.refresh_token,uid:j.user.id,
+    email:j.user.email||'',expires_at:Date.now()+((j.expires_in||3600)*1000)};
+  saveAuth(); return AUTH;
+}
+function sbReq(path,opt){
+  opt=opt||{};
+  var h={'apikey':SB_ANON,'Content-Type':'application/json'};
+  if(opt.token) h['Authorization']='Bearer '+opt.token;
+  else if(authOk()) h['Authorization']='Bearer '+AUTH.access_token;
+  if(opt.prefer) h['Prefer']=opt.prefer;
+  return new Promise(function(resolve,reject){
+    var ctl=new AbortController(), done=false;
+    var to=setTimeout(function(){ try{ctl.abort();}catch(e){} },opt.timeout||20000);
+    fetch(SB_URL+path,{method:opt.method||'GET',headers:h,
+      body:opt.body?JSON.stringify(opt.body):undefined,signal:ctl.signal})
+    .then(function(r){
+      return r.text().then(function(txt){
+        var j=null; try{ j=txt?JSON.parse(txt):null; }catch(e){ j=txt; }
+        if(!r.ok){
+          if(r.status===401&&!opt.__retry&&!/\/auth\/v1\/(token|verify|recover|resend|signup)/.test(path)){
+            return ensureToken(true).then(function(ok){ if(ok) return sbReq(path,Object.assign({},opt,{__retry:true})); throw new Error('登录已过期，请重新登录'); });
+          }
+          var msg=(j&&(j.msg||j.message||j.error_description))||('HTTP '+r.status);
+          var err=new Error(msg); err.status=r.status; err.data=j; throw err;
+        }
+        return j;
+      });
+    }).then(function(v){ done=true; clearTimeout(to); resolve(v); })
+    .catch(function(e){ clearTimeout(to); reject(e); });
+  });
+}
+var _refreshing=null;
+function ensureToken(force){
+  if(!authOk()) return Promise.resolve(false);
+  if(!force && Date.now()<(AUTH.expires_at||0)-60000) return Promise.resolve(true);
+  if(!AUTH.refresh_token){ onSessionLost(); return Promise.resolve(false); }
+  if(_refreshing) return _refreshing;
+  _refreshing=(function(){
+    return sbReq('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:{refresh_token:AUTH.refresh_token}})
+      .then(function(j){ adoptSession(j); broadcastAuth(); return true; })
+      .catch(function(){ onSessionLost(); return false; })
+      .then(function(v){ _refreshing=null; return v; });
+  })();
+  return _refreshing;
+}
+/* 把当前会话下发到所有已加载的科目包；登出时下发 null */
+function broadcastAuth(){
+  Object.keys(FR).forEach(function(k){ send(k,{t:'auth',session:AUTH||null}); });
+}
+/* 登录成功后：建档 + 下发会话 + 通知各科拉取云端 */
+function afterShellLogin(){
+  return sbReq('/rest/v1/rpc/ensure_profile',{method:'POST',body:{}}).catch(function(){}).then(function(){
+    broadcastAuth();
+    Object.keys(FR).forEach(function(k){ send(k,{t:'cloudPull'}); });
+  });
+}
+function shellSignOut(){
+  sbReq('/auth/v1/logout',{method:'POST',body:{}}).catch(function(){}).then(function(){
+    AUTH=null; saveAuth(); broadcastAuth();
+    toast('已退出：重新登录后才能继续同步，云端进度仍在');
+  });
+}
+
+/* ---------- 全屏账号页交互 ---------- */
+var Auth={
+  mode:'pwd', busy:false, otpLeft:0, _otpTimer:0,
+  setMode:function(m){ if(this.busy)return; this.mode=m; this.err(''); this.render(); },
+  open:function(mode){
+    if(mode) this.mode=mode;
+    $('auth').classList.add('on'); $('auth').setAttribute('aria-hidden','false');
+    this.render();
+  },
+  close:function(){
+    if(this.busy) return;
+    $('auth').classList.remove('on'); $('auth').setAttribute('aria-hidden','true');
+  },
+  err:function(m){ var el=$('authErr'); el.textContent=m||''; el.classList.toggle('on',!!m); },
+  render:function(){
+    var self=this;
+    $('segPwd').className=this.mode==='pwd'?'on':'';
+    $('segOtp').className=this.mode==='otp'?'on':'';
+    $('authClose').innerHTML=ic('x');
+    if(this.mode==='pwd'){
+      $('authForm').innerHTML=
+        '<div class="a-group"><div class="field"><label>邮箱</label>'+
+        '<input id="aMail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div>'+
+        '<div class="field"><label>密码</label>'+
+        '<input id="aPwd" type="password" autocomplete="current-password" placeholder="至少 6 位"></div></div>';
+      $('authPrimary').textContent='登录';
+      $('authPrimary').onclick=function(){ self.pwdGo('login'); };
+      $('authAlt').innerHTML='<button onclick="Auth.pwdGo(\'register\')">注册新账号</button>';
+    }else{
+      $('authForm').innerHTML=
+        '<div class="a-group"><div class="field"><label>邮箱</label>'+
+        '<input id="aMail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div>'+
+        '<div class="field"><label>验证码</label><input id="aCode" inputmode="numeric" maxlength="6" placeholder="邮件 6 位验证码">'+
+        '<button class="code-btn" id="codeBtn" onclick="Auth.sendOtp()">发送验证码</button></div></div>';
+      $('authPrimary').textContent='登录 / 注册';
+      $('authPrimary').onclick=function(){ self.otpGo(); };
+      $('authAlt').innerHTML='<button onclick="Auth.setMode(\'pwd\')">改用密码登录</button>';
+    }
+  },
+  setBusy:function(b){
+    this.busy=b; $('authPrimary')[b?'setAttribute':'removeAttribute']('disabled',b);
+  },
+  pwdGo:function(kind){
+    var mail=($('aMail').value||'').trim(), pwd=$('aPwd').value||'';
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ this.err('邮箱格式不对，检查一下'); return; }
+    if(kind==='register' && pwd.length<6){ this.err('密码至少 6 位'); return; }
+    if(kind==='login' && !pwd){ this.err('请输入密码'); return; }
+    var self=this; self.setBusy(true); self.err('');
+    var path;
+    if(kind==='register'){
+      sbReq('/auth/v1/signup',{method:'POST',body:{email:mail,password:pwd}})
+        .then(function(j){
+          if(j&&j.access_token){ adoptSession(j); return afterShellLogin().then(function(){ return true; }); }
+          self.err('注册请求已发出，若开启了邮箱确认，请点邮件链接后再登录'); return false;
+        })
+        .then(function(ok){ if(ok){ self.setBusy(false); self.close(); toast('注册完成，已登录'); } })
+        .catch(function(e){ self.err(e.message||'注册失败'); })
+        .then(function(){ self.setBusy(false); });
+    }else{
+      sbReq('/auth/v1/token?grant_type=password',{method:'POST',body:{email:mail,password:pwd}})
+        .then(function(j){ adoptSession(j); return afterShellLogin(); })
+        .then(function(){ self.setBusy(false); self.close(); toast('登录成功，三科进度已接通'); })
+        .catch(function(e){ self.err(e.message||'登录失败'); })
+        .then(function(){ self.setBusy(false); });
+    }
+  },
+  sendOtp:function(){
+    var mail=($('aMail').value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ this.err('先填正确邮箱再发验证码'); return; }
+    var self=this;
+    sbReq('/auth/v1/otp',{method:'POST',body:{email:mail,create_user:true}})
+      .then(function(){
+        self.tickOtp(60); toast('验证码已发送，查收邮件');
+      })
+      .catch(function(e){ self.err(e.message||'验证码发送失败'); });
+  },
+  tickOtp:function(s){
+    var self=this, btn=$('codeBtn');
+    clearInterval(this._otpTimer); this.otpLeft=s;
+    if(btn){ btn.disabled=true; btn.textContent=s+'s 后重发'; }
+    this._otpTimer=setInterval(function(){
+      self.otpLeft--;
+      if(self.otpLeft<=0){ clearInterval(self._otpTimer); if(btn){btn.disabled=false;btn.textContent='发送验证码';} return; }
+      if(btn) btn.textContent=self.otpLeft+'s 后重发';
+    },1000);
+  },
+  otpGo:function(){
+    var mail=($('aMail').value||'').trim(), code=($('aCode').value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ this.err('先填正确邮箱'); return; }
+    if(!/^\d{6}$/.test(code)){ this.err('填邮件里的 6 位验证码'); return; }
+    var self=this; self.setBusy(true); self.err('');
+    sbReq('/auth/v1/token?grant_type=otp',{method:'POST',body:{email:mail,token:code,type:'email'}})
+      .then(function(j){ adoptSession(j); return afterShellLogin(); })
+      .then(function(){ self.setBusy(false); self.close(); toast('登录成功，三科进度已接通'); })
+      .catch(function(e){ self.err(e.message||'验证码不对或已失效'); })
+      .then(function(){ self.setBusy(false); });
+  }
+};
+$('authClose').onclick=function(){ Auth.close(); };
+
 function lotteryHtml(){
   var labs='',stops='';
   PRIZES.forEach(function(p,i){
@@ -991,6 +1258,7 @@ S.checkVer=function(){
 };
 
 window.S=S;
+window.Auth=Auth;
 window.__ST=ST; window.__FR=FR;
 window.__PRIZES=function(){return PRIZES;};
 fetchRemoteConfig();
