@@ -27,10 +27,10 @@ jobs:
       - name: 拉取科目内容、线上壳、管理后台与 PWA 资源
         run: |
           mkdir -p packs admin icons
-          curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/m8Omsyad9R"
-          curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/4ZNFXbdpSM"
-          curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/kMMBTB2oNP"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/O2J8u5vzPz"
+          curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/zrhw2Iqnjh"
+          curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/VLUm5MzBbM"
+          curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/xBWsG9D9IY"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/ClIzn52cK7"
           curl -fsSL -o admin/index.html "https://aka.doubaocdn.com/s/VBnSbDQvjd"
           curl -fsSL -o manifest.webmanifest "https://aka.doubaocdn.com/s/NKmuOL9mNo"
           curl -fsSL -o icons/favicon-32.png "https://aka.doubaocdn.com/s/JD02EZUAcd"
@@ -46,9 +46,9 @@ jobs:
           python3 - <<'PY'
           import io
           s = io.open('index_raw.html', encoding='utf-8').read()
-          s = s.replace('https://aka.doubaocdn.com/s/m8Omsyad9R', 'packs/fz.html')
-          s = s.replace('https://aka.doubaocdn.com/s/4ZNFXbdpSM', 'packs/zz.html')
-          s = s.replace('https://aka.doubaocdn.com/s/kMMBTB2oNP', 'packs/en.html')
+          s = s.replace('https://aka.doubaocdn.com/s/zrhw2Iqnjh', 'packs/fz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/VLUm5MzBbM', 'packs/zz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/xBWsG9D9IY', 'packs/en.html')
           io.open('index.html', 'w', encoding='utf-8').write(s)
           io.open('shell.html', 'w', encoding='utf-8').write(s)
           print('index bytes', len(s))
@@ -59,7 +59,7 @@ jobs:
           git config user.name "pack-bot"
           git config user.email "pack-bot@users.noreply.github.com"
           git add packs admin icons index.html shell.html manifest.webmanifest
-          git commit -m "chore: 同步 1.0.0.0 版本、设置统一与 PWA 资源" || echo "nothing to commit"
+          git commit -m "chore: 同步 1.0.0.0 全新项目、设置统一与 PWA 资源" || echo "nothing to commit"
           git push
 
   deploy:
