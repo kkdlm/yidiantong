@@ -1,4 +1,4 @@
-# 重新部署：Pages 源已由账号启用
+# 沉浸式顶栏 + PWA 图标/启动屏版本
 name: sync-packs
 
 on:
@@ -26,11 +26,11 @@ jobs:
           fetch-depth: 0
       - name: 拉取科目内容、线上壳与管理后台
         run: |
-          mkdir -p packs admin
-          curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/ecyDYfWqHR"
-          curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Uklx9QVGnm"
-          curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/5CSorQnjlH"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/rv4qV3JeBl"
+          mkdir -p packs admin icons
+          curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/83pAr0pePl"
+          curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/FxlnlxaCdZ"
+          curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/We6MqkcpDG"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/b4fUHFyegb"
           curl -fsSL -o admin/index.html "https://aka.doubaocdn.com/s/VBnSbDQvjd"
           ls -l packs admin
       - name: 本地化路径
@@ -38,9 +38,9 @@ jobs:
           python3 - <<'PY'
           import io
           s = io.open('index_raw.html', encoding='utf-8').read()
-          s = s.replace('https://aka.doubaocdn.com/s/ecyDYfWqHR', 'packs/fz.html')
-          s = s.replace('https://aka.doubaocdn.com/s/Uklx9QVGnm', 'packs/zz.html')
-          s = s.replace('https://aka.doubaocdn.com/s/5CSorQnjlH', 'packs/en.html')
+          s = s.replace('https://aka.doubaocdn.com/s/83pAr0pePl', 'packs/fz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/FxlnlxaCdZ', 'packs/zz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/We6MqkcpDG', 'packs/en.html')
           io.open('index.html', 'w', encoding='utf-8').write(s)
           io.open('shell.html', 'w', encoding='utf-8').write(s)
           print('index bytes', len(s))
@@ -50,8 +50,8 @@ jobs:
         run: |
           git config user.name "pack-bot"
           git config user.email "pack-bot@users.noreply.github.com"
-          git add packs admin index.html shell.html
-          git commit -m "chore: 同步三科内容、线上壳与管理后台" || echo "nothing to commit"
+          git add packs admin icons index.html shell.html manifest.webmanifest
+          git commit -m "chore: 同步沉浸式壳、三科返回键与 PWA 资源" || echo "nothing to commit"
           git push
 
   deploy:
