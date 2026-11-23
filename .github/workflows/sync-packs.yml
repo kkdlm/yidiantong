@@ -1,4 +1,4 @@
-# 沉浸式顶栏 + PWA + 三科统一云端同步（CDN 快速加载版：1.0.0.3 横条/阅读器安全区修复·重试）
+# 沉浸式顶栏 + PWA + 三科统一云端同步（CDN 快速加载版：1.0.0.4 背景滚动锁定/底栏贴合）
 name: sync-packs
 
 on:
@@ -28,10 +28,10 @@ jobs:
         run: |
           mkdir -p packs admin icons
           pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 240 -o "$1" "$2" || echo "WARN 拉取失败 $2"; }
-          pull packs/fz.html 'https://aka.doubaocdn.com/s/FqgxFCiFCA'
+          pull packs/fz.html 'https://aka.doubaocdn.com/s/kk8hf2nljj'
           pull packs/zz.html 'https://aka.doubaocdn.com/s/QVBGvNu9yZ'
           pull packs/en.html 'https://aka.doubaocdn.com/s/DbSSFtLR2y'
-          pull index_raw.html 'https://aka.doubaocdn.com/s/YN9kfRrNuY'
+          pull index_raw.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw'
           pull admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9'
           pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
           pull icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
@@ -53,7 +53,7 @@ jobs:
           git config user.name 'pack-bot'
           git config user.email 'pack-bot@users.noreply.github.com'
           git add packs admin icons index.html shell.html manifest.webmanifest
-          git commit -m 'fix: 1.0.0.3 横条/阅读器安全区（提示条藏净/关闭按钮可点）' || echo nothing
+          git commit -m 'fix: 1.0.0.4 锁定背景滚动（底栏不再悬空/阅读器贴合）' || echo nothing
           git pull --rebase origin main || true
           git push
 
@@ -83,7 +83,13 @@ jobs:
           sleep 5
           code=$(curl -s -o /tmp/pg.html -w '%{http_code}' 'https://kkdlm.github.io/yidiantong/' || echo 000)
           mkdir -p docs
-          printf '{\n  "checked_at": "%s",\n  "http_code": "%s",\n  "deploy_outcome": "%s",\n  "page_url": "%s"\n}\n' "$(date -u +%Y-%m-%dT%H:%M:%S)" "$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
+          printf '{
+  "checked_at": "%s",
+  "http_code": "%s",
+  "deploy_outcome": "%s",
+  "page_url": "%s"
+}
+' "$(date -u +%Y-%m-%dT%H:%M:%S)" "$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
           cat docs/deploy-status.json
           git config user.name 'pack-bot'
           git config user.email 'pack-bot@users.noreply.github.com'
