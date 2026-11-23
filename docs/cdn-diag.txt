@@ -1,0 +1,23 @@
+=== DNS ===
+2404:2280:187:0:3::40d aka.doubaocdn.com.230b2a2545cfa773.queniuck.com aka.doubaocdn.com aka.doubaocdn.com.bytedns3.com
+2404:2280:187:0:3::40c aka.doubaocdn.com.230b2a2545cfa773.queniuck.com aka.doubaocdn.com aka.doubaocdn.com.bytedns3.com
+=== 下载小文件 zz ===
+HTTP/2 404 
+server: Tengine
+date: Mon, 23 Nov 2026 10:24:56 GMT
+x-tt-logid: 20261123182456852F3523B9C0E32BCA6E
+server-timing: inner; dur=11,tt_agw; dur=0
+strict-transport-security: max-age=31536000; includeSubDomains
+x-tt-trace-host: 01298c2d661db19cc90558e901ee1efdfa6dd7197e527089977d5a7c7274fb59f6ce7e77b1c4dbdb10c111fc3ac16162a707e246f8ce70c7239aea6ea7aebc355cecd2de2797f9c3a1cc224bd312ad9e5aa23d293942ca6ec035c8eb66b56a5b1b017b620592f7b5373f09d5307ea72c77
+x-tt-trace-tag: id=03;cdn-cache=miss;type=dyn
+x-tt-trace-id: 00-261123182456852F3523B9C0E32BCA6E-37D64A335F7F999A-00
+x-tt-timestamp: 1795429496.193
+x-alicdn-da-ups-status: endOs,0,404
+via: ens-cache15.l2eo166-18[99,0], ens-cache29.us34[704,0]
+server-timing: cdn-cache;desc=MISS,edge;dur=605,origin;dur=99
+timing-allow-origin: *
+eagleid: a3b53cb117954294955876621e
+
+=== 实际下载 ===
+http:200 bytes:1129133 speed:361530
+/tmp/zz.html: HTML document, Unicode text, UTF-8 text, with very long lines (420)
