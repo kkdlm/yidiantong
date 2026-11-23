@@ -13,6 +13,23 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="法硕一点通">
+<style id="splash-critical">
+/* 最早解析：弱网下文档没下完时先给窗口米色背景并画出启动屏，避免白屏 */
+html{background-color:#F4F1E7 !important}
+#splash{position:fixed;inset:0;z-index:9999;background:#F4F1E7;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;margin:0;padding:0}
+#splash .sp-in{display:flex;flex-direction:column;align-items:center}
+#splash .sp-logo{width:88px;height:88px;border-radius:22px;background:#1C4735;color:#F4EFE2;
+  display:flex;align-items:center;justify-content:center;
+  font:700 42px/1 'Songti SC','STSong',serif}
+#splash .sp-name{margin:26px 0 8px;font:700 25px/1 'Songti SC','STSong',serif;
+  letter-spacing:.14em;color:#1E1A14}
+#splash .sp-slogan{margin:0;font-size:12px;letter-spacing:.08em;color:#7A7365}
+#splash .sp-bar{width:188px;max-width:60vw;height:3px;border-radius:99px;
+  background:rgba(28,71,53,.14);margin-top:26px;overflow:hidden}
+#splash .sp-fill{height:100%;width:0%;border-radius:99px;background:#1C4735;transition:width .3s ease}
+#splash .sp-msg{margin:12px 0 0;font-size:10.5px;letter-spacing:.06em;color:#7A7365;min-height:15px}
+</style>
 <style>
 :root{
   --ink:#1E1A14; --ink2:#423C31; --ink3:#7A7365; --ink4:#A39C8E;
@@ -277,15 +294,77 @@ input:focus{border-color:rgba(31,74,56,.4)}
 .auth .a-err{display:none;background:rgba(168,67,47,.1);border:1px solid rgba(168,67,47,.25);
   color:var(--red);border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.6;margin-bottom:12px}
 .auth .a-err.on{display:block}
+/* ============ 冷启动屏（品牌动画） ============ */
+#splash{transition:opacity .5s ease,visibility .5s ease}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#splash .sp-logo{box-shadow:0 18px 38px -16px rgba(20,52,38,.55),inset 0 0 0 2px rgba(244,239,226,.18);
+  animation:spLogo .6s cubic-bezier(.2,.7,.3,1) both}
+#splash .sp-name{animation:spFade .5s ease both;animation-delay:.12s}
+#splash .sp-slogan{animation:spFade .5s ease both;animation-delay:.2s}
+#splash .sp-bar{animation:spFade .5s ease both;animation-delay:.26s}
+#splash .sp-msg{animation:spFade .5s ease both;animation-delay:.3s}
+@keyframes spLogo{from{opacity:0;transform:scale(.7) rotate(-4deg)}to{opacity:1;transform:none}}
+@keyframes spFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  #splash .sp-logo,#splash .sp-name,#splash .sp-slogan,#splash .sp-bar,#splash .sp-msg{animation:none}
+}
+
+/* ============ 版本更新提示条 ============ */
+.verbar{position:fixed;left:12px;right:12px;bottom:calc(14px + var(--safe-b));z-index:9990;
+  display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:15px;
+  background:linear-gradient(180deg,#234f3c,#1A4030);color:#F2EDE0;
+  box-shadow:0 14px 34px -12px rgba(15,40,29,.6),inset 0 1px 0 rgba(255,255,255,.12);
+  transform:translateY(160%);transition:transform .38s cubic-bezier(.22,.9,.3,1)}
+.verbar.show{transform:translateY(0)}
+.verbar .vb-txt{flex:1;font-size:12.5px;line-height:1.45;min-width:0}
+.verbar .vb-act{flex:0 0 auto;border:0;border-radius:10px;padding:8px 15px;background:#F2EDE0;
+  color:#1A4030;font-size:13px;font-weight:700;cursor:pointer}
+.verbar .vb-act:active{transform:scale(.95)}
+.verbar .vb-x{flex:0 0 auto;border:0;background:transparent;color:rgba(242,237,224,.66);
+  font-size:18px;line-height:1;padding:4px;cursor:pointer}
+
+/* ============ 更新遮罩（清缓存重启） ============ */
+.upd-mask{position:fixed;inset:0;z-index:99998;background:rgba(244,241,231,.98);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+  text-align:center;padding:28px}
+.upd-mask .u-spin{width:42px;height:42px;border-radius:50%;border:3px solid #D8D2C4;
+  border-top-color:#1C4735;animation:uSpin .9s linear infinite}
+@keyframes uSpin{to{transform:rotate(360deg)}}
+.upd-mask .u-txt{max-width:300px;font-size:14px;line-height:1.6;color:#1E1A14}
+.upd-mask .u-note{font-size:11.5px;color:#7A7365}
+
+/* ============ 版本记录 ============ */
+.clog{padding:13px 0;border-bottom:1px solid var(--line)}
+.clog:last-child{border-bottom:0}
+.clog-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.clog-h .v{font-weight:700;font-size:13.5px;color:var(--green);font-variant-numeric:tabular-nums}
+.clog-h .d{font-size:11px;color:var(--ink3)}
+.clog-h .kind{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(28,71,53,.09);color:var(--green)}
+.clog-h .now{font-size:10px;padding:2px 7px;border-radius:6px;background:var(--green);color:#F4EFE2}
+.clog-t{font-size:12.5px;font-weight:600;line-height:1.5;margin-bottom:6px}
+.clog ul{margin:0;padding-left:16px}
+.clog li{font-size:12px;line-height:1.65;color:var(--ink2);margin-bottom:3px}
+.clog-more{width:100%;margin-top:6px;border:0;background:transparent;color:var(--green);
+  font-size:11.5px;cursor:pointer;padding:6px}
 </style>
 </head>
 <body>
+
+<div id="splash" aria-hidden="true">
+  <div class="sp-in">
+    <div class="sp-logo">硕</div>
+    <div class="sp-name">法硕一点通</div>
+    <div class="sp-slogan">2027 法硕非法学 · 一站上岸</div>
+    <div class="sp-bar"><div class="sp-fill" id="spFill"></div></div>
+    <div class="sp-msg" id="spMsg">正在打开…</div>
+  </div>
+</div>
 
 <header class="bar" id="bar">
   <button class="navbtn" id="barBack" onclick="S.backToLib()" hidden aria-label="返回书库"><span id="backIcon"></span></button>
   <div class="seal" id="barSeal">书</div>
   <div class="tt" id="barTitle">法硕一点通<small id="barSub">2027 法硕非法学 · 一站上岸</small></div>
-  <button class="chip" id="verChip" onclick="S.showVer()">v1.0.0.0</button>
+  <button class="chip" id="verChip" onclick="S.showVer()">v1.0.0.1</button>
 </header>
 
 <main id="stage">
@@ -345,6 +424,11 @@ input:focus{border-color:rgba(31,74,56,.4)}
 <script>
 (function(){
 'use strict';
+/* 版本号单一事实来源：四段 主.次.修.序，每次发布只 +1，严禁跳号；
+   所有显示与检测都引用 APP_VER，不再各处写死 */
+var APP_VER='1.0.0.1';
+/* 版本辅助存储前缀：必须在顶部定义，因为启动段的 bootVer 会立即引用（变量赋值不提升）*/
+var VER_LS='yidiantong.shell.ver';
 var ICONS={
 'books':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M231.65,194.55,198.46,36.75a16,16,0,0,0-19-12.39L132.65,34.42a16.08,16.08,0,0,0-12.3,19l33.19,157.8A16,16,0,0,0,169.16,224a16.25,16.25,0,0,0,3.38-.36l46.81-10.06A16.09,16.09,0,0,0,231.65,194.55ZM136,50.15c0-.06,0-.09,0-.09l46.8-10,3.33,15.87L139.33,66Zm6.62,31.47,46.82-10.05,3.34,15.9L146,97.53Zm6.64,31.57,46.82-10.06,13.3,63.24-46.82,10.06ZM216,197.94l-46.8,10-3.33-15.87L212.67,182,216,197.85C216,197.91,216,197.94,216,197.94ZM104,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V48A16,16,0,0,0,104,32ZM56,48h48V64H56Zm0,32h48v96H56Zm48,128H56V192h48v16Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M231.65,194.55,198.46,36.75a16,16,0,0,0-19-12.39L132.65,34.42a16.08,16.08,0,0,0-12.3,19l33.19,157.8A16,16,0,0,0,169.16,224a16.25,16.25,0,0,0,3.38-.36l46.81-10.06A16.09,16.09,0,0,0,231.65,194.55ZM136,50.15c0-.06,0-.09,0-.09l46.8-10,3.33,15.87L139.33,66Zm10,47.38-3.35-15.9,46.82-10.06,3.34,15.9Zm70,100.41-46.8,10-3.33-15.87L212.67,182,216,197.85C216,197.91,216,197.94,216,197.94ZM104,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V48A16,16,0,0,0,104,32ZM56,48h48V64H56Zm48,160H56V192h48v16Z"/></svg>'},
 'graduation-cap':{r:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M251.76,88.94l-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a130,130,0,0,0,48-8.76V240a8,8,0,0,0,16,0V199.51a115.63,115.63,0,0,0,27.94-22.57A15.91,15.91,0,0,0,224,166.29V117.87l27.76-14.81a8,8,0,0,0,0-14.12ZM128,200c-43.27,0-68.72-21.14-80-33.71V126.4l76.24,40.66a8,8,0,0,0,7.52,0L176,143.47v46.34C163.4,195.69,147.52,200,128,200Zm80-33.75a97.83,97.83,0,0,1-16,14.25V134.93l16-8.53ZM188,118.94l-.22-.13-56-29.87a8,8,0,0,0-7.52,14.12L171,128l-43,22.93L25,96,128,41.07,231,96Z"/></svg>',f:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M176,207.24a119,119,0,0,0,16-7.73V240a8,8,0,0,1-16,0Zm11.76-88.43-56-29.87a8,8,0,0,0-7.52,14.12L171,128l17-9.06Zm64-29.87-120-64a8,8,0,0,0-7.52,0l-120,64a8,8,0,0,0,0,14.12L32,117.87v48.42a15.91,15.91,0,0,0,4.06,10.65C49.16,191.53,78.51,216,128,216a130,130,0,0,0,48-8.76V130.67L171,128l-43,22.93L43.83,106l0,0L25,96,128,41.07,231,96l-18.78,10-.06,0L188,118.94a8,8,0,0,1,4,6.93v73.64a115.63,115.63,0,0,0,27.94-22.57A15.91,15.91,0,0,0,224,166.29V117.87l27.76-14.81a8,8,0,0,0,0-14.12Z"/></svg>'},
@@ -396,12 +480,32 @@ function tabIcon(id,fill){ return ic(TAB_ICON[id]||'question',fill); }
 
 var LS='yidiantong.shell.v1';
 var BOOKS=[
-  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/48PUdXVZX3',ver:'1.0.0.0',
+  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/48PUdXVZX3',
    desc:'169 考点 · 3561 条 · 6.70 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/QVBGvNu9yZ',ver:'1.0.0.0',
+  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/QVBGvNu9yZ',
    desc:'100 考点 · 596 题 · 1.12 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/DbSSFtLR2y',ver:'1.0.0.0',
+  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/DbSSFtLR2y',
    desc:'132 短语 · 六大方面 · 图表词汇 + SRS',tabs:[{id:'today',n:'今日'},{id:'words',n:'词库'},{id:'drill',n:'测试'}]}
+];
+
+/* ---------- 更新日志（最新一条版本号必须等于 APP_VER）---------- */
+var KIND={feat:'新增',fix:'修复',ui:'界面',opt:'优化'};
+var CHANGELOG=[
+  {v:'1.0.0.1',d:'2026-11-23',kind:'feat',sum:'补齐完整的版本生命周期：启动画面、更新提示、自动重启清缓存，版本号每次发布严格递增',
+   items:[
+    '冷启动新增品牌启动画面：墨绿「硕」字印章、应用名与进度条，弱网先画启动屏不再白屏，开了减少动态效果会自动降级',
+    '版本检测改为明确的更新提示：发现新版本时底部弹出深绿提示条，可点「立即更新」或「稍后」，不再只弹一条会消失的提示',
+    '更新会自动注销离线服务、清空缓存并自动重启，重启后就是新版本，不用手动刷新；启动失败时也能一键清缓存重启',
+    '版本号四段、每次发布只 +1，更新日志与实际版本一一对应；更新完成后会提示「已更新至 vX」',
+    '回到前台、网络恢复时会自动再核对一次版本，短时间内不重复请求'
+   ]},
+  {v:'1.0.0.0',d:'2026-11-22',kind:'feat',sum:'首个正式版本：法制史、政治、英语大作文三科合一，一个账号全科通用',
+   items:[
+    '法制史、政治、英语大作文三科整合进同一个书库，点「打开」即可进入，底部三栏在书库、学习、我的之间切换',
+    '一个账号全科通用：会员、签到、抽奖、邀请、客服、卡密在所有科目间打通，换手机登录进度不丢',
+    '三科学习数据统一上云，按科目分别存储，后台可看每科的掌握进度与明细',
+    '支持添加到主屏幕，以独立 App 形态全屏运行，含离线缓存与品牌图标'
+   ]}
 ];
 
 /* ---------- 日期 ---------- */
@@ -418,7 +522,7 @@ function dateAdd(dstr,n){
 function load(){try{var r=localStorage.getItem(LS);return r?JSON.parse(r):null}catch(e){return null}}
 function save(){try{localStorage.setItem(LS,JSON.stringify(ST))}catch(e){}}
 var DEF={vip:8,vipUntil:'2026-12-01',signDays:2,signedDate:'',daily:0,dDate:'',pInvite:0,invite:0,
-  invCode:'FZ-8K2M',fzPct:0,zzPct:0,enPct:0,lastBook:'fz',lastTab:'',ver:'1.0.0.0',
+  invCode:'FZ-8K2M',fzPct:0,zzPct:0,enPct:0,lastBook:'fz',lastTab:'',
   theme:{fz:100,night:false},stats:{},chat:[],
   act:{on:true,off:'活动暂时关闭，已经抽到的不会收回',signTickets:1,inviteOn:true,inviteTickets:0,inviterDays:0,inviteeDays:0}};
 var ST=load()||{};
@@ -762,6 +866,9 @@ S.toast=toast;
 /* ---------- 启动 ----------
    路由态（view/book/tab）只认当前 hash，不继承 localStorage 残留；
    lastBook/lastTab 属于要保留的"上次进度"，不受影响。 */
+/* 版本号每次发布强制以 APP_VER 为准，不读 localStorage 残留；同步顶栏版本 chip */
+ST.ver=APP_VER;
+$('verChip').textContent='v'+APP_VER;
 ST.view='lib'; ST.book=''; ST.tab='';
 $('xIcon').innerHTML=ic('x');
 $('backIcon').innerHTML=ic('caret-left');
@@ -770,6 +877,30 @@ render();
 applyRoute();
 if(readRoute().kind==='lib') prewarm();
 sendTheme();
+
+/* ---------- 启动屏控制：进度条推进，保证品牌动画最短展示后再淡出，不白屏、不卡顿 ---------- */
+(function(){
+  var sp=$('splash'),fill=$('spFill'),msg=$('spMsg'),p=0,t0=Date.now();
+  var steps=['正在打开…','加载书库…','准备科目…','马上就好…'];
+  var iv=setInterval(function(){
+    p=Math.min(94,p+Math.max(2,(94-p)/6));
+    fill.style.width=p+'%';
+    msg.textContent=steps[Math.min(steps.length-1,Math.floor(p/25))];
+  },120);
+  function finish(){
+    clearInterval(iv); fill.style.width='100%'; msg.textContent='开始学习';
+    setTimeout(function(){ sp.classList.add('hide'); },180);
+  }
+  function tryFinish(){ if(Date.now()-t0>=1100) finish(); else setTimeout(tryFinish,80); }
+  if(document.readyState==='complete') tryFinish();
+  else window.addEventListener('load',tryFinish);
+  setTimeout(finish,3000);  /* 兜底：load 事件没来也收起，不卡住用户 */
+})();
+/* 启动版本核对：升级提示 + 启动/回前台自动检测新版本 */
+window.__autoBoot='before';
+bootVer();
+window.__autoBoot='after';
+
 /* 会话维护：定时提前刷新 token；回前台检查；上线后重试 */
 setInterval(function(){ if(authOk()) ensureToken(false); },4*60*1000);
 document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'&&authOk()) ensureToken(false); });
@@ -873,9 +1004,20 @@ function sheetHtml(kind){
       (m.me?'background:rgba(31,74,56,.09);color:var(--green);':'background:#fff;border:1px solid var(--line);')+'">'+esc(m.t)+'</span></div>'}).join(''):
       '<div class="hint">你好，这里是法硕一点通客服。签到、抽奖、会员、卡密问题都可以直接问。</div>')+'</div>'+
     '<div class="card"><input id="cin" placeholder="输入问题…" onkeydown="if(event.key===\'Enter\')S.sendMsg()"><button class="btn sm" onclick="S.sendMsg()">发送</button></div>';
-  if(kind==='ver') return '<div class="card"><div class="row"><span>当前版本</span><b>v'+esc(ST.ver)+'</b></div></div>'+
-    '<div class="card"><div style="font-size:13px;font-weight:700">v1.0.0.0</div><div class="hint">首个正式版本：法制史、政治、英语大作文三科合一，一个账号全科通用；会员、签到、抽奖、邀请、客服、卡密统一管理。</div></div>'+
-    '<button class="btn ghost" onclick="S.checkVer()">检查更新</button>';
+  if(kind==='ver') return '<div class="card"><div class="row"><span>当前版本</span><b>v'+esc(APP_VER)+'</b></div></div>'+
+    '<div class="card" style="padding:4px 15px">'+
+      CHANGELOG.map(function(c,i){return '<div class="clog">'+
+        '<div class="clog-h"><span class="v">v'+esc(c.v)+'</span><span class="d">'+esc(c.d)+'</span>'+
+        (KIND[c.kind]?'<span class="kind">'+KIND[c.kind]+'</span>':'')+
+        (i===0?'<span class="now">当前</span>':'')+'</div>'+
+        (c.sum?'<div class="clog-t">'+esc(c.sum)+'</div>':'')+
+        '<ul>'+(c.items||[]).map(function(it,idx){
+          return '<li'+(((c.items||[]).length>3&&idx>=3)?' style="display:none"':'')+'>'+esc(it)+'</li>';
+        }).join('')+'</ul>'+
+        (((c.items||[]).length>3)?'<button class="clog-more" onclick="clogMore(this)">展开全部 '+(c.items||[]).length+' 项</button>':'')+
+      '</div>';}).join('')+
+    '</div>'+
+    '<button class="btn ghost" onclick="S.checkVer(true)">检查更新</button>';
   if(kind==='faq') return '<div class="card"><div style="font-size:13px;font-weight:700">科目与会员</div>'+
     '<div class="hint">首次打开某科目需要下载内容（法制史约 6.7MB），之后再次打开会更快。会员、签到、抽奖、邀请、客服在所有科目间通用。</div></div>'+
     '<div class="card"><div style="font-size:13px;font-weight:700">抽奖次数规则</div>'+
@@ -1247,15 +1389,115 @@ S.setTheme=function(k,v){
   toast(k==='fz'?('字号已设为 '+v+'%'):(v?'已切到夜间':'已切回日间'));
 };
 
-/* ---------- 版本 ---------- */
+/* ---------- 版本生命周期（VER_LS 已在 IIFE 顶部定义）---------- */
 S.showVer=function(){ openSheet('ver'); };
-S.checkVer=function(){
-  fetch('version.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
-    if(j&&j.version&&j.version!==ST.ver){ toast('发现新版本 v'+j.version+' · 下次打开生效'); }
-    else if(j&&j.version){ toast('已是最新 v'+j.version); }
-    else { toast('已是最新 v'+ST.ver); }
-  }).catch(function(){ toast('已是最新 v'+ST.ver); });
+function getVerKV(k,d){ try{ var v=localStorage.getItem(VER_LS+'.'+k); return v==null?d:v; }catch(e){ return d; } }
+function setVerKV(k,v){ try{ localStorage.setItem(VER_LS+'.'+k,v); }catch(e){} }
+
+function cmpVer(a,b){
+  var x=String(a).split('.').map(Number), y=String(b).split('.').map(Number);
+  var n=Math.max(x.length,y.length);
+  for(var i=0;i<n;i++){ var A=x[i]||0,B=y[i]||0; if(A!==B) return A>B?1:-1; }
+  return 0;
+}
+/* 底部更新提示条 */
+function verBar(msg,btnTxt,onAct,sticky,verTag,altTxt){
+  var el=document.getElementById('verbar');
+  if(!el){ el=document.createElement('div'); el.id='verbar'; el.className='verbar'; document.body.appendChild(el); }
+  el.innerHTML='<span class="vb-txt"></span><button class="vb-act"></button><button class="vb-x"></button>';
+  el.querySelector('.vb-txt').textContent=msg;
+  el.dataset.ver=verTag||'';
+  var b=el.querySelector('.vb-act'); b.textContent=btnTxt; b.onclick=onAct;
+  var xb=el.querySelector('.vb-x'); xb.textContent=altTxt||'×';
+  xb.onclick=function(){ el.classList.remove('show'); if(el.dataset.ver){ setVerKV('dv',el.dataset.ver); } };
+  el.classList.add('show');
+  clearTimeout(el._t);
+  if(!sticky) el._t=setTimeout(function(){el.classList.remove('show');},9000);
+}
+/* 更新遮罩 */
+function updOverlay(txt){
+  var d=document.getElementById('updMask');
+  if(!d){
+    d=document.createElement('div'); d.id='updMask'; d.className='upd-mask';
+    d.innerHTML='<div class="u-spin"></div><div class="u-txt"></div><div class="u-note">清理缓存后会自动重开，不用手动刷新</div>';
+    document.body.appendChild(d);
+  }
+  d.querySelector('.u-txt').textContent=txt||'正在更新…';
+}
+/* 硬跳：清掉地址上的旧 query，带新版本戳强制走网络 */
+function hardReload(){
+  var path='/';
+  try{ path=new URL(document.baseURI||location.href).pathname||'/'; }catch(e){ path=location.pathname||'/'; }
+  try{ location.replace(path+'?v='+Date.now()); }catch(e){ location.reload(); }
+}
+/* 清缓存硬重置：注销全部离线服务、删除全部缓存条目后硬跳 */
+window.__hardReset=function(){
+  updOverlay('正在更新：清理缓存…');
+  try{ if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(x){x.unregister();});}); }catch(e){}
+  try{ if(window.caches) caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k);});}); }catch(e){}
+  setTimeout(hardReload,650);
 };
+/* 常规更新：清缓存 + 自动重启，记录尝试次数用于"更新没生效"兜底 */
+function refreshApp(){
+  updOverlay('正在更新：清理缓存…');
+  setVerKV('try',String((parseInt(getVerKV('try','0'),10)||0)+1));
+  try{ if(navigator.serviceWorker) navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(x){x.unregister();});}); }catch(e){}
+  try{ if(window.caches) caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k);});}); }catch(e){}
+  setTimeout(hardReload,650);
+}
+function checkRemote(manual){
+  return fetch('version.json?t='+Date.now(),{cache:'no-store'})
+   .then(function(r){ return r.ok?r.json():null; })
+   .then(function(j){
+      if(!j||!j.version) throw new Error('no');
+      if(cmpVer(j.version,APP_VER)>0){
+        var tag=j.version;
+        var tries=parseInt(getVerKV('try','0'),10)||0;
+        if(tries>=2){
+          if(!manual) return;
+          verBar('更新好像没生效（还在 v'+APP_VER+'）','清缓存重启',window.__hardReset,true);
+          return;
+        }
+        if(!manual && getVerKV('dv','')===tag) return;
+        verBar('新版本 v'+j.version+' 已发布，现在更新吗？','立即更新',refreshApp,true,tag,'稍后');
+      }else{
+        setVerKV('try','0');
+        if(manual) toast('已是最新版本 v'+APP_VER);
+      }
+   })
+   .catch(function(){ if(manual) toast('检查不到更新信息（离线时正常）'); });
+}
+S.checkVer=function(manual){ checkRemote(!!manual); };
+window.clogMore=function(btn){
+  var ul=btn.parentNode.querySelector('ul');
+  var lis=ul.querySelectorAll('li');
+  var expand=btn.textContent.indexOf('展开')===0;
+  for(var i=0;i<lis.length;i++){ lis[i].style.display=expand?'list-item':'none'; }
+  btn.textContent=expand?'收起':'展开全部 '+lis.length+' 项';
+};
+/* 启动版本核对：版本升级后提示"已更新"，并在启动/回前台时检测新版本 */
+function bootVer(){
+  var last=getVerKV('run',null);
+  setVerKV('run',APP_VER);
+  if(last && cmpVer(APP_VER,last)>0){
+    setVerKV('try','0');
+    verBar('已更新至 v'+APP_VER,'查看版本',function(){
+      openSheet('ver'); var vb=document.getElementById('verbar'); if(vb) vb.classList.remove('show');
+    },false);
+  }
+  window.__chkAt=Date.now();
+  setTimeout(function(){ checkRemote(false); },1600);
+  function onForeground(){
+    if(document.visibilityState!=='visible') return;
+    if(Date.now()-(window.__chkAt||0)<30000) return;
+    window.__chkAt=Date.now();
+    checkRemote(false);
+  }
+  document.addEventListener('visibilitychange',onForeground);
+  window.addEventListener('pageshow',function(e){ if(e.persisted) onForeground(); });
+  setInterval(onForeground,600000);
+}
+window.__bootVer=bootVer;
 
 window.S=S;
 window.Auth=Auth;
