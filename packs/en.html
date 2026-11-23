@@ -880,7 +880,7 @@ input,textarea{font:inherit;color:inherit}
       var lv = lvOf(c.id);
       if (lv >= 5) mastered++; else if (lv > 0) learning++;
     });
-    var h = hd('大作文背诵', allCards().length + ' 张', exam !== null && exam >= 0 ? ('距考试 ' + exam + ' 天') : '');
+    var h = hd('英语大作文', allCards().length + ' 张', exam !== null && exam >= 0 ? ('距考试 ' + exam + ' 天') : '');
     h += '<div class="wrap">';
 
     h += '<div class="panel today"><div class="row"><span class="k">今日</span><span class="v">' + todayStr() + '</span></div>' +
@@ -1628,7 +1628,7 @@ input,textarea{font:inherit;color:inherit}
       var blob = new Blob([JSON.stringify(S)], { type: 'application/json' });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = '大作文背诵进度-' + todayStr() + '.json';
+      a.download = '英语大作文进度-' + todayStr() + '.json';
       a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 3000);
     },
@@ -3320,6 +3320,14 @@ html.shell #shellBack:active{transform:scale(.92)}
   });
   /* 包内更新记录统一交给壳，不再显示单科旧版本面板 */
   window.showVerLog=function(){ post({t:'askMe'}); };
+  window.checkNow=function(){ post({t:'open',kind:'ver'}); };
+  /* 拦截闭包内自动更新检查对 version.json 的请求，避免 404，版本统一由壳管理 */
+  var _fetch=window.fetch.bind(window);
+  window.fetch=function(input,init){
+    var url=(typeof input==='string')?input:((input&&input.url)||'');
+    if(url.indexOf('version.json')>=0){ return Promise.reject(new Error('shell-managed')); }
+    return _fetch(input,init);
+  };
   /* 包内「我的」一律交给壳 */
   document.addEventListener('click',function(ev){
     var el=ev.target;

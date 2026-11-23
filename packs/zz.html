@@ -995,7 +995,7 @@ html[data-theme="night"] mark.hl{background:#8a6d2f;color:#fff}
 <div id="splash" class="splash">
   <div class="splash-inner">
     <div class="splash-ring"><div class="splash-seal serif">政</div></div>
-    <h1 class="splash-title serif">政治一页纸</h1>
+    <h1 class="splash-title serif">政治</h1>
     <p class="splash-sub">2027 考研政治 · 考点 × 真题 × 专题</p>
     <div class="splash-rule"></div>
     <div class="splash-meta">100 考点 · 596 道题 · 9 板块</div>
@@ -1008,7 +1008,7 @@ html[data-theme="night"] mark.hl{background:#8a6d2f;color:#fff}
   <div class="wrap">
     <div class="seal serif">政</div>
     <div class="tt">
-      <b>政治一页纸</b>
+      <b>政治</b>
       <span>9 板块纲领 · 596 道题</span>
     </div>
     <div class="mini-ring" onclick="go('home')">
@@ -1027,7 +1027,7 @@ html[data-theme="night"] mark.hl{background:#8a6d2f;color:#fff}
   <div class="wrap">
     <div class="hero">
       <div class="eyebrow">2027 · 考研政治 · 选择题考点</div>
-      <h1>政治<br><em>一页纸</em></h1>
+      <h1>政治</h1>
       <div class="hero-sub">100 条考点 · 9 大板块 · 596 道题（真题 140）</div>
       <div class="stamp serif">政</div>
     </div>
@@ -4543,6 +4543,22 @@ html.shell .icon-btn{display:none!important}
     window.openSettings=function(){ post({t:'askMe'}); };
     /* 包内版本记录同样交给壳，避免显示单科旧版本号 */
     window.openChangelog=function(){ post({t:'askMe'}); };
+    /* 系统/运营类弹层统一交给壳，杜绝包内独立版本 */
+    var SHEET_MAP={
+      openVip:'redeem', redeemCard:'redeem',
+      openLottery:'lottery', goCkCard:'me', openInviteSheet:'invite',
+      openDevices:'dev', openPwdSheet:'me', openLogs:'me',
+      openChat:'chat', openFaq:'faq',
+      openInstall:'me', checkNow:'ver', openStats:'me',
+      openBadges:'me', openFreeSheet:'me',
+      openNickEdit:'me', signOutAsk:'me', deleteAccountAsk:'me',
+      openBug:'chat', openBugs:'chat', openIssue:'chat'
+    };
+    Object.keys(SHEET_MAP).forEach(function(fn){
+      if(typeof window[fn]==='function'){ window[fn]=function(){ post({t:'open',kind:SHEET_MAP[fn]}); }; }
+    });
+    /* 嵌入态禁用包内自动更新检查（返回 resolved promise 兼容 .then 调用），版本更新统一由壳管理，杜绝 404 */
+    window.checkRemote=function(){ return Promise.resolve(); };
     var _go=(typeof go==='function')?go:null;
     if(_go){
       window.go=function(v){

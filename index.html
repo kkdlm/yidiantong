@@ -327,11 +327,11 @@ function tabIcon(id,fill){ return ic(TAB_ICON[id]||'question',fill); }
 
 var LS='yidiantong.shell.v1';
 var BOOKS=[
-  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'packs/fz.html',ver:'1.0.0.0',
+  {id:'fz',name:'法制史',seal:'史',color:'#1F4A38',url:'https://aka.doubaocdn.com/s/zrhw2Iqnjh',ver:'1.0.0.0',
    desc:'169 考点 · 3561 条 · 6.70 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'packs/zz.html',ver:'1.0.0.0',
+  {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'https://aka.doubaocdn.com/s/VLUm5MzBbM',ver:'1.0.0.0',
    desc:'100 考点 · 596 题 · 1.12 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'packs/en.html',ver:'1.0.0.0',
+  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'https://aka.doubaocdn.com/s/xBWsG9D9IY',ver:'1.0.0.0',
    desc:'132 短语 · 六大方面 · 图表词汇 + SRS',tabs:[{id:'today',n:'今日'},{id:'words',n:'词库'},{id:'drill',n:'测试'}]}
 ];
 
@@ -643,6 +643,10 @@ window.addEventListener('message',function(e){
     if(ST.view==='study') render();
   }
   else if(d.t==='askMe'){ openSheet('me'); }
+  else if(d.t==='open'){
+    var allowed={lottery:1,invite:1,redeem:1,chat:1,ver:1,faq:1,dev:1,me:1,theme:1};
+    if(allowed[d.kind]) openSheet(d.kind);
+  }
   else if(d.t==='back'){ S.backToLib(); }
   else if(d.t==='tab'){
     if(typeof d.id==='string'&&isTabAllowed(id,d.id)){

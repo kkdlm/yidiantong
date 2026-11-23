@@ -2619,7 +2619,7 @@ body.sheet-open .nav{transform:translateX(-50%) translateY(calc(115% + env(safe-
   <div class="splash-inner">
     <div class="splash-slips"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="splash-seal">史</div>
-    <h1 class="splash-title">法制史一点通</h1>
+    <h1 class="splash-title">法制史</h1>
     <p class="splash-sub">2027 法硕非法学 · <b id="spTotal" style="color:var(--zhu);font-weight:600">169 条考点</b></p>
     <div class="splash-strip"><s></s>断代史 / 专题史 · 背诵一本通<s></s></div>
     <div class="sp-bar"><div class="sp-fill" id="spFill"></div></div>
@@ -2760,7 +2760,7 @@ window.__bootOk=function(){ window.__booted=true; var d=document.getElementById(
   <div class="wrap">
     <div class="seal serif">史</div>
     <div class="tt">
-      <b>法制史一点通</b>
+      <b>法制史</b>
       <span>断代史／专题史 · 一键切换</span>
     </div>
     <div class="mini-ring" onclick="go('home')">
@@ -2780,7 +2780,7 @@ window.__bootOk=function(){ window.__booted=true; var d=document.getElementById(
   <div class="wrap">
     <div class="hero">
       <div class="eyebrow">2027 · 法硕非法学 · 中国法制史</div>
-      <h1>法制史<br><em>一点通</em></h1>
+      <h1>法制史</h1>
       <div class="hero-sub">169 张考点卡 · 29 个专题 · 23 个朝代段</div>
       <div class="stamp serif">史</div>
     </div>
@@ -11853,6 +11853,22 @@ html.shell .icon-btn{display:none!important}
     window.openSettings=function(){ post({t:'askMe'}); };
     /* 包内版本记录同样交给壳，避免显示单科旧版本号 */
     window.openChangelog=function(){ post({t:'askMe'}); };
+    /* 系统/运营类弹层统一交给壳，杜绝包内独立版本 */
+    var SHEET_MAP={
+      openVip:'redeem', redeemCard:'redeem',
+      openLottery:'lottery', goCkCard:'me', openInviteSheet:'invite',
+      openDevices:'dev', openPwdSheet:'me', openLogs:'me',
+      openChat:'chat', openFaq:'faq',
+      openInstall:'me', checkNow:'ver', openStats:'me',
+      openBadges:'me', openFreeSheet:'me',
+      openNickEdit:'me', signOutAsk:'me', deleteAccountAsk:'me',
+      openBug:'chat', openBugs:'chat', openIssue:'chat'
+    };
+    Object.keys(SHEET_MAP).forEach(function(fn){
+      if(typeof window[fn]==='function'){ window[fn]=function(){ post({t:'open',kind:SHEET_MAP[fn]}); }; }
+    });
+    /* 嵌入态禁用包内自动更新检查（返回 resolved promise 兼容 .then 调用），版本更新统一由壳管理，杜绝 404 */
+    window.checkRemote=function(){ return Promise.resolve(); };
     var _go=(typeof go==='function')?go:null;
     if(_go){
       window.go=function(v){
