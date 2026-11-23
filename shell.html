@@ -201,8 +201,8 @@ var BOOKS=[
    desc:'169 考点 · 3561 条 · 6.70 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
   {id:'zz',name:'政治',seal:'政',color:'#A8432F',url:'packs/zz.html',ver:'1.3.0.0',
    desc:'100 考点 · 596 题 · 1.12 MB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'速览'},{id:'recite',n:'背诵'},{id:'topic',n:'专题'},{id:'quiz',n:'刷题'},{id:'me',n:'我的'}]},
-  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'packs/en.html',ver:'1.3.0.0',
-   desc:'三段模板 · 24 条功能句 · 25 KB',tabs:[{id:'home',n:'总览'},{id:'browse',n:'范文'},{id:'recite',n:'背诵'},{id:'topic',n:'功能句'},{id:'quiz',n:'默写'}]}
+  {id:'en',name:'英语大作文',seal:'英',color:'#8C8578',url:'packs/en.html',ver:'1.3.10',
+   desc:'132 短语 · 六大方面 · 图表词汇 + SRS',tabs:[{id:'today',n:'今日'},{id:'words',n:'词库'},{id:'drill',n:'测试'}]}
 ];
 function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function load(){try{var r=localStorage.getItem(LS);return r?JSON.parse(r):null}catch(e){return null}}
@@ -223,7 +223,7 @@ rollDay();
 var $=function(id){return document.getElementById(id)};
 function book(id){for(var i=0;i<BOOKS.length;i++) if(BOOKS[i].id===id) return BOOKS[i]; return null}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-var TABS_ICON={home:'▤',browse:'≡',recite:'✎',topic:'◷',quiz:'✓',me:'☺'};
+var TABS_ICON={home:'▤',browse:'≡',recite:'✎',topic:'◷',quiz:'✓',me:'☺',today:'☉',words:'▤',drill:'✓',cards:'▦'};
 
 /* ---------- iframe 管理 ---------- */
 var FR={}, seq=0;
