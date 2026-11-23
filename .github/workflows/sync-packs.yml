@@ -1,15 +1,13 @@
-# 沉浸式顶栏 + PWA + 三科统一云端同步（CDN 快速加载版：1.0.0.4 背景滚动锁定/底栏贴合）
-name: sync-packs
+# 法硕一点通 · 拉取 CDN 资源后直接部署（不做 self-push，避免 rebase/冲突）
+name: deploy-site
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/sync-packs.yml'
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -18,89 +16,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  sync:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: 拉取资源（带重试，单文件失败不中断）
+      - name: 拉取 CDN 资源
         run: |
+          set -x
           mkdir -p packs admin icons
-          pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 240 -o "$1" "$2" || echo "WARN 拉取失败 $2"; }
+          pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 300 -o "$1" "$2"; }
+          pullopt(){ curl -fsSL --retry 2 --retry-all-errors --connect-timeout 20 --max-time 120 -o "$1" "$2" || echo "WARN 可选资源失败 $2"; }
           pull packs/fz.html 'https://aka.doubaocdn.com/s/kk8hf2nljj'
           pull packs/zz.html 'https://aka.doubaocdn.com/s/QVBGvNu9yZ'
           pull packs/en.html 'https://aka.doubaocdn.com/s/DbSSFtLR2y'
-          pull index_raw.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw'
-          pull admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9'
+          pull /tmp/shell.html 'https://aka.doubaocdn.com/s/tk8sUqe4vw'
+          cp /tmp/shell.html index.html
+          cp /tmp/shell.html shell.html
+          pullopt admin/index.html 'https://aka.doubaocdn.com/s/qvyFgF0eX9'
           pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
-          pull icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
-          pull icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj'
-          pull icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry'
-          pull icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR'
-          pull icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66'
-          pull icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT'
-          pull icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH'
-          echo '=== 校验 ==='; ls -l packs admin icons; file packs/*.html icons/*.png | head -20
-      - name: 保留 CDN 快速地址
-        run: |
-          cp index_raw.html index.html
-          cp index_raw.html shell.html
-          rm -f index_raw.html
-          grep -c 'aka.doubaocdn.com/s/' index.html
-      - name: 提交
-        run: |
-          git config user.name 'pack-bot'
-          git config user.email 'pack-bot@users.noreply.github.com'
-          git add packs admin icons index.html shell.html manifest.webmanifest
-          git commit -m 'fix: 1.0.0.4 锁定背景滚动（底栏不再悬空/阅读器贴合）' || echo nothing
-          ok=0
-          for i in 1 2 3; do
-            if git pull --rebase origin main; then ok=1; break; fi
-            git rebase --abort 2>/dev/null || true
-            echo "rebase 冲突/失败，第 $i 次重试"; sleep 3
-          done
-          if [ "$ok" != "1" ]; then echo 'WARN rebase 未成功，仍尝试推送当前状态'; fi
-          git push origin main
-          echo 'push 完成'
-
-  deploy:
-    needs: sync
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: 拉取最新
-        run: |
-          git fetch origin main
-          git checkout -B main origin/main
+          pullopt icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
+          pullopt icons/icon-192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj'
+          pullopt icons/icon-512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry'
+          pullopt icons/maskable-192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR'
+          pullopt icons/maskable-512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66'
+          pullopt icons/apple-touch-icon.png 'https://aka.doubaocdn.com/s/LawVTiqTXT'
+          pullopt icons/apple-splash.png 'https://aka.doubaocdn.com/s/5zPRkVtKaH'
+          echo '=== 校验 ==='
+          ls -l packs index.html shell.html
+          grep -c "APP_VER='1.0.0.4'" index.html
+          file packs/*.html | head
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: 记录部署结果
+      - name: 回读验证
         if: always()
         run: |
-          sleep 5
-          code=$(curl -s -o /tmp/pg.html -w '%{http_code}' 'https://kkdlm.github.io/yidiantong/' || echo 000)
-          mkdir -p docs
-          printf '{
-  "checked_at": "%s",
-  "http_code": "%s",
-  "deploy_outcome": "%s",
-  "page_url": "%s"
-}
-' "$(date -u +%Y-%m-%dT%H:%M:%S)" "$code" "${{ steps.deployment.outcome }}" "${{ steps.deployment.outputs.page_url }}" > docs/deploy-status.json
-          cat docs/deploy-status.json
-          git config user.name 'pack-bot'
-          git config user.email 'pack-bot@users.noreply.github.com'
-          git pull --rebase origin main || true
-          git add docs
-          git commit -m 'chore: 记录部署状态' || echo nothing
-          git push || true
+          sleep 4
+          curl -s -o /dev/null -w '部署后站点 HTTP:%{http_code}\n' 'https://kkdlm.github.io/yidiantong/' || true
