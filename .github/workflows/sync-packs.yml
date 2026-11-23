@@ -1,4 +1,4 @@
-# 沉浸式顶栏 + PWA 图标/启动屏版本
+# 沉浸式顶栏 + PWA 图标/启动屏 + 设置统一版本
 name: sync-packs
 
 on:
@@ -27,10 +27,10 @@ jobs:
       - name: 拉取科目内容、线上壳、管理后台与 PWA 资源
         run: |
           mkdir -p packs admin icons
-          curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/83pAr0pePl"
-          curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/FxlnlxaCdZ"
+          curl -fsSL -o packs/fz.html "https://aka.doubaocdn.com/s/V1e2eBlu45"
+          curl -fsSL -o packs/zz.html "https://aka.doubaocdn.com/s/Eg9U7GHIDU"
           curl -fsSL -o packs/en.html "https://aka.doubaocdn.com/s/We6MqkcpDG"
-          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/b4fUHFyegb"
+          curl -fsSL -o index_raw.html "https://aka.doubaocdn.com/s/OHu02JuNK5"
           curl -fsSL -o admin/index.html "https://aka.doubaocdn.com/s/VBnSbDQvjd"
           curl -fsSL -o manifest.webmanifest "https://aka.doubaocdn.com/s/NKmuOL9mNo"
           curl -fsSL -o icons/favicon-32.png "https://aka.doubaocdn.com/s/JD02EZUAcd"
@@ -46,8 +46,8 @@ jobs:
           python3 - <<'PY'
           import io
           s = io.open('index_raw.html', encoding='utf-8').read()
-          s = s.replace('https://aka.doubaocdn.com/s/83pAr0pePl', 'packs/fz.html')
-          s = s.replace('https://aka.doubaocdn.com/s/FxlnlxaCdZ', 'packs/zz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/V1e2eBlu45', 'packs/fz.html')
+          s = s.replace('https://aka.doubaocdn.com/s/Eg9U7GHIDU', 'packs/zz.html')
           s = s.replace('https://aka.doubaocdn.com/s/We6MqkcpDG', 'packs/en.html')
           io.open('index.html', 'w', encoding='utf-8').write(s)
           io.open('shell.html', 'w', encoding='utf-8').write(s)
@@ -59,7 +59,7 @@ jobs:
           git config user.name "pack-bot"
           git config user.email "pack-bot@users.noreply.github.com"
           git add packs admin icons index.html shell.html manifest.webmanifest
-          git commit -m "chore: 同步沉浸式壳、三科返回键与 PWA 资源" || echo "nothing to commit"
+          git commit -m "chore: 同步设置统一壳、三科返回键与 PWA 资源" || echo "nothing to commit"
           git push
 
   deploy:
