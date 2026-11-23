@@ -14,9 +14,21 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: 诊断 CDN 连通性
+      - uses: actions/checkout@v4
+      - name: 诊断 CDN 并写入文件
         run: |
-          echo '=== DNS ==='
-          getent hosts aka.doubaocdn.com || echo 'DNS解析失败'
-          echo '=== HEAD 小文件 ==='
-          curl -sSIL --connect-timeout 15 --max-time 40 'https://aka.doubaocdn.com/s/VLUm5MzBbM' | head -20 || echo 'curl失败'
+          mkdir -p docs
+          {
+            echo '=== DNS ==='
+            getent hosts aka.doubaocdn.com || echo 'DNS解析失败'
+            echo '=== 下载小文件 zz ==='
+            curl -sSIL --connect-timeout 15 --max-time 40 'https://aka.doubaocdn.com/s/VLUm5MzBbM' | head -20 || echo 'HEAD失败'
+            echo '=== 实际下载 ==='
+            curl -sSL --connect-timeout 15 --max-time 90 -o /tmp/zz.html -w 'http:%{http_code} bytes:%{size_download} speed:%{speed_download}\n' 'https://aka.doubaocdn.com/s/VLUm5MzBbM' || echo '下载失败'
+            file /tmp/zz.html 2>/dev/null || true
+          } > docs/cdn-diag.txt 2>&1
+          git config user.name 'pack-bot'
+          git config user.email 'pack-bot@users.noreply.github.com'
+          git add docs/cdn-diag.txt
+          git commit -m 'chore: 记录 CDN 诊断' || echo nothing
+          git push
