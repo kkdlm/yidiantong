@@ -1,4 +1,4 @@
-# 沉浸式顶栏 + PWA + 设置统一（CDN 快速加载版：书内导航恢复 + iOS 白边修复）
+# 沉浸式顶栏 + PWA + 设置统一（CDN 快速加载版：底部导航米黄统一 + 书内导航 + iOS 白边根治）
 name: sync-packs
 
 on:
@@ -28,10 +28,10 @@ jobs:
         run: |
           mkdir -p packs admin icons
           pull(){ curl -fsSL --retry 3 --retry-all-errors --connect-timeout 20 --max-time 240 -o "$1" "$2" || echo "WARN 拉取失败 $2"; }
-          pull packs/fz.html 'https://aka.doubaocdn.com/s/kcTV23m0j3'
-          pull packs/zz.html 'https://aka.doubaocdn.com/s/FUL6CUZJAV'
-          pull packs/en.html 'https://aka.doubaocdn.com/s/gOcPrpcjdA'
-          pull index_raw.html 'https://aka.doubaocdn.com/s/Fo4VH5hXUV'
+          pull packs/fz.html 'https://aka.doubaocdn.com/s/32WsqN78YJ'
+          pull packs/zz.html 'https://aka.doubaocdn.com/s/SFNy9LYcai'
+          pull packs/en.html 'https://aka.doubaocdn.com/s/WH2VwvxZxc'
+          pull index_raw.html 'https://aka.doubaocdn.com/s/274Zsq2bVV'
           pull admin/index.html 'https://aka.doubaocdn.com/s/VBnSbDQvjd'
           pull manifest.webmanifest 'https://aka.doubaocdn.com/s/NKmuOL9mNo'
           pull icons/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd'
@@ -53,7 +53,7 @@ jobs:
           git config user.name 'pack-bot'
           git config user.email 'pack-bot@users.noreply.github.com'
           git add packs admin icons index.html shell.html manifest.webmanifest
-          git commit -m 'chore: 导航恢复+白边修复 1.0.0.0' || echo nothing
+          git commit -m 'chore: 底部导航米黄统一 1.0.0.0' || echo nothing
           git push
 
   deploy:
