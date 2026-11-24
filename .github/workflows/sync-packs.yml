@@ -1,4 +1,5 @@
 # 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
+# retry: pages 部署接口偶发失败，原样重发
 name: deploy-site
 
 on:
