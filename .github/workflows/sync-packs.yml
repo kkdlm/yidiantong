@@ -26,13 +26,13 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/iM1vcQW1y5'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/BV5QJORHwI'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.1.7'" /tmp/shell.html
+          grep -q "APP_VER='1.0.1.8'" /tmp/shell.html
           grep -q "rUsaYjaSBm" /tmp/shell.html
           echo "壳校验通过"
       - name: 组装站点目录
