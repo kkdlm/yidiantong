@@ -1,5 +1,5 @@
 # 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
-# pages 发布链已改用 upload-pages-artifact@v4（v3 产出的 artifact 名不再被 deploy-pages 接受）
+# pages 发布链使用 upload-pages-artifact@v4（v3 产出的 artifact 名不再被 deploy-pages 接受）
 name: deploy-site
 
 on:
@@ -28,13 +28,13 @@ jobs:
         run: |
           mkdir -p admin icons
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/7pG3X8N0cJ'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/aJVFa5me3p'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.1.4'" /tmp/shell.html
+          grep -q "APP_VER='1.0.1.5'" /tmp/shell.html
           grep -q "rUsaYjaSBm" /tmp/shell.html
           cp /tmp/shell.html index.html
           cp /tmp/shell.html shell.html
