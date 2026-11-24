@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment2.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - name: 拉取线上壳
@@ -63,7 +63,14 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: /tmp/site
+      - name: 等产物就绪
+        run: sleep 8
       - id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: 重试一次发布
+        id: deployment2
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
       - name: 回读
         if: always()
