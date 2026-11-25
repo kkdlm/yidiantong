@@ -1,5 +1,5 @@
 # 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
-# 触发点 2026-11-26T16:52+08:00（壳 1.0.7.2 学习页：未开始/未背成的科目紧凑卡）
+# 触发点 2026-11-26T17:05+08:00（壳 1.0.7.3 英语排队墨墨顺序 + 新英语包 1.3.11）
 name: deploy-site
 
 on:
@@ -27,15 +27,15 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/btJ8wyNU4V'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/4bBLOQ4cGH'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.7.2'" /tmp/shell.html
+          grep -q "APP_VER='1.0.7.3'" /tmp/shell.html
           grep -q "cFQySXV0Ph" /tmp/shell.html
-          grep -q "QoJ7lJCOZt" /tmp/shell.html
+          grep -q "v49R97ltZR" /tmp/shell.html
           grep -q "MM_SPEC" /tmp/shell.html
           grep -q "rpc/my_devices" /tmp/shell.html
           grep -q "rpc/claim_invite" /tmp/shell.html
