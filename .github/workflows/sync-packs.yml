@@ -1,6 +1,5 @@
 # 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
-# 触发点 2026-11-26T17:05+08:00（壳 1.0.7.3 英语排队墨墨顺序 + 新英语包 1.3.11）
-# 重触发 17:22（前一次 push 的 run 未见到站，重新推送一次）
+# 触发点 2026-11-26T17:35+08:00（壳 1.0.7.4 修英语包空数据覆盖 + 包 1.3.12）
 name: deploy-site
 
 on:
@@ -28,18 +27,15 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/4bBLOQ4cGH'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/S7ntkUByT5'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.7.3'" /tmp/shell.html
-          grep -q "cFQySXV0Ph" /tmp/shell.html
-          grep -q "v49R97ltZR" /tmp/shell.html
+          grep -q "APP_VER='1.0.7.4'" /tmp/shell.html
+          grep -q "tn5131Qwa6" /tmp/shell.html
           grep -q "MM_SPEC" /tmp/shell.html
-          grep -q "rpc/my_devices" /tmp/shell.html
-          grep -q "rpc/claim_invite" /tmp/shell.html
           echo "壳校验通过"
       - name: 组装站点目录
         run: |
