@@ -1,5 +1,5 @@
 # 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
-# 触发点 2026-11-25T20:05+08:00（壳 1.0.6.3 / 壳内法制史 1.2.1.4）
+# 触发点 2026-11-25T21:00+08:00（后台分布图按科目口径统计）
 name: deploy-site
 
 on:
@@ -45,7 +45,7 @@ jobs:
           cp /tmp/shell.html /tmp/site/shell.html
           adm_ok=0
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 180 -o /tmp/admin.html 'https://aka.doubaocdn.com/s/mJKfV8Q5n3'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 180 -o /tmp/admin.html 'https://aka.doubaocdn.com/s/hLcAHSFS1w'; then
               if [ -s /tmp/admin.html ] && grep -q "<html" /tmp/admin.html; then adm_ok=1; echo "admin ok $(wc -c < /tmp/admin.html) bytes"; break; fi
             fi
             echo "admin retry $n"; sleep 4
