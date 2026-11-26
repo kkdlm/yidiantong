@@ -1,5 +1,5 @@
 # 法硕一点通 · 单 job 部署（声明 pages 环境，壳为关键文件，静态资源超时回退仓库已有）
-# 触发点 2026-11-26T19:55+08:00（壳 1.0.9.3：法制史正文校字与残段清理）
+# 触发点 2026-11-26T20:20+08:00（壳 1.0.9.4：法制史第二轮校字）
 name: deploy-site
 on:
   workflow_dispatch:
@@ -23,15 +23,15 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/2DtgOXwVp5'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/0uUQhEJuhK'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.9.3'" /tmp/shell.html
+          grep -q "APP_VER='1.0.9.4'" /tmp/shell.html
           grep -q "法理学" /tmp/shell.html
-          grep -q "hAQuV1uLer" /tmp/shell.html
+          grep -q "pKLyNgiwUY" /tmp/shell.html
           grep -q "yLG3XEkdpu" /tmp/shell.html
           grep -q "VZoZcofsg7" /tmp/shell.html
           echo "壳校验通过"
