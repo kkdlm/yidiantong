@@ -21,15 +21,15 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/ICravrvJea'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/9NaXRSDqsf'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.9.9'" /tmp/shell.html
+          grep -q "APP_VER='1.0.9.10'" /tmp/shell.html
           grep -q "法理学" /tmp/shell.html
-          grep -q "zhUazoODE2" /tmp/shell.html
+          grep -q "ufSQ4tdoTQ" /tmp/shell.html
           grep -q "yLG3XEkdpu" /tmp/shell.html
           grep -q "VZoZcofsg7" /tmp/shell.html
           echo "壳校验通过"
