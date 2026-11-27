@@ -18,18 +18,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url || steps.deployment2.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: 拉取线上壳
+      - name: 拉取壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/JrI8k5kOvL'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/NpYiYlTx9h'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.1.0.4'" /tmp/shell.html
+          grep -q "APP_VER='1.1.0.5'" /tmp/shell.html
           grep -q "window.shellSignOut=shellSignOut;" /tmp/shell.html
-          grep -q "TPiPdOVFrl" /tmp/shell.html
+          grep -q "utY7r1oJ67" /tmp/shell.html
+          grep -q "v02dNZxCcY" /tmp/shell.html
           grep -q "yLG3XEkdpu" /tmp/shell.html
           grep -q "VZoZcofsg7" /tmp/shell.html
           echo "壳校验通过"
@@ -74,7 +75,7 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v4
         continue-on-error: true
-      - name: 重试一次发布
+      - name: 重试一次
         id: deployment2
         if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
