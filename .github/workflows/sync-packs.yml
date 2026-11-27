@@ -21,7 +21,7 @@ jobs:
       - name: 拉取壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/1UHFR9srnr'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/TCUnGB70Ey'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
@@ -29,7 +29,7 @@ jobs:
           test -s /tmp/shell.html
           grep -q "APP_VER='1.1.0.8'" /tmp/shell.html
           grep -q "window.shellSignOut=shellSignOut;" /tmp/shell.html
-          grep -q "Sz0HAUHJd7" /tmp/shell.html
+          grep -q "XYv1AwCJZI" /tmp/shell.html
           grep -q "v02dNZxCcY" /tmp/shell.html
           grep -q "yLG3XEkdpu" /tmp/shell.html
           grep -q "VZoZcofsg7" /tmp/shell.html
