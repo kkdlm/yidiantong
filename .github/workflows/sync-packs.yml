@@ -21,13 +21,13 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/37oieWrjjo'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/JrI8k5kOvL'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.10.4'" /tmp/shell.html
+          grep -q "APP_VER='1.1.0.4'" /tmp/shell.html
           grep -q "window.shellSignOut=shellSignOut;" /tmp/shell.html
           grep -q "TPiPdOVFrl" /tmp/shell.html
           grep -q "yLG3XEkdpu" /tmp/shell.html
@@ -47,7 +47,7 @@ jobs:
           done
           if [ "$adm_ok" != "1" ]; then echo "admin 取不到，停止发布"; exit 1; fi
           curl -fsSL --max-time 45 -o /tmp/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd' || true
-          curl -fsSL --max-time 45 -o /tmp/i192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj' || true
+          curl -fsSL --max-time 45 -o /tmp/i192.png 'https://aka.doubaocdn.com/s/RaVseTIWbn' || true
           curl -fsSL --max-time 45 -o /tmp/i512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry' || true
           curl -fsSL --max-time 45 -o /tmp/m192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR' || true
           curl -fsSL --max-time 45 -o /tmp/m512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66' || true
