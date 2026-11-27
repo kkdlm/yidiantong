@@ -47,7 +47,7 @@ jobs:
           done
           if [ "$adm_ok" != "1" ]; then echo "admin 取不到，停止发布"; exit 1; fi
           curl -fsSL --max-time 45 -o /tmp/favicon-32.png 'https://aka.doubaocdn.com/s/JD02EZUAcd' || true
-          curl -fsSL --max-time 45 -o /tmp/i192.png 'https://aka.doubaocdn.com/s/RaVseTIWbn' || true
+          curl -fsSL --max-time 45 -o /tmp/i192.png 'https://aka.doubaocdn.com/s/rPo7MC9MBj' || true
           curl -fsSL --max-time 45 -o /tmp/i512.png 'https://aka.doubaocdn.com/s/7EAfdyV0Ry' || true
           curl -fsSL --max-time 45 -o /tmp/m192.png 'https://aka.doubaocdn.com/s/rf4gk8IZqR' || true
           curl -fsSL --max-time 45 -o /tmp/m512.png 'https://aka.doubaocdn.com/s/9I6hfYvH66' || true
