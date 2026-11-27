@@ -21,14 +21,14 @@ jobs:
       - name: 拉取线上壳
         run: |
           for n in 1 2 3; do
-            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/dRzK6UQCB9'; then
+            if curl -fsSL --retry 2 --retry-all-errors --connect-timeout 25 --max-time 240 -o /tmp/shell.html 'https://aka.doubaocdn.com/s/37oieWrjjo'; then
               echo "shell ok $(wc -c < /tmp/shell.html) bytes"; break
             fi
             echo "retry $n"; sleep 5
           done
           test -s /tmp/shell.html
-          grep -q "APP_VER='1.0.9.13'" /tmp/shell.html
-          grep -q "法理学" /tmp/shell.html
+          grep -q "APP_VER='1.0.10.4'" /tmp/shell.html
+          grep -q "window.shellSignOut=shellSignOut;" /tmp/shell.html
           grep -q "TPiPdOVFrl" /tmp/shell.html
           grep -q "yLG3XEkdpu" /tmp/shell.html
           grep -q "VZoZcofsg7" /tmp/shell.html
