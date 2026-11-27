@@ -6,27 +6,27 @@
 
 ## 科目
 
-| 科目 | 包 | 体量 | 内容 |
+| 科目 | 包 | 线上体量 | 内容 |
 |---|---|---|---|
 | 法制史 | `packs/fz.html` | 6.73 MB | 169 考点 · 3561 条 · 断代史 / 专题史 |
 | 政治 | `packs/zz.html` | 1.14 MB | 100 考点 · 596 题 |
 | 英语大作文 | `packs/en.html` | 364 KB | 404 张卡 · 67 组 · 132 短语 · SRS |
-| 法理学 | `packs/fl.html` | 74 KB | 知识框架 · 考点卡片 |
-| 宪法 | `packs/xf.html` | 52 KB | 口诀 · 选举与备案 |
+| 法理学 | fl | 74 KB | 知识框架 · 考点卡片 |
+| 宪法 | xf | 52 KB | 口诀 · 选举与备案 |
 
-政治「真一页」不并入书库。
+政治「真一页」不并入书库。五个科的包都取自内容 CDN，`packs/` 里只留法制史、政治、英语三个早期快照，供对照。
 
 ## 发布
 
-工作流 `.github/workflows/sync-packs.yml` 每次先拉线上的壳与包，校验版本号和内容包编号，再连同后台、图标一起组装站点目录，最后发 Pages。仓库里只放源与产物快照，线上从不直接读仓库里的 `index.html`。
+工作流 `.github/workflows/sync-packs.yml` 每次先拉线上的壳，校验版本号与各包编号，再连同后台、图标一起组装站点目录，最后发 Pages。线上从不读仓库里的 `index.html`。
 
-`index.html` 与 `shell.html` 是早期本地预览副本，已不再跟随后续发布，仅供对照。
+`index.html` 与 `shell.html` 是早期本地预览副本，已不跟随后续发布。
 
 ## 路由
 
-壳经 CDN 转发时会丢 query 但保留 fragment，所以路由全走顶层 hash：
+壳经 CDN 转发会丢 query、保留 fragment，所以路由全走顶层 hash：
 
-- `#book=<id>&tab=<t>` ：进入某科并定位到某个标签
+- `#book=<id>&tab=<t>` ：进某科并定位到某个标签
 - `#view=study` ：学习汇总页
 - `#ref=<邀请码>` ：邀请入口
 - 空 hash ：书库
@@ -50,7 +50,7 @@ iframe 载入后等包发 `ready`，2 秒没等到就判失败，显示重载按
 - 包 → 壳：`ready(tabs)`、`stat(pct, items)`、`askMe`、`tab(id)`、`toast(msg)`
 - 壳 → 包：`theme(night, fz, vip)`、`tab(id)`
 
-包内的「我的」一律走壳的同一份。
+包内「我的」一律走壳里那一份。
 
 ## 活动
 
